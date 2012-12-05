@@ -115,6 +115,7 @@ function isGoodFile($file) {
 }
 
 /**
+ * return a 
  */
 function logList($repo) {
 
@@ -123,20 +124,30 @@ function logList($repo) {
     $basePath = $activeRepos[$repo][1];
 
     chdir($basePath);
-    $gitlog = shell_exec('git log --pretty=format:"%h %ae %ad %s" --date=short .');
+    // check details by using the following command:
+    // git help log
+    // %ae for author email
+    // %an for author name
+    $gitlog = shell_exec('git log --pretty=format:"%h|%an|%ae|%ad|%s" --date=short .');
     $commits = explode("\n", $gitlog);
     $logs = array();
     foreach ($commits as $commit) {
 
         if($commit !== '') {
 
-            list($commitId, $commitEmail, $commitDate, $commitComment) = explode(" ", $commit, 4);
+            list($commitId, $authorName, $commitEmail, 
+                 $commitDate, $commitComment) = 
+              explode("|", $commit, 5);
             // we need theme in the url, so we could come back.
-            $commitLogUrl = 'gitlog.php?basepath=' . $basePath . '&commit=' . $commitId;
+            $commitLogUrl = 'gitlog.php?basepath=' . 
+                            $basePath . '&commit=' . 
+                            $commitId;
+            $mailto = '<a href="mailto:' . $commitEmail .
+                      '">' . $authorName . '</a>';
             // append a new log entry.
             $logs[] = array(
                 "id" => $commitId,
-                "email" => $commitEmail,
+                "email" => $mailto,
                 "date" => $commitDate,
                 "url" => $commitLogUrl,
                 "comment" => $commitComment
