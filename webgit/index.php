@@ -53,6 +53,13 @@ foreach (array_keys($activeRepos) as $repoName) {
 
   <p>
 <?php
+if ((!empty($action)) && empty($repo)) {
+
+    // we will reject any action without repo select.
+    echo "<h2>Please select a Git repository!</h2>";
+    die;
+}
+
 if ($action === "Check Status") {
 ?>
 
@@ -163,7 +170,6 @@ if ($action === 'Commit') {
         $commitFiles = $_POST['commits'];
         $gitcommit = performCommit($repo, $commitFiles, 
                                    $comment, $author);
-
         // show the raw commit result:
         echo "<pre>" . htmlentities($gitcommit) . "</pre>";
     }
@@ -181,7 +187,7 @@ if ($action === 'Check Logs') {
 ?>
 
     <table border = "1" width="90%"><tbody>
-      <tr><th>Commit</th><th width="100">Author</th>
+      <tr><th width="60">Commit</th><th width="100">Author</th>
       <th width="80">Date</th><th>Comment</th></tr>
 <?php
     foreach ($logs as $log) {
