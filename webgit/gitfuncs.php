@@ -150,8 +150,8 @@ function logList($repo) {
                  $commitDate, $commitComment) = 
               explode("|", $commit, 5);
             // we need theme in the url, so we could come back.
-            $commitLogUrl = 'gitlog.php?basepath=' . 
-                            $basePath . '&commit=' . 
+            $commitLogUrl = 'gitlog.php?repo=' . 
+                            $repo. '&commit=' . 
                             $commitId;
             $mailto = '<a href="mailto:' . $commitEmail .
                       '">' . $authorName . '</a>';
