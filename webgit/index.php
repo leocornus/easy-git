@@ -132,9 +132,43 @@ if ($action === "Check Status") {
 <?php
     } // end else
 } // end action Check Status.
+
+if ($action === 'Commit') {
 ?>
 
+    <h2>Commit status for Git Repository: 
+        <?php echo $repo; ?></h2>
+
 <?php
+
+    // try to find the selected repository name
+    if (array_key_exists('accesskey', $_POST)) {
+        $accessKey = $_POST['accesskey'];
+    } else {
+        $accessKey = '';
+    }
+
+    if (array_key_exists('commits', $_POST) === false) {
+        echo "<b>No file selected for commit! Please select files that you want to commit</b>";
+    // verify the access key based on the repository.
+    } elseif (! isAuthorized($repo, $accessKey)) {
+        // wrong access key
+        echo "<b>Wrong access key! Please provide right access key!</b>";
+    } else {
+        // perform the commit.
+        $comment = $_POST['comment'];
+        $authorName = $_POST['authorname'];
+        $authorEmail = $_POST['authoremail'];
+        $author = $authorName . " <" . $authorEmail . ">";
+        $commitFiles = $_POST['commits'];
+        $gitcommit = performCommit($repo, $commitFiles, 
+                                   $comment, $author);
+
+        // show the raw commit result:
+        echo "<pre>" . htmlentities($gitcommit) . "</pre>";
+    }
+} // end action Commit
+
 if ($action === 'Check Logs') {
     // generate the change logs list.
 ?>
@@ -147,7 +181,7 @@ if ($action === 'Check Logs') {
 ?>
 
     <table border = "1" width="90%"><tbody>
-      <tr><th>Commit</th><th>Author</th>
+      <tr><th>Commit</th><th width="100">Author</th>
       <th width="80">Date</th><th>Comment</th></tr>
 <?php
     foreach ($logs as $log) {

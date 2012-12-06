@@ -43,6 +43,16 @@ function requestContext() {
 }
 
 /**
+ * verify the access key
+ */
+function isAuthorized($repo, $accessKey) {
+
+    global $activeRepos;
+    $key = $activeRepos[$repo][2];
+    return ($key === $accessKey);
+}
+
+/**
  * generate a list of chagnes for the given theme.
  */
 function changeList($repo) {
@@ -115,7 +125,8 @@ function isGoodFile($file) {
 }
 
 /**
- * return a 
+ * return a list of change logs from git log 
+ * raw output.
  */
 function logList($repo) {
 
@@ -169,7 +180,12 @@ function logList($repo) {
  * the author has to be format like:
  * Sean Chen <sean.chen@ontario.ca>
  */
-function performCommit($commitFiles, $comment, $author) {
+function performCommit($repo, $commitFiles, 
+                       $comment, $author) {
+
+    global $activeRepos;
+    $basePath = $activeRepos[$repo][1];
+    chdir($basePath);
 
     // pull the latest from git repository.
     $gitpull = shell_exec('git pull');
@@ -181,11 +197,14 @@ function performCommit($commitFiles, $comment, $author) {
     //echo "<p>$gitadd</p>";
 
     // now let's commit the selected files.
-    $cmd = 'git commit -m "' . $comment . '" --author="' . $author . '" ' . $commitFilesStr;
+    $cmd = 'git commit -m "' . $comment . 
+           '" --author="' . $author . 
+           '" ' . $commitFilesStr;
     //echo "<pre>commit command: $cmd<br/>";
     $gitcommit = shell_exec($cmd);
     // need push to git repo.
     shell_exec('git push');
+
     return $gitcommit;
 }
 
