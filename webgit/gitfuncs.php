@@ -116,9 +116,18 @@ function isGoodFile($file) {
 
     // using the global ignoreFiles;
     global $ignoreFiles;
+    global $ignorePatterns;
 
     if (in_array($file, $ignoreFiles)) {
         return false;
+    }
+
+    foreach ($ignorePatterns as $pattern) {
+
+        if(preg_match($pattern, $file) === 1) {
+
+            return false;
+        }
     }
 
     return true;
