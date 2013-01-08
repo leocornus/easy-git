@@ -24,10 +24,13 @@ function requestContext() {
     // if we have the theme name, get ready the status.
     if ($repo !== '') {
         $changes = changeList($repo);
+        $branch = getCurrentBranch($repo);
     } else {
         $changes = '';
+        $branch = '';
     } 
     $context['changes'] = $changes;
+    $context['branch'] = $branch;
 
     // find out the action, based on submit button's value.
     if (array_key_exists('submit', $_POST)) {
@@ -50,6 +53,23 @@ function isAuthorized($repo, $accessKey) {
     global $activeRepos;
     $key = $activeRepos[$repo][2];
     return ($key === $accessKey);
+}
+
+/**
+ * from current active branch.
+ */
+function getCurrentBranch($repo) {
+
+    // we will use the activeRepos as global
+    global $activeRepos;
+    $basePath = $activeRepos[$repo][1];
+//echo $basePath;
+
+    chdir($basePath);
+    // using the short format from git output
+    $rawBranch = shell_exec('git branch | grep \*');
+    // php substr starts from 0
+    return substr($rawBranch, 2);
 }
 
 /**

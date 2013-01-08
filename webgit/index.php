@@ -19,6 +19,7 @@ $repo = $context['repo'];
 $action = $context['action'];
 //// a list of changed file, result from git status
 $changes = $context['changes'];
+$branch = $context['branch'];
 ?>
 
 <form name="repoform" method="POST" action="index.php">
@@ -63,8 +64,9 @@ if ((!empty($action)) && empty($repo)) {
 if ($action === "Check Status") {
 ?>
 
-    <h2>Change status for Git Repository: 
-        <?php echo $repo; ?></h2>
+    <p>Change status for Git Repository: <br />
+    <b><?php echo $repo; ?></b> <br />
+    -- at Branch: <b><?php echo $branch; ?></b></p>
 <?php
     if (count($changes) <= 0) {
         echo "nothing to commit (working directory clean)";
@@ -143,8 +145,9 @@ if ($action === "Check Status") {
 if ($action === 'Commit') {
 ?>
 
-    <h2>Commit status for Git Repository: 
-        <?php echo $repo; ?></h2>
+    <p>Commit status for Git Repository: <br/>
+    <b><?php echo $repo; ?></b> <br />
+    -- at Branch: <b><?php echo $branch; ?></b></p>
 
 <?php
 
@@ -179,8 +182,9 @@ if ($action === 'Check Logs') {
     // generate the change logs list.
 ?>
 
-    <h2>Commit Logs for Git Repository: 
-        <?php echo $repo; ?></h2>
+    <p>Commit Logs for Git Repository:<br />
+    <b><?php echo $repo; ?></b> <br />
+    -- at Branch: <b><?php echo $branch; ?></b></p>
 
 <?php
     $logs = logList($repo);
