@@ -154,6 +154,20 @@ function isGoodFile($file) {
 }
 
 /**
+ * execute git pull to get the latest from repository.
+ */
+function performPull($repo) {
+
+    // user the global variables
+    global $activeRepos;
+    $basePath = $activeRepos[$repo][1];
+    chdir($basePath);
+    $msg = shell_exec('git pull');
+
+    return $msg;
+}
+
+/**
  * return a list of change logs from git log 
  * raw output.
  */

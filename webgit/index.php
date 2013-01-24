@@ -51,6 +51,7 @@ foreach (array_keys($activeRepos) as $repoName) {
   <br/>
   <input type="submit" name="submit" value="Check Status"/>
   <input type="submit" name="submit" value="Check Logs"/>
+  <input type="submit" name="submit" value="Git Pull"/>
 
   <p>
 <?php
@@ -210,8 +211,18 @@ if ($action === 'Check Logs') {
 
 <?php
 } // end action Check Logs
+
+if ($action === 'Git Pull') {
+    // perform git pull and show the message.
 ?>
-  </p>
+    <p>Pull Message for Git Repository:<br />
+    <b><?php echo $repo; ?></b> <br />
+    -- at Branch: <b><?php echo $branch; ?></b></p>
+<?php
+    $msg = performPull($repo);
+    echo "<pre>" . htmlentities($msg) . "</pre>";
+} // end action 'git pull'
+?>
 
 </body>
 </html>
