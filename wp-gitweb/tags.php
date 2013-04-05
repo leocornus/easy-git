@@ -55,3 +55,56 @@ function wpg_get_active_repos($user_name=null) {
 
     return $myRepos;
 }
+
+/**
+ * the clean way to get a http request parameter's value.
+ */
+function wpg_get_request_param($param) {
+
+    // try to find the selected theme name
+    if (array_key_exists($param, $_POST)) {
+        $value = $_POST[$param];
+    } elseif (array_key_exists($param, $_GET)) {
+        $value = $_GET[$param];
+    } else {
+        $value = '';
+    }
+
+    return $value;
+}
+
+/**
+ * get ready the request context from $_POST and $_GET
+ * it will return an array with the follow structure:
+ * 'paramname' => 'value'
+ */
+function wpg_request_context() {
+
+    $context = array();
+
+    $repo = wpg_get_request_param('repo');
+    $context['repo'] = $repo;
+
+    // if we have the theme name, get ready the status.
+    if ($repo !== '') {
+        $changes = changeList($repo);
+        $branch = getCurrentBranch($repo);
+    } else {
+        $changes = '';
+        $branch = '';
+    } 
+    $context['changes'] = $changes;
+    $context['branch'] = $branch;
+
+    // the submit action.
+    $context['action'] = wpg_get_request_param('submit');
+    // git user.
+    $user = wpg_get_request_param('gituser');
+    if($user === "") {
+        global $current_user;
+        $user = $current_user->user_login;
+    }
+    $context['gituser'] = $user;
+
+    return $context;
+}
