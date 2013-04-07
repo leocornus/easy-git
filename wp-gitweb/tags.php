@@ -95,8 +95,9 @@ function wpg_request_context() {
 
     // if we have the theme name, get ready the status.
     if ($repo !== '') {
-        $changes = wpg_get_change_list($user, $repo);
-        //$branch = getCurrentBranch($repo);
+        $base_path = wpg_get_base_path($user, $repo);
+        $changes = wpg_get_change_list($base_path);
+        $branch = wpg_get_current_branch($base_path);
     } else {
         $changes = '';
         $branch = '';
@@ -111,13 +112,33 @@ function wpg_request_context() {
 }
 
 /**
+ * return base absolute path for the given user's given 
+ * repository.
+ */
+function wpg_get_base_path($user, $repo) {
+
+    $repos = wpg_get_active_repos($user);
+    $base_path = $repos[$repo];
+
+    return $base_path;
+}
+
+/**
+ * from current active branch.
+ */
+function wpg_get_current_branch($base_path) {
+
+    chdir($base_path);
+    // using the short format from git output
+    $rawBranch = shell_exec('git branch | grep \*');
+    // php substr starts from 0
+    return substr($rawBranch, 2);
+}
+
+/**
  * generate a list of chagnes for the given theme.
  */
-function wpg_get_change_list($user_login, $repo) {
-
-    // we will use the activeRepos as global
-    $repos = wpg_get_active_repos($user_login);
-    $basePath = $repos[$repo];
+function wpg_get_change_list($base_path) {
 
     // prepare a list of files as an array, 
     // with the following format.
@@ -125,7 +146,7 @@ function wpg_get_change_list($user_login, $repo) {
     // status will be the readable status:
     // new, modified, deleted, etc
 
-    chdir($basePath);
+    chdir($base_path);
     // using the short format from git output
     $rawStatus = shell_exec('git status -s .');
     // split by newline, this is wired! have to use "\n"
