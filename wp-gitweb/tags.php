@@ -85,10 +85,18 @@ function wpg_request_context() {
     $repo = wpg_get_request_param('repo');
     $context['repo'] = $repo;
 
+    // git user.
+    $user = wpg_get_request_param('gituser');
+    if($user === "") {
+        global $current_user;
+        $user = $current_user->user_login;
+    }
+    $context['gituser'] = $user;
+
     // if we have the theme name, get ready the status.
     if ($repo !== '') {
-        $changes = changeList($repo);
-        $branch = getCurrentBranch($repo);
+        $changes = wpg_get_change_list($user, $repo);
+        //$branch = getCurrentBranch($repo);
     } else {
         $changes = '';
         $branch = '';
@@ -98,13 +106,83 @@ function wpg_request_context() {
 
     // the submit action.
     $context['action'] = wpg_get_request_param('submit');
-    // git user.
-    $user = wpg_get_request_param('gituser');
-    if($user === "") {
-        global $current_user;
-        $user = $current_user->user_login;
-    }
-    $context['gituser'] = $user;
 
     return $context;
+}
+
+/**
+ * generate a list of chagnes for the given theme.
+ */
+function wpg_get_change_list($user_login, $repo) {
+
+    // we will use the activeRepos as global
+    $repos = wpg_get_active_repos($user_login);
+    $basePath = $repos[$repo];
+
+    // prepare a list of files as an array, 
+    // with the following format.
+    // filename => status
+    // status will be the readable status:
+    // new, modified, deleted, etc
+
+    chdir($basePath);
+    // using the short format from git output
+    $rawStatus = shell_exec('git status -s .');
+    // split by newline, this is wired! have to use "\n"
+    $rawFiles = explode("\n", $rawStatus);
+    $files = array();
+    foreach ($rawFiles as $file) {
+        if ($file === '') {
+            // skip the empty line.
+            continue;
+        }
+        // the status will be the short-format status.
+        // XY PATH1 -> PATH2
+        $status = substr($file, 0, 2);
+        $fileName = substr($file, 3);
+        // we will skip the ignored files.
+        if (($fileName !== '') && wpg_is_good_file($fileName)) {
+            // now let's check the git short format status.
+            if ($status === '??') {
+                // this is an untracked file.
+                $files[$fileName] = 'new';
+            } else if ($status === ' M') {
+                // this is a changed file.
+                $files[$fileName] = 'modified';
+            } else if ($status === ' D') {
+                $files[$fileName] = 'deleted';
+            } else {
+                $files[$fileName] = $status;
+            }
+        }
+    }
+//var_dump($files);
+
+    return $files;
+}
+
+/**
+ * is good file to commit? check if the given file is 
+ * one of the ignore 
+ * files.
+ */
+function wpg_is_good_file($file) {
+
+    // using the global ignoreFiles;
+    $ignoreFiles = wpg_get_ignore_files();
+    $ignorePatterns = wpg_get_ignore_patterns();
+
+    if (in_array($file, $ignoreFiles)) {
+        return false;
+    }
+
+    foreach ($ignorePatterns as $pattern) {
+
+        if(preg_match($pattern, $file) === 1) {
+
+            return false;
+        }
+    }
+
+    return true;
 }

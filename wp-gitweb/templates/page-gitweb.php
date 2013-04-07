@@ -11,17 +11,8 @@ $context = wpg_request_context();
 // we will using the left nav and content layout.
 ?>
 
-<div id="left_column">
-  <div class='leftnav'>
-    <div id="repo-nav" class="widget">
-      <h2 class="widgettitle">Repositories</h2>
-      <?php echo wpg_widget_repos_nav($context['gituser']);?>
-    </div>
-  </div>
-</div> <?php // END left_column ?>
-
-<div id="content">
-
+<div id="right_column">
+  <?php echo wpg_widget_repo_form($context); ?>
 </div> <?php // END content ?>
 
 <?php get_footer(); ?>
