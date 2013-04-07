@@ -53,13 +53,57 @@ EOT;
 }
 
 /**
+ * The git log view.
+ */
+function wpg_widget_log_view($context) {
+
+    $repo = $context['repo'];
+    $branch = $context['branch'];
+    $base_path = $context['base_path'];
+    $logs = wpg_get_log_list($base_path);
+
+    $log_rows = array();
+    foreach($logs as $log) {
+        $log_rows[] = <<<EOT
+<tr>
+  <td><a href='{$log["url"]}'>{$log["id"]}</a></td>
+  <td>{$log["email"]}</td>
+  <td>{$log["date"]}</td>
+  <td>{$log["comment"]}</td>
+</tr>
+EOT;
+    }
+
+    $log_trs = implode("\n", $log_rows);
+
+    $the_view = <<<EOT
+<p>Commit Logs for Git Repository:<br />
+<b>{$repo}</b> <br />
+-- at Branch: <b>{$branch}</b></p>
+
+<table border = "1" width="90%"><tbody>
+  <tr>
+    <th width="60">Commit</th>
+    <th width="100">Author</th>
+    <th width="80">Date</th>
+    <th>Comment</th>
+  </tr>
+  {$log_trs}
+</tbody></table>
+EOT;
+
+    return $the_view;
+}
+
+/**
  * view for git status review
  */
 function wpg_widget_status_view($context) {
 
     $repo = $context['repo'];
     $branch = $context['branch'];
-    $changes = $context['changes'];
+    $base_path = $context['base_path'];
+    $changes = wpg_get_change_list($base_path);
 
     $status_view = "nothing to commit (working directory is clean)";
     if (is_array($changes) && count($changes) > 0) {

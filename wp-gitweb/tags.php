@@ -96,13 +96,12 @@ function wpg_request_context() {
     // if we have the theme name, get ready the status.
     if ($repo !== '') {
         $base_path = wpg_get_base_path($user, $repo);
-        $changes = wpg_get_change_list($base_path);
         $branch = wpg_get_current_branch($base_path);
     } else {
-        $changes = '';
+        $base_path= '';
         $branch = '';
     } 
-    $context['changes'] = $changes;
+    $context['base_path'] = $base_path;
     $context['branch'] = $branch;
 
     // the submit action.
@@ -180,6 +179,46 @@ function wpg_get_change_list($base_path) {
 //var_dump($files);
 
     return $files;
+}
+
+/**
+ * return the commit log as array list
+ */
+function wpg_get_log_list($base_path) {
+
+    chdir($base_path);
+    // check details by using the following command:
+    // git help log
+    // %ae for author email
+    // %an for author name
+    $gitlog = shell_exec('git log --pretty=format:"%h|%an|%ae|%ad|%s" --date=short .');
+    $commits = explode("\n", $gitlog);
+    $logs = array();
+    foreach ($commits as $commit) {
+
+        if($commit !== '') {
+
+            list($commitId, $authorName, $commitEmail, 
+                 $commitDate, $commitComment) = 
+              explode("|", $commit, 5);
+            // we need theme in the url, so we could come back.
+            $commitLogUrl = 'gitlog.php?repo=' . 
+                            $repo. '&commit=' . 
+                            $commitId;
+            $mailto = '<a href="mailto:' . $commitEmail .
+                      '">' . $authorName . '</a>';
+            // append a new log entry.
+            $logs[] = array(
+                "id" => $commitId,
+                "email" => $mailto,
+                "date" => $commitDate,
+                "url" => $commitLogUrl,
+                "comment" => $commitComment
+                );
+        }
+    }
+
+    return $logs;
 }
 
 /**
