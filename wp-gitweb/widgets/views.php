@@ -51,6 +51,7 @@ function wpg_widget_repo_form($context) {
   <!-- input type="submit" name="submit" value="Git Pull"/ -->
 
   <p>{$the_view}</p>
+</form>
 EOT;
 
     return $form;
@@ -135,8 +136,8 @@ EOT;
         }
 
         $change_trs = implode("\n", $trs);
-        // TODO: commit form.
-        $commit_trs = "";
+        // commit form fieldset.
+        $commit_trs = wpg_widget_commit_fieldset($context); 
 
         $status_view = <<<EOT
 <table border="1"><tbody>
@@ -147,17 +148,34 @@ EOT;
     <th>Status</th>
   </tr>
   {$change_trs}
-  <tr><td colspan="3">
+  <tr><th colspan="3">
+    <span>
     Please fill out the following form to commit 
-    the selected files to Git repository.<br/>
-    <b>All Fields are REQUIRED</b>.
-  </td></tr>
+    the selected files to Git repository.
+    </span>
+  </th></tr>
   <tr><td colspan="3">
-    <table><tbody>
+    <table style="width: 80%"><tbody>
     {$commit_trs}
     </tbody></table>
   </td></tr>
 </tbody></table>
+
+<script type="text/javascript">
+function toggleSelect() {
+
+  var commits = document.repoform["commits[]"];
+  if (document.repoform.toggle.checked) {
+    for (i = 0; i < commits.length; i++) {
+        commits[i].checked = true;
+    }
+  } else {
+    for (i = 0; i < commits.length; i++) {
+        commits[i].checked = false;
+    }
+  }
+}
+</script>
 EOT;
     }
 
@@ -169,6 +187,63 @@ EOT;
 EOT;
 
     return $the_view;
+}
+
+/**
+ * preparing the commit form fieldset in tr format.
+ */
+function wpg_widget_commit_fieldset($context) {
+
+    $fullname = $context['user_fullname'];
+    $email = $context['user_email'];
+
+    $trs = <<<EOT
+<tr>
+  <td>Commit Author Name:</td>
+  <td><b>{$fullname}</b></td>
+</tr>
+<tr>
+  <td>Commit Author Email:</td>
+  <td><b>{$email}</b></td>
+</tr>
+<!-- tr>
+  <td>Commit Access Key:</td>
+  <td><input type="password" 
+             name="accesskey"/></td>
+</tr -->
+<tr>
+  <td>Commit Comment:</td>
+  <td>
+    <textarea name="gitcomment" cols="68" rows="3"></textarea>
+  </td>
+</tr>
+<tr>
+  <td colspan="2">
+    <input type="submit" name="submit" 
+      value="Commit" 
+      onclick="return validateCommitForm()"/></td>
+</tr>
+<script type="text/javascript">
+function validateCommitForm() {
+  if (checkValue('gitcomment', 'Commit Comment')) {
+    return false;
+  }
+}  
+
+function checkValue(fieldName, label) {
+  var x = document.forms["repoform"][fieldName].value;
+  if (x == null || x == "") {
+    alert(label + " must be filled out");
+    return true;
+  }
+
+  return false;
+}
+
+</script>
+EOT;
+
+    return $trs;
 }
 
 /**
@@ -198,4 +273,12 @@ EOT;
     }
 
     return $ret;
+}
+
+/**
+ * preparing the view to show the status of a commit.
+ */
+function wpg_widget_commit_view($context) {
+
+    
 }

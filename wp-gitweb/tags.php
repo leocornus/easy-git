@@ -90,8 +90,12 @@ function wpg_request_context() {
     if($user === "") {
         global $current_user;
         $user = $current_user->user_login;
+        $user_fullname = $current_user->display_name;
+        $user_email = $current_user->user_email;
     }
     $context['gituser'] = $user;
+    $context['user_email'] = $user_email;
+    $context['user_fullname'] = $user_fullname;
 
     // if we have the theme name, get ready the status.
     if ($repo !== '') {
