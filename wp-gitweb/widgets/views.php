@@ -87,13 +87,24 @@ EOT;
 <b>{$repo}</b> <br />
 -- at Branch: <b>{$branch}</b></p>
 
-<table border = "1" width="90%"><tbody>
+<table border = "1" width="90%">
+  <thead>
   <tr>
     <th width="60">Commit</th>
     <th width="100">Author</th>
     <th width="80">Date</th>
     <th>Comment</th>
   </tr>
+  </thead>
+  <tfoot>
+  <tr>
+    <th width="60">Commit</th>
+    <th width="100">Author</th>
+    <th width="80">Date</th>
+    <th>Comment</th>
+  </tr>
+  </tfoot>
+  <tbody>
   {$log_trs}
 </tbody></table>
 EOT;
@@ -141,13 +152,16 @@ EOT;
         $commit_trs = wpg_widget_commit_fieldset($context); 
 
         $status_view = <<<EOT
-<table border="1"><tbody>
+<table border="1">
+  <thead>
   <tr>
-    <th><input type="checkbox" name="toggle" 
+    <th align="center"><input type="checkbox" name="toggle" 
          onclick="toggleSelect()"/></th>
     <th>File Name</th>
-    <th>Status</th>
+    <th align="center">Status</th>
   </tr>
+  </thead>
+  <tbody>
   {$change_trs}
   <tr><th colspan="3">
     <span>
@@ -294,9 +308,9 @@ function wpg_widget_commit_view($context) {
 EOT;
 
     // TODO: verify the access key.
+
     $commit_files = wpg_get_request_param('commits');
     $comment = wpg_get_request_param('gitcomment');
-    // TODO: Server site validation to make sure!
     if ($commit_files === "") {
         $result = "<b>No file selected for commit! " .
             "Please select at least one file and try again.</b>";
@@ -307,6 +321,7 @@ EOT;
         // perform the commit now.
         $gitcommit = wpg_perform_commit($base_path, $commit_files,
                                         $comment, $author);
+        // TODO: after commit hook.
         $result = "<pre>" . htmlentities($gitcommit) . "</pre>";
     }
 
