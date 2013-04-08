@@ -182,6 +182,24 @@ function wpg_get_change_list($base_path) {
 }
 
 /**
+ * generate the diff url for the given file 
+ * based on the status.
+ */
+function wpg_get_diff_url($base_path, $filename, $status) {
+
+    if ($status === 'modified') {
+
+        return '<a href="gitdiff.php?repo=' . $repo . 
+               '&file=' . $filename . 
+               '&ignorespace=yes">' . $status . '</a>';
+
+    } else {
+        return $status;
+    }
+}
+
+
+/**
  * return the commit log as array list
  */
 function wpg_get_log_list($base_path) {
@@ -202,9 +220,7 @@ function wpg_get_log_list($base_path) {
                  $commitDate, $commitComment) = 
               explode("|", $commit, 5);
             // we need theme in the url, so we could come back.
-            $commitLogUrl = 'gitlog.php?repo=' . 
-                            $repo. '&commit=' . 
-                            $commitId;
+            $commitLogUrl = 'commit?id=' . $commitId;
             $mailto = '<a href="mailto:' . $commitEmail .
                       '">' . $authorName . '</a>';
             // append a new log entry.

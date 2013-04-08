@@ -25,6 +25,10 @@ function wpg_widget_repo_form($context) {
             case "Check Status":
                 $the_view = wpg_widget_status_view($context);
                 break;
+            case "Check Status Diff":
+                // this is a hidden button.
+                $the_view = wpg_widget_status_diff_view($context);
+                break;
             case "Commit":
                 $the_view = wpg_widget_commit_view($context);
                 break;
@@ -44,7 +48,7 @@ function wpg_widget_repo_form($context) {
   <br/>
   <input type="submit" name="submit" value="Check Status"/>
   <input type="submit" name="submit" value="Check Logs"/>
-  <input type="submit" name="submit" value="Git Pull"/>
+  <!-- input type="submit" name="submit" value="Git Pull"/ -->
 
   <p>{$the_view}</p>
 EOT;
@@ -113,7 +117,7 @@ function wpg_widget_status_view($context) {
 
             // the diff url for a commit based on status.
             // TODO:
-            //$diff_url = 
+            $diff_url = $status;
             //    wpg_get_diff_url($repo, $filename, $status);
 
             $atr = <<<EOT
@@ -130,7 +134,7 @@ EOT;
             $trs[] = $atr;
         }
 
-        $change_trs = implode(" ", $trs);
+        $change_trs = implode("\n", $trs);
         // TODO: commit form.
         $commit_trs = "";
 
