@@ -221,7 +221,7 @@ function logList($repo) {
  * - perform git push
  *
  * the author has to be format like:
- * Sean Chen <sean.chen@ontario.ca>
+ * Sean Chen <sean.chen@example.com>
  */
 function performCommit($repo, $commitFiles, 
                        $comment, $author) {

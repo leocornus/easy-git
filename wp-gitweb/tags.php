@@ -266,3 +266,42 @@ function wpg_is_good_file($file) {
 
     return true;
 }
+
+/**
+ * perform commit for the commit files based on the status on 
+ * change files.
+ * We will do the following work on different status.
+ * - sync with server by perform git pull
+ * - if there is new files, add them.
+ * - perform git commit.
+ * - perform git push
+ *
+ * the author has to be format like:
+ * Sean Chen <sean.chen@example.com>
+ */
+function wpg_perform_commit($base_path, $commitFiles, 
+                            $comment, $author) {
+
+    chdir($base_path);
+
+    // pull the latest from git repository.
+    $gitpull = shell_exec('git pull');
+    //echo "<p>$gitpull</p>";
+
+    // git add will add new files,
+    $commitFilesStr = implode(" ", $commitFiles);
+    $gitadd = shell_exec('git add ' . $commitFilesStr);
+    //echo "<p>$gitadd</p>";
+
+    // now let's commit the selected files.
+    $cmd = 'git commit -m "' . $comment . 
+           '" --author="' . $author . 
+           '" ' . $commitFilesStr;
+    //echo "<pre>commit command: $cmd<br/>";
+    $gitcommit = shell_exec($cmd);
+    // need push to git repo.
+    shell_exec('git push');
+
+    return $gitcommit;
+}
+

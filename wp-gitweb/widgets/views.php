@@ -40,6 +40,7 @@ function wpg_widget_repo_form($context) {
     }
 
     $form = <<<EOT
+<h1>Welcome to OPSpedia GitWeb</h1>
 <form name="repoform" method="POST" action="">
   Pleae select the Git repository: 
   <select name="repo" id="repo">
@@ -280,5 +281,34 @@ EOT;
  */
 function wpg_widget_commit_view($context) {
 
-    
+    $repo = $context['repo'];
+    $branch = $context['branch'];
+    $base_path = $context['base_path'];
+    $author = $context['user_fullname'] . " <" . 
+              $context['user_email'] . ">";
+
+    $the_view = <<<EOT
+<p>Commit status for Git Repository: <br/>
+<b>{$repo}</b> <br />
+-- at Branch: <b>{$branch}</b></p>
+EOT;
+
+    // TODO: verify the access key.
+    $commit_files = wpg_get_request_param('commits');
+    $comment = wpg_get_request_param('gitcomment');
+    // TODO: Server site validation to make sure!
+    if ($commit_files === "") {
+        $result = "<b>No file selected for commit! " .
+            "Please select at least one file and try again.</b>";
+    } else if ($comment === "") {
+        $result = "<b>Comment must be provied for a commit! " .
+            "Please add some comment and try again.</b>";
+    } else {
+        // perform the commit now.
+        $gitcommit = wpg_perform_commit($base_path, $commit_files,
+                                        $comment, $author);
+        $result = "<pre>" . htmlentities($gitcommit) . "</pre>";
+    }
+
+    return $the_view . $result;
 }
