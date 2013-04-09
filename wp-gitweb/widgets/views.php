@@ -25,10 +25,6 @@ function wpg_widget_repo_form($context) {
             case "Check Status":
                 $the_view = wpg_widget_status_view($context);
                 break;
-            case "Check Status Diff":
-                // this is a hidden button.
-                $the_view = wpg_widget_status_diff_view($context);
-                break;
             case "Commit":
                 $the_view = wpg_widget_commit_view($context);
                 break;
@@ -40,7 +36,6 @@ function wpg_widget_repo_form($context) {
     }
 
     $form = <<<EOT
-<h1>Welcome to OPSpedia GitWeb</h1>
 <form name="repoform" method="POST" action="">
   Pleae select the Git repository: 
   <select name="repo" id="repo">
@@ -246,7 +241,7 @@ function changeDiff(basePath, fileName) {
 }
 </script>
 
-<div id="gitDiffDialog" title="OPSpedia GitWeb Diff Dialog">
+<div id="gitDiffDialog" title="WordPress GitWeb Diff Dialog">
   <div id="gitDiff">
   </div>
 </div>
@@ -385,4 +380,29 @@ EOT;
     }
 
     return $the_view . $result;
+}
+
+/**
+ * the commit log view will for details change set for each file.
+ */
+function wpg_widget_changeset_view($commit_id) {
+
+    $repos = wpg_get_repos_root_path();
+    $pathes = array_values($repos);
+    $changeset = "<b>" . $commit_id . "</b> is NOT a valid commit!";
+    foreach($pathes as $path) {
+       if(wpg_is_commit_valid($path, $commit_id)) {
+           $raw_log = wpg_get_commit_changeset($path, $commit_id);
+           $changeset = htmlentities($raw_log);
+           break;
+       }
+    }
+
+    $the_view = <<<EOT
+<h1>Details Change for Commit: {$commit_id}</h1>
+
+<pre style="font-size: 2em">{$changeset}</pre>
+EOT;
+
+    return $the_view;
 }

@@ -15,6 +15,7 @@ $context = wpg_request_context();
 ?>
 
 <div id="right_column">
+  <h1>Welcome to WordPress GitWeb</h1>
   <?php echo wpg_widget_repo_form($context); ?>
 </div> <?php // END content ?>
 

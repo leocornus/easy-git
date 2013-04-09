@@ -25,6 +25,25 @@ function wpg_get_ignore_patterns() {
 }
 
 /**
+ * return Git repositories' root path as the following format.
+ * array() {
+ *     REPO_LABEL => REPO_PATH,
+ * }
+ */
+function wpg_get_repos_root_path() {
+
+    $roots = wpg_get_option_as_array('wpg_repo_roots');
+    $pathes = array();
+    foreach($roots as $root) {
+
+        $one_repo = explode(";", $root);
+        $pathes[$one_repo[0]] = $one_repo[1];
+    }
+
+    return $pathes;
+}
+
+/**
  * return active repositories as an array with following
  * structure:
  *
@@ -323,4 +342,33 @@ function wpg_get_git_diff($base_path, $filename,
 EOT;
 
     return $pre;
+}
+
+/**
+ * return true if the commit id is exist in the given path.
+ */
+function wpg_is_commit_valid($repo_path, $commit_id) {
+
+    chdir($repo_path);
+    $git_cmd = "git rev-list --all | grep ^" . $commit_id;
+    $check = shell_exec($git_cmd);
+    $pos = strpos($check, $commit_id);
+
+    if($pos === 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * return the changeset for a commit.
+ */
+function wpg_get_commit_changeset($repo_path, $commit_id) {
+
+    chdir($repo_path);
+    $git_cmd = 'git log -1 --name-status --relative ' . $commit_id;
+    $raw_log = shell_exec($git_cmd);
+
+    return $raw_log;
 }

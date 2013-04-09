@@ -15,6 +15,8 @@ if (isset($_POST['wpg_settings_form_submit']) &&
                        stripslashes($_POST['wpg_ignore_patterns']));
     update_site_option('wpg_active_repos', 
                        stripslashes($_POST['wpg_active_repos']));
+    update_site_option('wpg_repo_roots',
+                       stripslashes($_POST['wpg_repo_roots']));
 
     // show the message.
     echo '<div class="updated"><p><strong>Settings Updated</strong></p></div>';
@@ -29,6 +31,16 @@ if (isset($_POST['wpg_settings_form_submit']) &&
   <form name="wpg_settings_form" method="post">
     <input type="hidden" name="wpg_settings_form_submit" value="Y"/>
     <table class="form-table"><tbody>
+      <tr>
+        <th scope="row">Git Repositories Root Path: <br/>
+        (One File Each Line)
+        </th>
+        <td>
+          <textarea name="wpg_repo_roots" 
+                    rows="6" cols="98"
+          ><?php echo get_site_option('wpg_repo_roots')?></textarea>
+        </td>
+      </tr>
       <tr>
         <th scope="row">Ignore Files: <br/>
         (One File Each Line)
