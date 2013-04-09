@@ -71,7 +71,7 @@ function wpg_widget_log_view($context) {
     $log_rows = array();
     foreach($logs as $log) {
         $log_rows[] = <<<EOT
-<tr>
+<tr id="log">
   <td><a href='{$log["url"]}'>{$log["id"]}</a></td>
   <td>{$log["email"]}</td>
   <td>{$log["date"]}</td>
@@ -107,6 +107,13 @@ EOT;
   <tbody>
   {$log_trs}
 </tbody></table>
+
+<script type="text/javascript">
+// using jQuery to alternate table row colors.
+jQuery(document).ready(function($) {
+    $("tr[#log]:even").css("background-color", "#fcfcef");
+});
+</script>
 EOT;
 
     return $the_view;
