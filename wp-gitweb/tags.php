@@ -305,3 +305,22 @@ function wpg_perform_commit($base_path, $commitFiles,
     return $gitcommit;
 }
 
+/**
+ * get ready the git difference view.
+ */
+function wpg_get_git_diff($base_path, $filename, 
+                          $ignore_whitespace=false, 
+                          $is_commit=false) {
+
+    chdir($base_path);
+    $diff_cmd = "git diff " . $filename;
+    $diff = htmlentities(shell_exec($diff_cmd));
+
+    $pre = <<<EOT
+<pre style="font-size: 2em; white-space: pre-wrap; 
+  text-align: left; overflow: auto; max-height:398px"
+>{$diff}</pre>
+EOT;
+
+    return $pre;
+}

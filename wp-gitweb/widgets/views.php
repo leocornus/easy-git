@@ -141,8 +141,13 @@ function wpg_widget_status_view($context) {
            value="{$filename}"/>
   </td>
   <td>{$filename}</td>
-  <td align="center">{$diff_url}</td>
+  <td align="center">
+    <a  
+      onclick="javascript: changeDiff('{$base_path}', '{$filename}')"
+    >{$status}</a>
+  </td>
 </tr>
+
 EOT;
             $trs[] = $atr;
         }
@@ -152,7 +157,7 @@ EOT;
         $commit_trs = wpg_widget_commit_fieldset($context); 
 
         $status_view = <<<EOT
-<table border="1">
+<table border="1" id="status">
   <thead>
   <tr>
     <th align="center"><input type="checkbox" name="toggle" 
@@ -190,7 +195,49 @@ function toggleSelect() {
     }
   }
 }
+
+jQuery(function($) {
+    $("#gitDiffDialog").dialog({
+        autoOpen: false,
+        // minimum width in pixels
+        position: "center",
+        minWidth: 680,
+        height: 446,
+        show: {
+            effect: "blind",
+            duration: 1000
+        },
+        hide: {
+            effect: "explode",
+            duration: 1000
+        }
+    });
+});
+
+function changeDiff(basePath, fileName) {
+
+    // load the dialog...
+    jQuery("#gitDiff").html("<b>Loading ...</b>");
+    jQuery("#gitDiffDialog").dialog("open");
+
+    // get ready the post data.
+    var data = {
+        "action"    : "wpg_get_git_diff",
+        "base_path" : basePath,
+        "filename"  : fileName
+    };
+
+    jQuery.post("wp-admin/admin-ajax.php", data, function(response) {
+
+        jQuery("#gitDiff").html(response);
+    });
+}
 </script>
+
+<div id="gitDiffDialog" title="OPSpedia GitWeb Diff Dialog">
+  <div id="gitDiff">
+  </div>
+</div>
 EOT;
     }
 

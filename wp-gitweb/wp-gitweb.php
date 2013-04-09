@@ -18,10 +18,25 @@ define('WPG_PLUGIN_PATH', WP_PLUGIN_DIR . '/' . basename(dirname($plugin_file)))
 
 // load php file for this plugin.
 require_once(WPG_PLUGIN_PATH . '/tags.php');
+require_once(WPG_PLUGIN_PATH . '/ajax.php');
 require_once(WPG_PLUGIN_PATH . '/widgets/navs.php');
 require_once(WPG_PLUGIN_PATH . '/widgets/views.php');
 
 // TODO: network activation hook.
+
+/**
+ * register the dataTables JavaScript lib.
+ * DataTables depends on jQuery.  
+ * we assume jQuery is already loaded.
+ */
+add_action('init', 'wpg_register_resources');
+function wpg_register_resources() {
+
+    // using wp_enqueue_style to load this css.
+    // jquery ui dialog style seens not automatically loaded.
+    wp_register_style('jquery-ui',
+                      'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css');
+}
 
 // adding the network admin menu.
 add_action('network_admin_menu', 'wpg_admin_init');
