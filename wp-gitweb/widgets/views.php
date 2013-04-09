@@ -142,7 +142,7 @@ function wpg_widget_status_view($context) {
   </td>
   <td>{$filename}</td>
   <td align="center">
-    <a  
+    <a style="cursor: pointer" 
       onclick="javascript: changeDiff('{$base_path}', '{$filename}')"
     >{$status}</a>
   </td>
@@ -182,6 +182,11 @@ EOT;
 </tbody></table>
 
 <script type="text/javascript">
+// using jQuery to alternate table row colors.
+jQuery(document).ready(function($) {
+    $("tr:even").css("background-color", "#fcfcef");
+});
+
 function toggleSelect() {
 
   var commits = document.repoform["commits[]"];
