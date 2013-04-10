@@ -362,13 +362,72 @@ function wpg_is_commit_valid($repo_path, $commit_id) {
 }
 
 /**
- * return the changeset for a commit.
+ * return the details changeset for a commit with the following
+ * format:
+ *   id => 
+ *   author => <a href="mailto: email">Full Name</a>
+ *   age => 20 hours ago
+ *   comment => why this change
+ *   changestat => git log -1 --shortstat --oneline
+ *   working folder => /var/www/html/wp-content/themes/
+ *   changeset => {
+ *       filename => status
+ *   }
  */
 function wpg_get_commit_changeset($repo_path, $commit_id) {
 
     chdir($repo_path);
-    $git_cmd = 'git log -1 --name-status --relative ' . $commit_id;
-    $raw_log = shell_exec($git_cmd);
 
-    return $raw_log;
+    // change stats.
+    $git_cmd = "git log -1 --oneline --shortstat " . $commit_id;
+    list($summary, $change_stat) = 
+        explode("\n", shell_exec($git_cmd));
+    $git_cmd = 'git log -1 --pretty=format:%B ' . $commit_id;
+    $commit_comment = shell_exec($git_cmd);
+
+    // the pretty format, check more details using the follwoing:
+    // git help log
+    $format = '--pretty=format:"%H|%an|%ae|%ad" --relative-date ';
+    $git_cmd = 'git log -1 --name-status ' . $format . $commit_id;
+    $raw_log = shell_exec($git_cmd);
+    $logs = explode("\n", $raw_log);
+
+    // change summary is in the first line
+    list($commit_fullid, $author_name, $author_email, 
+         $commit_age) = explode("|", $logs[0], 5);
+    // the rest are changed files
+    $files = array_slice($logs, 1);
+    // find the smallest last slash position as the
+    // working folder.
+    $last_slash = PHP_MAXPATHLEN;
+    $working_folder = "";
+    $changeset = array();
+    // declare filename outside of foreach, so we could use it later.
+    foreach($files as $file) {
+        if(empty($file)) {
+            // skip the empty line.
+            continue;
+        }
+        list($status, $filename) = explode("\t", $file);
+        // the position for last /
+        $last_slash = min($last_slash, strrpos($filename, "/"));
+        $changeset[$filename] = $status;
+        // here is the working folder.
+        $working_folder = substr($filename, 0, $last_slash);
+    }
+
+    // the fine grind log
+    $fine_log = array( 
+        'commit_id' => $commit_fullid,
+        'author_name' => $author_name,
+        'author_email' => $author_email,
+        'commit_age' => $commit_age,
+        'comment' => $commit_comment,
+        'working_folder' => $working_folder,
+        'branch' => wpg_get_current_branch($repo_path),
+        'change_stat' => $change_stat,
+        'changeset' => $changeset
+    );
+
+    return $fine_log;
 }

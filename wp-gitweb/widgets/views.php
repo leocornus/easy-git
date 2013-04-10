@@ -392,8 +392,64 @@ function wpg_widget_changeset_view($commit_id) {
     $changeset = "<b>" . $commit_id . "</b> is NOT a valid commit!";
     foreach($pathes as $path) {
        if(wpg_is_commit_valid($path, $commit_id)) {
-           $raw_log = wpg_get_commit_changeset($path, $commit_id);
-           $changeset = htmlentities($raw_log);
+           $commit_log = wpg_get_commit_changeset($path, $commit_id);
+           $pos = strlen($commit_log['working_folder']) + 1;
+           $file_trs = array();
+           foreach($commit_log['changeset'] as $file => $status) {
+               $filename = substr($file, $pos);
+               $file_trs[] = <<<EOT
+<tr id="log">
+  <td>{$status}</td>
+  <td>{$filename}</td>
+</tr>
+EOT;
+           }
+           $file_trs = implode("\n", $file_trs);
+           $changeset = <<<EOT
+<table><tbody>
+<tr>
+  <th>Full ID:</th>
+  <td>{$commit_log['commit_id']}</td>
+</tr>
+<tr>
+  <th>Comment:</th>
+  <td>{$commit_log['comment']}</td>
+</tr>
+<tr>
+  <th>Branch:</th>
+  <td>{$commit_log['branch']}</td>
+</tr>
+<tr>
+  <th>Author:</th>
+  <td>
+    <a href="mailto:{$commit_log['author_email']}">
+      {$commit_log['author_name']}
+    </a>
+    authored <b>{$commit_log['commit_age']}</b>
+  </td>
+</tr>
+<tr>
+  <td colspan="2">
+  <b>{$commit_log['working_folder']}</b>
+  </td>
+</tr>
+<tr>
+  <td colspan="2">
+  ---- <b>{$commit_log['change_stat']}</b>
+  </td>
+</tr>
+<tr>
+  <th>Status</th>
+  <th>File Name</th>
+</tr>
+{$file_trs}
+<tr>
+  <th>Status</th>
+  <th>File Name</th>
+</tr>
+</tbody></table>
+EOT;
+           // The first match wins.
            break;
        }
     }
@@ -401,7 +457,7 @@ function wpg_widget_changeset_view($commit_id) {
     $the_view = <<<EOT
 <h1>Details Change for Commit: {$commit_id}</h1>
 
-<pre style="font-size: 2em">{$changeset}</pre>
+<div style="font-size: 1.2em">{$changeset}</div>
 EOT;
 
     return $the_view;
