@@ -76,8 +76,9 @@ EOT;
     }
 
     $log_trs = implode("\n", $log_rows);
-
-    $the_view = <<<EOT
+    $alt_color_js = wpg_widget_tr_alternate_js("tr[id='log']",
+          array("even" => "#FCFCEF"));
+$the_view = <<<EOT
 <p>Commit Logs for Git Repository:<br />
 <b>{$repo}</b> <br />
 -- at Branch: <b>{$branch}</b></p>
@@ -102,17 +103,44 @@ EOT;
   <tbody>
   {$log_trs}
 </tbody></table>
-
-<script type="text/javascript">
-// using jQuery to alternate table row colors.
-jQuery(document).ready(function($) {
-    $("tr[#log]:even").css("background-color", "#fcfcef");
-});
-</script>
+{$alt_color_js}
 EOT;
 
     return $the_view;
 }
+
+/**
+ * jQuery way to alternate table role color.
+ * @param $selector tr or tr[#log]
+ * @param $alt_colors is array with the following format.
+ *   array() (
+ *     'odd' => 'white',
+ *     'even' => 'grey'
+ *   )
+ */
+function wpg_widget_tr_alternate_js($selector, $alt_colors) {
+
+    $even_odd = array();
+    foreach($alt_colors as $alt => $color) {
+        $even_odd[] = <<<EOT
+    $("{$selector}:{$alt}").css("background-color", "{$color}");
+EOT;
+    }
+    
+    $even_odd = implode("\n", $even_odd);
+
+    $js = <<<EOT
+<script type="text/javascript">
+// using jQuery to alternate table row colors.
+jQuery(document).ready(function($) {
+{$even_odd}
+});
+</script>
+EOT;
+
+    return $js;
+}
+
 
 /**
  * view for git status review
@@ -136,7 +164,7 @@ function wpg_widget_status_view($context) {
             //    wpg_get_diff_url($repo, $filename, $status);
 
             $atr = <<<EOT
-<tr>
+<tr id="change">
   <td align="center">
     <input type="checkbox" name="commits[]" 
            id="commits" 
@@ -155,6 +183,8 @@ EOT;
         }
 
         $change_trs = implode("\n", $trs);
+        $alt_color_js = wpg_widget_tr_alternate_js("tr[id='change']",
+            array("even" => "#FCFCEF"));
         // commit form fieldset.
         $commit_trs = wpg_widget_commit_fieldset($context); 
 
@@ -182,13 +212,9 @@ EOT;
     </tbody></table>
   </td></tr>
 </tbody></table>
+{$alt_color_js}
 
 <script type="text/javascript">
-// using jQuery to alternate table row colors.
-jQuery(document).ready(function($) {
-    $("tr:even").css("background-color", "#fcfcef");
-});
-
 function toggleSelect() {
 
   var commits = document.repoform["commits[]"];
@@ -405,6 +431,8 @@ function wpg_widget_changeset_view($commit_id) {
 EOT;
            }
            $file_trs = implode("\n", $file_trs);
+           $alt_tr_js = wpg_widget_tr_alternate_js("tr[id='log']",
+               array("even" => "#FCFCEF"));
            $changeset = <<<EOT
 <table><tbody>
 <tr>
@@ -448,6 +476,7 @@ EOT;
   <th>File Name</th>
 </tr>
 </tbody></table>
+{$alt_tr_js}
 EOT;
            // The first match wins.
            break;
