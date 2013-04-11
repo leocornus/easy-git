@@ -185,23 +185,40 @@ function wpg_get_change_list($base_path) {
         $fileName = substr($file, 3);
         // we will skip the ignored files.
         if (($fileName !== '') && wpg_is_good_file($fileName)) {
-            // now let's check the git short format status.
-            if ($status === '??') {
-                // this is an untracked file.
-                $files[$fileName] = 'new';
-            } else if ($status === ' M') {
-                // this is a changed file.
-                $files[$fileName] = 'modified';
-            } else if ($status === ' D') {
-                $files[$fileName] = 'deleted';
-            } else {
-                $files[$fileName] = $status;
-            }
+            $files[$fileName] = wpg_get_status_name($status);
         }
     }
 //var_dump($files);
 
     return $files;
+}
+
+/**
+ * return full status name for the given status code.
+ * Git status code is explained in 
+ *   git help status.
+ */
+function wpg_get_status_name($status_code) {
+
+    // return the code anyway.
+    $status = $status_code;
+    switch($status_code) {
+        case "??":
+            // this is an untracked file, we mark as new.
+            $status = 'new';
+            break;
+        case "M":
+            $status = 'modified';
+            break;
+        case "D":
+            $status = 'deleted';
+            break;
+        case "A":
+            $status = 'added';
+            break;
+     }
+
+    return $status;
 }
 
 /**
@@ -411,7 +428,7 @@ function wpg_get_commit_changeset($repo_path, $commit_id) {
         list($status, $filename) = explode("\t", $file);
         // the position for last /
         $last_slash = min($last_slash, strrpos($filename, "/"));
-        $changeset[$filename] = $status;
+        $changeset[$filename] = wpg_get_status_name($status);
         // here is the working folder.
         $working_folder = substr($filename, 0, $last_slash);
     }
