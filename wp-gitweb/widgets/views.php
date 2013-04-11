@@ -419,21 +419,42 @@ function wpg_widget_changeset_view($commit_id) {
     foreach($pathes as $path) {
        if(wpg_is_commit_valid($path, $commit_id)) {
            $commit_log = wpg_get_commit_changeset($path, $commit_id);
-           $pos = strlen($commit_log['working_folder']) + 1;
-           $file_trs = array();
-           foreach($commit_log['changeset'] as $file => $status) {
-               $filename = substr($file, $pos);
-               $file_trs[] = <<<EOT
+           $changeset = wpg_widget_changeset_html($commit_log);
+           break;
+       }
+    }
+
+    $the_view = <<<EOT
+<h1>Details Change for Commit: {$commit_id}</h1>
+
+<div style="font-size: 1.2em">{$changeset}</div>
+EOT;
+
+    return $the_view;
+}
+
+/**
+ * the html view a commit changeset.
+ */
+function wpg_widget_changeset_html($commit_log) {
+
+    $pos = strlen($commit_log['working_folder']) + 1;
+    $file_trs = array();
+    foreach($commit_log['changeset'] as $file => $status) {
+        $filename = substr($file, $pos);
+        $file_trs[] = <<<EOT
 <tr id="log">
   <td align="center">{$status}</td>
   <td>{$filename}</td>
 </tr>
 EOT;
-           }
-           $file_trs = implode("\n", $file_trs);
-           $alt_tr_js = wpg_widget_tr_alternate_js("tr[id='log']",
-               array("even" => "#FCFCEF"));
-           $changeset = <<<EOT
+    }
+
+    $file_trs = implode("\n", $file_trs);
+    $alt_tr_js = wpg_widget_tr_alternate_js("tr[id='log']",
+        array("even" => "#FCFCEF"));
+
+    $changeset = <<<EOT
 <table><tbody>
 <tr>
   <th>Full ID:</th>
@@ -441,7 +462,10 @@ EOT;
 </tr>
 <tr>
   <th>Comment:</th>
-  <td>{$commit_log['comment']}</td>
+  <td>
+    <pre style="font-size: 1.2em; white-space: pre-wrap;"
+    >{$commit_log['comment']}</pre>
+  </td>
 </tr>
 <tr>
   <th>Branch:</th>
@@ -467,27 +491,17 @@ EOT;
   </td>
 </tr>
 <tr>
-  <th align="center">Status</th>
+  <th align="center" width="120">Status</th>
   <th>File Name</th>
 </tr>
 {$file_trs}
-<tr align="center">
-  <th>Status</th>
+<tr>
+  <th align="center">Status</th>
   <th>File Name</th>
 </tr>
 </tbody></table>
 {$alt_tr_js}
 EOT;
-           // The first match wins.
-           break;
-       }
-    }
 
-    $the_view = <<<EOT
-<h1>Details Change for Commit: {$commit_id}</h1>
-
-<div style="font-size: 1.2em">{$changeset}</div>
-EOT;
-
-    return $the_view;
+    return $changeset;
 }
