@@ -185,7 +185,7 @@ function wpg_get_change_list($base_path) {
         $fileName = substr($file, 3);
         // we will skip the ignored files.
         if (($fileName !== '') && wpg_is_good_file($fileName)) {
-            $files[$fileName] = wpg_get_status_name($status);
+            $files[$fileName] = wpg_get_status_name(trim($status));
         }
     }
 //var_dump($files);

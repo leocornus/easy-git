@@ -399,7 +399,7 @@ function wpg_widget_changeset_view($commit_id) {
                $filename = substr($file, $pos);
                $file_trs[] = <<<EOT
 <tr id="log">
-  <td>{$status}</td>
+  <td align="center">{$status}</td>
   <td>{$filename}</td>
 </tr>
 EOT;
@@ -439,11 +439,11 @@ EOT;
   </td>
 </tr>
 <tr>
-  <th>Status</th>
+  <th align="center">Status</th>
   <th>File Name</th>
 </tr>
 {$file_trs}
-<tr>
+<tr align="center">
   <th>Status</th>
   <th>File Name</th>
 </tr>
