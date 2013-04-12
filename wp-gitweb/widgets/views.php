@@ -163,6 +163,7 @@ function wpg_widget_status_view($context) {
             // status name is return of function
             // wpg_get_status_name.
             if($status === 'modified') {
+                // only add diff dialog for modified files.
                 $diff_url = <<<EOT
 <a style="cursor: pointer" 
   onclick="javascript: changeDiff('{$base_path}', '{$filename}')"
@@ -188,6 +189,7 @@ EOT;
         $change_trs = implode("\n", $trs);
         $alt_color_js = wpg_widget_tr_alternate_js("tr[id='change']",
             array("even" => "#FCFCEF"));
+        // diff for changes on working directory.
         $diff_dialog_js = wpg_widget_diff_dialog_js();
 
         // commit form fieldset.
@@ -249,6 +251,10 @@ EOT;
 }
 
 /**
+ * preparing the jQuery UI dialog to show change difference.
+ *
+ * @param $has_commit_id distinguish this is a git status 
+ *        difference or git log difference.
  */
 function wpg_widget_diff_dialog_js($has_commit_id=false) {
 
@@ -259,7 +265,7 @@ function wpg_widget_diff_dialog_js($has_commit_id=false) {
 EOT;
     if($has_commit_id) {
         $signature = $signature . ", commitId";
-        $data = $data . ',\n        "commit_id"  : commitId';
+        $data = $data . ",\n        \"commit_id\" : commitId";
     }
 
     $js = <<<EOT
@@ -464,13 +470,26 @@ EOT;
  */
 function wpg_widget_changeset_html($commit_log) {
 
-    $pos = strlen($commit_log['working_folder']) + 1;
+    $working_folder = $commit_log['working_folder'];
+    // add 1 to skip the last slash '/'
+    $pos = strlen($working_folder) + 1;
+    $commit_id = $commit_log['commit_id'];
+    $base_path = $commit_log['repo_path'] . "/" . $working_folder;
+
     $file_trs = array();
     foreach($commit_log['changeset'] as $file => $status) {
         $filename = substr($file, $pos);
+        $diff_url = $status;
+        if($status === 'modified') {
+            $diff_url = <<<EOT
+<a style="cursor: pointer" 
+  onclick="javascript: changeDiff('{$base_path}', '{$filename}', '{$commit_id}')"
+>{$status}</a>
+EOT;
+        }
         $file_trs[] = <<<EOT
 <tr id="log">
-  <td align="center">{$status}</td>
+  <td align="center">{$diff_url}</td>
   <td>{$filename}</td>
 </tr>
 EOT;
@@ -479,6 +498,8 @@ EOT;
     $file_trs = implode("\n", $file_trs);
     $alt_tr_js = wpg_widget_tr_alternate_js("tr[id='log']",
         array("even" => "#FCFCEF"));
+    // we will pass commit id here.
+    $diff_dialog_js = wpg_widget_diff_dialog_js(true);
 
     $changeset = <<<EOT
 <table><tbody>
@@ -527,6 +548,7 @@ EOT;
 </tr>
 </tbody></table>
 {$alt_tr_js}
+{$diff_dialog_js}
 EOT;
 
     return $changeset;

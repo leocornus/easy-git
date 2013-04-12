@@ -353,13 +353,34 @@ function wpg_perform_commit($base_path, $commitFiles,
  * get ready the git difference view.
  */
 function wpg_get_git_diff($base_path, $filename, 
-                          $ignore_whitespace=false, 
-                          $is_commit=false) {
+                          $ignore_whitespace=false) {
 
     chdir($base_path);
     $diff_cmd = "git diff " . $filename;
     $diff = htmlentities(shell_exec($diff_cmd));
 
+    // TODO: NOT suppose format the difference here.
+    // should just return the difference line by line as an array
+    $pre = <<<EOT
+<pre style="font-size: 2em; white-space: pre-wrap; 
+  text-align: left; overflow: auto; max-height:398px"
+>{$diff}</pre>
+EOT;
+
+    return $pre;
+}
+
+/**
+ * return the git log difference for the fiven file.
+ */
+function wpg_get_git_log_diff($base_path, $filename, $commit_id,
+                              $ignore_whitespace=false) {
+
+    chdir($base_path);
+    $git_cmd = "git log -1 -w -p " . $commit_id . " " . $filename;
+    $diff = htmlentities(shell_exec($git_cmd));
+
+    // TODO: 
     $pre = <<<EOT
 <pre style="font-size: 2em; white-space: pre-wrap; 
   text-align: left; overflow: auto; max-height:398px"
@@ -443,7 +464,7 @@ function wpg_get_commit_changeset($repo_path, $commit_id) {
 
     // the fine grind log
     $fine_log = array( 
-        'base_path' => $repo_path,
+        'repo_path' => $repo_path,
         'commit_id' => $commit_fullid,
         'author_name' => $author_name,
         'author_email' => $author_email,
