@@ -17,6 +17,8 @@ if (isset($_POST['wpg_settings_form_submit']) &&
                        stripslashes($_POST['wpg_active_repos']));
     update_site_option('wpg_repo_roots',
                        stripslashes($_POST['wpg_repo_roots']));
+    update_site_option('wpg_ticket_base_url',
+                       stripslashes($_POST['wpg_ticket_base_url']));
 
     // show the message.
     echo '<div class="updated"><p><strong>Settings Updated</strong></p></div>';
@@ -59,6 +61,14 @@ if (isset($_POST['wpg_settings_form_submit']) &&
           <textarea name="wpg_ignore_patterns" 
                     rows="8" cols="98"
           ><?php echo get_site_option('wpg_ignore_patterns')?></textarea>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">Base URL for Ticket System: <br/>
+        </th>
+        <td>
+          <input name="wpg_ticket_base_url" size="80"
+            value="<?php echo get_site_option('wpg_ticket_base_url')?>">
         </td>
       </tr>
       <tr>

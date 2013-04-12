@@ -25,6 +25,14 @@ function wpg_get_ignore_patterns() {
 }
 
 /**
+ * the base url to ticket system.
+ */
+function wpg_get_ticket_base_url() {
+
+    return get_site_option('wpg_ticket_base_url');
+}
+
+/**
  * return Git repositories' root path as the following format.
  * array() {
  *     REPO_LABEL => REPO_PATH,
@@ -269,7 +277,7 @@ function wpg_get_log_list($base_path) {
                 "email" => $mailto,
                 "date" => $commitDate,
                 "url" => $commitLogUrl,
-                "comment" => $commitComment
+                "comment" => wpg_auto_link_ticket_id($commitComment)
                 );
         }
     }
@@ -439,7 +447,7 @@ function wpg_get_commit_changeset($repo_path, $commit_id) {
         'author_name' => $author_name,
         'author_email' => $author_email,
         'commit_age' => $commit_age,
-        'comment' => $commit_comment,
+        'comment' => wpg_auto_link_ticket_id($commit_comment),
         'working_folder' => $working_folder,
         'branch' => wpg_get_current_branch($repo_path),
         'change_stat' => $change_stat,

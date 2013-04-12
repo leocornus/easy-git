@@ -18,6 +18,7 @@ define('WPG_PLUGIN_PATH', WP_PLUGIN_DIR . '/' . basename(dirname($plugin_file)))
 
 // load php file for this plugin.
 require_once(WPG_PLUGIN_PATH . '/tags.php');
+require_once(WPG_PLUGIN_PATH . '/utils.php');
 require_once(WPG_PLUGIN_PATH . '/ajax.php');
 require_once(WPG_PLUGIN_PATH . '/widgets/navs.php');
 require_once(WPG_PLUGIN_PATH . '/widgets/views.php');
