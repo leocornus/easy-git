@@ -443,6 +443,7 @@ function wpg_get_commit_changeset($repo_path, $commit_id) {
 
     // the fine grind log
     $fine_log = array( 
+        'base_path' => $repo_path,
         'commit_id' => $commit_fullid,
         'author_name' => $author_name,
         'author_email' => $author_email,

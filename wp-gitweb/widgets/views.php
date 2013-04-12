@@ -159,9 +159,16 @@ function wpg_widget_status_view($context) {
         foreach($changes as $filename => $status) {
 
             // the diff url for a commit based on status.
-            // TODO:
             $diff_url = $status;
-            //    wpg_get_diff_url($repo, $filename, $status);
+            // status name is return of function
+            // wpg_get_status_name.
+            if($status === 'modified') {
+                $diff_url = <<<EOT
+<a style="cursor: pointer" 
+  onclick="javascript: changeDiff('{$base_path}', '{$filename}')"
+>{$status}</a>
+EOT;
+            }
 
             $atr = <<<EOT
 <tr id="change">
@@ -171,11 +178,7 @@ function wpg_widget_status_view($context) {
            value="{$filename}"/>
   </td>
   <td>{$filename}</td>
-  <td align="center">
-    <a style="cursor: pointer" 
-      onclick="javascript: changeDiff('{$base_path}', '{$filename}')"
-    >{$status}</a>
-  </td>
+  <td align="center">{$diff_url}</td>
 </tr>
 
 EOT;
@@ -185,6 +188,8 @@ EOT;
         $change_trs = implode("\n", $trs);
         $alt_color_js = wpg_widget_tr_alternate_js("tr[id='change']",
             array("even" => "#FCFCEF"));
+        $diff_dialog_js = wpg_widget_diff_dialog_js();
+
         // commit form fieldset.
         $commit_trs = wpg_widget_commit_fieldset($context); 
 
@@ -213,6 +218,7 @@ EOT;
   </td></tr>
 </tbody></table>
 {$alt_color_js}
+{$diff_dialog_js}
 
 <script type="text/javascript">
 function toggleSelect() {
@@ -228,7 +234,36 @@ function toggleSelect() {
     }
   }
 }
+</script>
+EOT;
+    }
 
+    $the_view = <<<EOT
+<p>Change status for Git Repository: <br />
+<b>{$repo}</b> <br />
+-- at Branch: <b>{$branch}</b></p>
+<p>{$status_view}</p>
+EOT;
+
+    return $the_view;
+}
+
+/**
+ */
+function wpg_widget_diff_dialog_js($has_commit_id=false) {
+
+    $signature = "basePath, fileName";
+    $data = <<<EOT
+        "base_path" : basePath,
+        "filename"  : fileName
+EOT;
+    if($has_commit_id) {
+        $signature = $signature . ", commitId";
+        $data = $data . ',\n        "commit_id"  : commitId';
+    }
+
+    $js = <<<EOT
+<script type="text/javascript">
 jQuery(function($) {
     $("#gitDiffDialog").dialog({
         autoOpen: false,
@@ -247,7 +282,7 @@ jQuery(function($) {
     });
 });
 
-function changeDiff(basePath, fileName) {
+function changeDiff({$signature}) {
 
     // load the dialog...
     jQuery("#gitDiff").html("<b>Loading ...</b>");
@@ -256,8 +291,7 @@ function changeDiff(basePath, fileName) {
     // get ready the post data.
     var data = {
         "action"    : "wpg_get_git_diff",
-        "base_path" : basePath,
-        "filename"  : fileName
+{$data}
     };
 
     jQuery.post("wp-admin/admin-ajax.php", data, function(response) {
@@ -272,16 +306,8 @@ function changeDiff(basePath, fileName) {
   </div>
 </div>
 EOT;
-    }
 
-    $the_view = <<<EOT
-<p>Change status for Git Repository: <br />
-<b>{$repo}</b> <br />
--- at Branch: <b>{$branch}</b></p>
-<p>{$status_view}</p>
-EOT;
-
-    return $the_view;
+    return $js;
 }
 
 /**
