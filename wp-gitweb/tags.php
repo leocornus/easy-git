@@ -346,6 +346,10 @@ function wpg_perform_commit($base_path, $commitFiles,
     // need push to git repo.
     shell_exec('git push');
 
+    // set the action hook for after commit.
+    // TODO: need make sure the commit is success.
+    do_action('wpg_after_perform_commit', $author, $comment, $gitcommit); 
+
     return $gitcommit;
 }
 
