@@ -33,6 +33,21 @@ function wpg_get_ticket_base_url() {
 }
 
 /**
+ * return true if the given user is one of the code reviewers.
+ */
+function wpg_is_code_reviewer($user_login = null) {
+
+    if($user_login === null) {
+        // get current user.
+        global $current_user;
+        $user_login = $current_user->user_login;
+    }
+    $reviewers = wpg_get_option_as_array('wpg_code_reviewers');
+
+    return in_array($user_login, $reviewers);
+}
+
+/**
  * return Git repositories' root path as the following format.
  * array() {
  *     REPO_LABEL => REPO_PATH,
@@ -81,6 +96,28 @@ function wpg_get_active_repos($user_name=null) {
     }
 
     return $myRepos;
+}
+
+/**
+ * return all contributors as an array.
+ */
+function wpg_get_contributors() {
+
+    $all = wpg_get_option_as_array('wpg_active_repos');
+    $users = array();
+    foreach($all as $repo) {
+        $pos = strpos($repo, ";");
+        if($pos !== false) {
+            // found
+            // the first one is user_login.
+            $user_login = substr($repo, 0, $pos);
+            if(!in_array($user_login, $users)) {
+                $users[] = $user_login;
+            }
+        }
+    }
+
+    return $users;
 }
 
 /**

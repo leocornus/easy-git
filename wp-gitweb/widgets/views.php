@@ -20,12 +20,31 @@ EOT;
         return $please_login;
     }
 
+    $gituser = $context['gituser'];
     $repo = $context['repo'];
     $action = $context['action'];
     // active repositories for this user.
-    $repos = wpg_get_active_repos($context['gituser']);
+    $repos = wpg_get_active_repos($gituser);
     $repo_opts = 
         wpg_widget_options_html(array_keys($repos), $repo);
+    // preparin the user dropdown based on current user's role.
+    $user_select_html = "";
+    if(wpg_is_code_reviewer()) {
+        // code reviewer has
+        $contributors = wpg_get_contributors();
+        $user_opts =
+            wpg_widget_options_html($contributors, $gituser);
+        $user_select_html = <<<EOT
+  <select name="gituser" id="gituser">
+    {$user_opts}
+  </select>
+  {$repo_select_js}
+EOT;
+    } else {
+        // only one user here.
+        $user_opts =
+           wpg_widget_options_html(array($gituser), $gituser);
+    }
 
     $the_view = "";
     // preparing the views based on context.
@@ -53,6 +72,7 @@ EOT;
     $form = <<<EOT
 <form name="repoform" method="POST" action="">
   Pleae select the Git repository: 
+  {$user_select_html}
   <select name="repo" id="repo">
     {$repo_opts}
   </select>
@@ -66,6 +86,15 @@ EOT;
 EOT;
 
     return $form;
+}
+
+/**
+ * the javascript for user and repository 
+ */
+function wpg_widget_user_repo_js($user_id="gituser",
+                                 $repo_id="repo") {
+
+    $ajax_url = admin_url("admin-ajax.php");
 }
 
 /**

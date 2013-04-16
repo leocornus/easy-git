@@ -13,6 +13,8 @@ if (isset($_POST['wpg_settings_form_submit']) &&
                        stripslashes($_POST['wpg_ignore_files']));
     update_site_option('wpg_ignore_patterns', 
                        stripslashes($_POST['wpg_ignore_patterns']));
+    update_site_option('wpg_code_reviewers', 
+                       stripslashes($_POST['wpg_code_reviewers']));
     update_site_option('wpg_active_repos', 
                        stripslashes($_POST['wpg_active_repos']));
     update_site_option('wpg_repo_roots',
@@ -41,6 +43,16 @@ if (isset($_POST['wpg_settings_form_submit']) &&
           <textarea name="wpg_repo_roots" 
                     rows="6" cols="98"
           ><?php echo get_site_option('wpg_repo_roots')?></textarea>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">Code Reviewer: <br/>
+        (One user_login Each Line)
+        </th>
+        <td>
+          <textarea name="wpg_code_reviewers" 
+                    rows="6" cols="58"
+          ><?php echo get_site_option('wpg_code_reviewers')?></textarea>
         </td>
       </tr>
       <tr>
