@@ -34,16 +34,13 @@ EOT;
         $contributors = wpg_get_contributors();
         $user_opts =
             wpg_widget_options_html($contributors, $gituser);
+        $repo_select_js = wpg_widget_user_repo_js();
         $user_select_html = <<<EOT
   <select name="gituser" id="gituser">
     {$user_opts}
   </select>
   {$repo_select_js}
 EOT;
-    } else {
-        // only one user here.
-        $user_opts =
-           wpg_widget_options_html(array($gituser), $gituser);
     }
 
     $the_view = "";
@@ -95,6 +92,34 @@ function wpg_widget_user_repo_js($user_id="gituser",
                                  $repo_id="repo") {
 
     $ajax_url = admin_url("admin-ajax.php");
+
+    $js = <<<EOT
+<script type="text/javascript" charset="utf-8">
+<!--
+jQuery("select#{$user_id}").change(function() {
+    user = this.value;
+    if(user == "") {
+        // reset.
+        jQuery("select#{$repo_id}").html("");
+    } else {
+        // preparing the ajax request data
+        var data ={
+            "action" : "wpg_toggle_repo_opts",
+            "user"   : user
+        };
+        jQuery.post("{$ajax_url}",
+            data,
+            function(response) {
+                res = JSON.parse(response);
+                jQuery("select#{$repo_id}").html(res);
+            });
+    }
+});
+-->
+</script>
+EOT;
+
+    return $js;
 }
 
 /**
