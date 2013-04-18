@@ -22,3 +22,20 @@ function wpg_get_git_diff_cb() {
     echo $git_diff;
     exit;
 }
+
+/**
+ * wordpress AJAX callback for dynamic user repos change selection.
+ */
+add_action('wp_ajax_nopriv_wpg_toggle_repo_opts', 
+           'wpg_toggle_repo_opts_cb');
+add_action('wp_ajax_wpg_toggle_repo_opts', 
+           'wpg_toggle_repo_opts_cb');
+function wpg_toggle_repo_opts_cb() {
+
+    $user_login = wpg_get_request_param('user');
+    $repos = wpg_get_active_repos($user_login);
+    $opts = wpg_widget_options_html(array_keys($repos));
+
+    echo json_encode($opts);
+    exit;
+}
