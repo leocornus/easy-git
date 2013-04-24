@@ -134,6 +134,10 @@ function wpg_get_request_param($param) {
         $value = '';
     }
 
+    if(is_string($value)) {
+        $value = stripslashes($value);
+    }
+
     return $value;
 }
 
