@@ -569,6 +569,8 @@ EOT;
         array("even" => "#FCFCEF"));
     // we will pass commit id here.
     $diff_dialog_js = wpg_widget_diff_dialog_js(true);
+    // generate html safe comment.
+    $comment = htmlspecialchars($commit_log['comment']);
 
     $changeset = <<<EOT
 <table><tbody>
@@ -580,7 +582,7 @@ EOT;
   <th>Comment:</th>
   <td>
     <pre style="font-size: 1.2em; white-space: pre-wrap;"
-    >{$commit_log['comment']}</pre>
+    >{$comment}</pre>
   </td>
 </tr>
 <tr>
