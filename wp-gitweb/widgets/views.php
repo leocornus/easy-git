@@ -5,20 +5,8 @@
  */
 function wpg_widget_repo_form($context) {
 
-    if (! is_user_logged_in()) {
-        // user not logged in. do nothing here.
-        $loginHref = get_option('siteurl') . 
-            "/wp-login.php?redirect_to=" . 
-            urlencode(get_permalink());
-        $please_login = <<<EOT
-<div>
-  <h1>
-    Please <a href="{$loginHref}">log in</a> to view GitWeb!
-  </h1>
-</div>
-EOT;
-        return $please_login;
-    }
+    // redirect to login page if user not logged in.
+    auth_redirect();
 
     $gituser = $context['gituser'];
     $repo = $context['repo'];
