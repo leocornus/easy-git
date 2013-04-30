@@ -153,14 +153,15 @@ function wpg_request_context() {
     $repo = wpg_get_request_param('repo');
     $context['repo'] = $repo;
 
+    $current_user = wp_get_current_user();
+    // we will always using the current user as the commit author.
+    $user_fullname = $current_user->display_name;
+    $user_email = $current_user->user_email;
     // git user.
     $user = wpg_get_request_param('gituser');
     if($user === "") {
-        global $current_user;
         $user = $current_user->user_login;
-        $user_fullname = $current_user->display_name;
-        $user_email = $current_user->user_email;
-    }
+    } 
     $context['gituser'] = $user;
     $context['user_email'] = $user_email;
     $context['user_fullname'] = $user_fullname;
