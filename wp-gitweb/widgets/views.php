@@ -402,15 +402,62 @@ function wpg_widget_commit_fieldset($context) {
   </td>
 </tr>
 <tr>
+  <td>Commit Action:</td>
+  <td>
+    <select name="commitaction" id="commitaction">
+      <option value="create_ticket">Create New Ticket</option>
+      <option value="update_ticket" selected>
+        Update Existing Ticket
+      </option>
+    </select>
+    <span id="ticket_input">
+      <label>Ticket ID: </label>
+      <input type="text" id="ticketid" name="ticketid" size="8"/>
+    </span>
+  </td>
+</tr>
+<tr>
   <td colspan="2">
     <input type="submit" name="submit" 
       value="Commit" 
       onclick="return validateCommitForm()"/></td>
 </tr>
+
 <script type="text/javascript">
+<!--
+
+jQuery.fn.intOnly = function(limit) { 
+    jQuery(this).keydown(function(e) { 
+        var key = e.charCode || e.keyCode || 0; 
+        // Numbers 0-9 (including NumLock) 
+        var numbers = new Array(57,56,55,54,53,52,51,50,49,48,96,97,98,99,100,101,102,103,104,105); 
+        // Navigation keys: Left Arrow, Right Arrow, Home, End, Delete, Backspace, Tab 
+        var navigation = new Array(37,39,36,35,46,8,9); 
+        if ( jQuery.inArray(key, numbers) > -1) { 
+            if (limit != "undefined" && $(this).val().length < limit) { 
+                return true; 
+            } else return false; 
+        } else if ( jQuery.inArray(key, navigation) > -1 ) { 
+            return true; 
+        } 
+        return false; 
+    }); 
+}
+
+jQuery(document).ready(function($) {
+  $("input#ticketid").intOnly(5);
+});
+
 function validateCommitForm() {
   if (checkValue('gitcomment', 'Commit Comment')) {
     return false;
+  }
+  action = jQuery("select#commitaction").val();
+  if (action == "update_ticket") {
+    // need make sure the ticket id is valid.
+    if (checkValue('ticketid', 'Existing Ticket Id')) {
+        return false;
+    }
   }
 }  
 
@@ -424,6 +471,18 @@ function checkValue(fieldName, label) {
   return false;
 }
 
+jQuery("select#commitaction").change(function() {
+
+    action = this.value;
+    if(action == "create_ticket") {
+        jQuery("span#ticket_input").hide();
+    }
+
+    if(action == "update_ticket") {
+        jQuery("span#ticket_input").show();
+    }
+});
+-->
 </script>
 EOT;
 
@@ -483,6 +542,8 @@ EOT;
 
     $commit_files = wpg_get_request_param('commits');
     $comment = wpg_get_request_param('gitcomment');
+    $commit_action = wpg_get_request_param('commitaction');
+    $ticket_id = wpg_get_request_param('ticketid');
     if ($commit_files === "") {
         $result = "<b>No file selected for commit! " .
             "Please select at least one file and try again.</b>";
@@ -492,7 +553,8 @@ EOT;
     } else {
         // perform the commit now.
         $gitcommit = wpg_perform_commit($base_path, $commit_files,
-                                        $comment, $author);
+                                        $comment, $author,
+                                        $commit_action, $ticket_id);
         // TODO: after commit hook.
         $result = "<pre>" . htmlentities($gitcommit) . "</pre>";
     }

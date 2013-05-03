@@ -135,7 +135,7 @@ function wpg_get_request_param($param) {
     }
 
     if(is_string($value)) {
-        $value = stripslashes($value);
+        $value = str_replace("\r\n", "\n", stripslashes($value));
     }
 
     return $value;
@@ -366,7 +366,8 @@ function wpg_is_good_file($file) {
  * Sean Chen <sean.chen@example.com>
  */
 function wpg_perform_commit($base_path, $commitFiles, 
-                            $comment, $author) {
+                            $comment, $author, 
+                            $commit_action, $ticket_id) {
 
     chdir($base_path);
 
@@ -399,7 +400,7 @@ function wpg_perform_commit($base_path, $commitFiles,
     // set the action hook for after commit.
     // TODO: need make sure the commit is success.
     do_action('wpg_after_perform_commit', $author['gituser'], 
-              $comment, $gitcommit); 
+              $comment, $gitcommit, $commit_action, $ticket_id); 
 
     return $gitcommit;
 }
@@ -408,7 +409,7 @@ function wpg_perform_commit($base_path, $commitFiles,
  * the default after commit hook to create a minium ticket.
  */
 //add_action('wpg_after_perform_commit',
-//           'wpg_create_ticket_after_commit', 10, 3);
+//           'wpg_create_ticket_after_commit', 10, 5);
 function wpg_create_ticket_after_commit($reporter, $comment, 
     $gitcommit) {
 
@@ -418,6 +419,21 @@ function wpg_create_ticket_after_commit($reporter, $comment,
         // ticket attributes.
         $attrs['reporter'] = $reporter;
         wptc_create_ticket($comment, $gitcommit, $attrs);
+    }
+}
+
+/**
+ * update ticket after commit.
+ */
+function wpg_update_ticket_after_commit($author, $ticket_id,
+    $comment, $gitcommit) {
+
+    if(function_exists('wptc_update_ticket')) {
+
+        // 
+        wptc_update_ticket($ticket_id, 
+                           $comment . "\n\n" . $gitcommit,
+                           null);
     }
 }
 
