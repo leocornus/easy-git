@@ -467,8 +467,11 @@ function wpg_widget_commit_view($context) {
     $repo = $context['repo'];
     $branch = $context['branch'];
     $base_path = $context['base_path'];
-    $author = $context['user_fullname'] . " <" . 
-              $context['user_email'] . ">";
+    $author = array(
+        "gituser" => $context['gituser'],
+        "fullname" => $context['user_fullname'],
+        "email" => $context['user_email']
+    );
 
     $the_view = <<<EOT
 <p>Commit status for Git Repository: <br/>

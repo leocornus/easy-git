@@ -388,7 +388,8 @@ function wpg_perform_commit($base_path, $commitFiles,
 
     // now let's commit the selected files.
     $cmd = 'git commit -m "' . $comment . 
-           '" --author="' . $author . 
+           '" --author="' . $author["fullname"] . ' <' . 
+           $author["email"] . '>' .
            '" ' . $commitFilesStr;
     //echo "<pre>commit command: $cmd<br/>";
     $gitcommit = shell_exec($cmd);
@@ -397,9 +398,27 @@ function wpg_perform_commit($base_path, $commitFiles,
 
     // set the action hook for after commit.
     // TODO: need make sure the commit is success.
-    do_action('wpg_after_perform_commit', $author, $comment, $gitcommit); 
+    do_action('wpg_after_perform_commit', $author['gituser'], 
+              $comment, $gitcommit); 
 
     return $gitcommit;
+}
+
+/**
+ * the default after commit hook to create a minium ticket.
+ */
+//add_action('wpg_after_perform_commit',
+//           'wpg_create_ticket_after_commit', 10, 3);
+function wpg_create_ticket_after_commit($reporter, $comment, 
+    $gitcommit) {
+
+    // this depends on the wp-trac-client plugin.
+    if(function_exists('wptc_create_ticket')) {
+    
+        // ticket attributes.
+        $attrs['reporter'] = $reporter;
+        wptc_create_ticket($comment, $gitcommit, $attrs);
+    }
 }
 
 /**
