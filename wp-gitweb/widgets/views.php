@@ -624,6 +624,7 @@ EOT;
     $diff_dialog_js = wpg_widget_diff_dialog_js(true);
     // generate html safe comment.
     $comment = htmlspecialchars($commit_log['comment']);
+    $comment = wpg_auto_link_ticket_id($comment);
 
     $changeset = <<<EOT
 <table><tbody>

@@ -564,7 +564,7 @@ function wpg_get_commit_changeset($repo_path, $commit_id) {
         'author_name' => $author_name,
         'author_email' => $author_email,
         'commit_age' => $commit_age,
-        'comment' => wpg_auto_link_ticket_id($commit_comment),
+        'comment' => $commit_comment,
         'working_folder' => $working_folder,
         'branch' => wpg_get_current_branch($repo_path),
         'change_stat' => $change_stat,
