@@ -387,8 +387,15 @@ function wpg_perform_commit($base_path, $commitFiles,
     $gitadd = shell_exec('git add ' . $commitFilesStr);
     //echo "<p>$gitadd</p>";
 
+    // double check to make sure the ticket ID is in the comment.
+    // for the update existing ticket action:
+    $gitcomment = $comment;
+    if($commit_action === "update_ticket" && $ticket_id !== '') {
+        $gitcomment = $comment . "\nRe: #" . $ticket_id;
+    }
+
     // now let's commit the selected files.
-    $cmd = 'git commit -m "' . $comment . 
+    $cmd = 'git commit -m "' . $gitcomment . 
            '" --author="' . $author["fullname"] . ' <' . 
            $author["email"] . '>' .
            '" ' . $commitFilesStr;
