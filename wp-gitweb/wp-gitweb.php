@@ -53,4 +53,10 @@ function wpg_admin_init() {
                      'General Settings',
                      'manage_options',
                      'wp-gitweb/admin/settings.php');
+    // the merge management page.
+    add_submenu_page('wp-gitweb/admin/settings.php',
+                     'WP GitWeb Merge Mangement',
+                     'Merge Mangement',
+                     'manage_optionss',
+                     'wp-gitweb/admin/merge.php');
 }
