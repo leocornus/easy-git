@@ -625,6 +625,7 @@ EOT;
     // generate html safe comment.
     $comment = htmlspecialchars($commit_log['comment']);
     $comment = wpg_auto_link_ticket_id($comment);
+    $merge_view = wpg_widget_merge_html($commit_log);
 
     $changeset = <<<EOT
 <table><tbody>
@@ -652,6 +653,7 @@ EOT;
     authored <b>{$commit_log['commit_age']}</b>
   </td>
 </tr>
+{$merge_view}
 <tr>
   <td colspan="2">
   <b>{$commit_log['working_folder']}</b>
@@ -677,4 +679,56 @@ EOT;
 EOT;
 
     return $changeset;
+}
+
+/**
+ * get ready the merge role for the changeset html.
+ * we need the ticket id if we could figure out it from git comments.
+ */
+function wpg_widget_merge_html($commit_log) {
+
+    $merge_path = get_site_option('wpg_merge_folder');
+    if($merge_path === False || $merge_path === "") {
+        // return empty view.
+        return "";
+    }
+    $uat_branch = get_site_option('wpg_merge_uat_branch');
+    $dev_branch = get_site_option('wpg_merge_dev_branch');
+    // check the commit is merged or not, 2 steps to make sure.
+    // 1. grep the the full commit id from the git log
+    // 2. grep the first line of commit comment from the git log
+    $matches = wpg_git_log_grep($merge_path, $uat_branch,
+                                $commit_log['commit_id']);
+    if($matches === False) {
+        // find the fist line of comments.
+        $comment_lines = explode("\n", trim($commit_log['comment']));
+        $matches = wpg_git_log_grep($merge_path, $uat_branch,
+                                    $comment_lines[0]);
+    }
+
+    // if it is merged, get the commit id 
+    // if not, 
+    // 1. extract the ticket id from commit comment
+    // 2. show the merge form with ticket id.
+    // 3. present JavaScript, the merge button.
+    if($matches === False) {
+        // TODO: show the merge form.
+        $merge_html = "No Merge Available";
+    } else {
+        $merge_html = "Merged to <b>" . $uat_branch . "</b> at " . 
+                      "commit <b>" . $matches[0] . "</b>";
+    }
+ 
+    $view = <<<EOT
+<tr>
+  <th>Merge:</th>
+  <td>
+    {$merge_html}
+  </td>
+</tr>
+EOT;
+
+    // make sure get back to dev branch.
+    shell_exec('git checkout ' . $dev_branch . '; git pull');
+    return $view;
 }

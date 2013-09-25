@@ -573,3 +573,37 @@ function wpg_get_commit_changeset($repo_path, $commit_id) {
 
     return $fine_log;
 }
+
+/**
+ * using git log --grep option to query a branch.
+ * 
+ * @param $repo_path the base path the to repository
+ * @param $branch the branch name
+ * @param $term the search term, for example commit id, comment
+ *
+ * @return an array of commit ids for the matched message or 
+ *         false if no match found.
+ */
+function wpg_git_log_grep($repo_path, $branch, $term) {
+
+    chdir($repo_path);
+    shell_exec('git checkout ' . $branch . '; git pull');
+
+    // perfrom the grep search
+    $git_log = "git log --oneline --grep '" . $term . "'";
+    $grep_result = shell_exec($git_log);
+
+    if (empty($grep_result)) {
+        // found nothing.
+        return False;
+    }
+
+    // we found some thing.
+    //$ret = explode("\n", trim($grep_result));
+    $count = preg_match_all('/([0-9a-fA-F]{7}) /', $grep_result, 
+                            $matches);
+
+    // the default PREG_PATTERN_ORDER will return all full pattern
+    // match as matches[0]
+    return $matches[1];
+}
