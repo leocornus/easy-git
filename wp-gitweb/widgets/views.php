@@ -682,11 +682,74 @@ EOT;
 }
 
 /**
+ * ajax based merge form.
+ */
+function wpg_widget_merge_form_html($repo_path, $from_branch,
+    $to_branch, $commit_id, $ticket_id) {
+
+    // TODO: if user not loged in or user is not code reviewer, skip!
+    // return message No Merge Available!
+    if(!wpg_is_code_reviewer()) {
+        // not a code reviewer!
+        return "<b>No Merge Performed!</b>";
+    }
+
+    $ajax_url = admin_url("admin-ajax.php");
+
+    $form = <<<EOT
+<div id="merge_msg">
+  Reference Ticket:
+  <input type="text" size="5" name="ticket_id" id="ticket_id"
+    value="{$ticket_id}"
+  />
+  <input id="merge_{$to_branch}" type="button" 
+    value="Merge to {$to_branch}"
+  />
+</div>
+
+<script type="text/javascript" charset="utf-8">
+<!--
+jQuery("input#merge_{$to_branch}").click(function() {
+    var ticketId = parseInt(jQuery("input#ticket_id").val()); 
+    if(!jQuery.isNumeric(ticketId) || ticketId <= 0) {
+        // reset.
+        alert("A valid ticket id is required to perform merge!");
+    } else {
+        // preparing the ajax request data
+        var data ={
+            "action" : "wpg_git_perform_merge",
+            "repo_path"   : "{$repo_path}",
+            "from_branch" : "{$from_branch}",
+            "to_branch"   : "{$to_branch}",
+            "commit_id"   : "{$commit_id}",
+            "ticket_id"   : ticketId
+        };
+        // set the mouse cursor to progress...
+        jQuery("body").css("cursor", "progress");
+        jQuery.post("{$ajax_url}",
+            data,
+            function(response) {
+                res = JSON.parse(response);
+                jQuery("div#merge_msg").html(res);
+                // set the mouse cursor back to default...
+                jQuery("body").css("cursor", "default");
+            });
+    }
+});
+-->
+</script>
+EOT;
+
+    return $form;
+}
+
+/**
  * get ready the merge role for the changeset html.
  * we need the ticket id if we could figure out it from git comments.
  */
 function wpg_widget_merge_html($commit_log) {
 
+    // if no merge folder set up, skip it.
     $merge_path = get_site_option('wpg_merge_folder');
     if($merge_path === False || $merge_path === "") {
         // return empty view.
@@ -712,8 +775,11 @@ function wpg_widget_merge_html($commit_log) {
     // 2. show the merge form with ticket id.
     // 3. present JavaScript, the merge button.
     if($matches === False) {
-        // TODO: show the merge form.
-        $merge_html = "No Merge Available";
+        // find the ticket id
+        $ticket_id = wpg_extract_ticket_id($commit_log['comment']);
+        $merge_html = wpg_widget_merge_form_html($merge_path,
+            $dev_branch, $uat_branch, $commit_log['commit_id'],
+            $ticket_id);
     } else {
         $merge_html = "Merged to <b>" . $uat_branch . "</b> at " . 
                       "commit <b>" . $matches[0] . "</b>";
@@ -722,13 +788,14 @@ function wpg_widget_merge_html($commit_log) {
     $view = <<<EOT
 <tr>
   <th>Merge:</th>
-  <td>
+  <td style="background-color: rgb(252, 252, 239);">
     {$merge_html}
   </td>
 </tr>
 EOT;
 
     // make sure get back to dev branch.
-    shell_exec('git checkout ' . $dev_branch . '; git pull');
+    // might not need this if the merge folder is separate.
+    //shell_exec('git checkout ' . $dev_branch);
     return $view;
 }
