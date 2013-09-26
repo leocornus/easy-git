@@ -3,7 +3,7 @@
 Plugin Name: WP-GitWeb
 Plugin URI: http://www.github.com/leocornus/easy-git
 Description: GitWeb Interface for WordPress
-Version: 0.1
+Version: 0.2
 Author: Leocornus Ltd.
 Author URI: http://www.leocorn.com
 License: GPLv2
