@@ -598,7 +598,7 @@ function wpg_perform_merge($repo_path, $from_branch, $to_branch,
 
     if(has_action('wpg_after_perform_merge')) {
         do_action('wpg_after_perform_merge', 
-                  $cherry_pick, $ticket_id); 
+                  $to_branch, $cherry_pick, $ticket_id); 
     }
 
     return $cherry_pick;

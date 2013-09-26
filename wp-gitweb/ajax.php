@@ -57,12 +57,15 @@ function wpg_git_perform_merge_cb() {
     $commit_id = wpg_get_request_param('commit_id');
     $ticket_id = intval(wpg_get_request_param('ticket_id'));
 
-
     // perfrom git merge,
+    $cherry_pick = 
+        wpg_perform_merge($repo_path, $from_branch, 
+                          $to_branch, $commit_id, $ticket_id);
     // parse the new commit id;
-    $new_id = "abcdef1";
+    $count = preg_match('/^\[' . $to_branch . ' ([0-9a-fA-F]{7})\]/', 
+                        $cherry_pick, $matches);
     $ret = "Merged to <b>" . $to_branch . "</b> at " . 
-           "commit <b>" . $new_id . "</b>";
+           "commit <b>" . $matches[1]. "</b>";
 
     echo json_encode($ret);
     exit;
