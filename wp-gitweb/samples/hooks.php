@@ -5,35 +5,56 @@
  */
 
 /**
- * the default after commit hook to create a minium ticket.
+ * the sample after commit hook to create a new ticket or
+ * update an existing ticket.
  */
-//add_action('wpg_after_perform_commit',
-//           'wpg_create_ticket_after_commit', 10, 5);
-function wpg_create_ticket_after_commit($reporter, $comment, 
-    $gitcommit) {
+add_action('wpg_after_perform_commit', 
+           'create_or_update_ticket', 10, 5);
+function create_or_update_ticket($author, $comment, $commit_result,
+    $commit_action, $ticket_id) {
 
-    // this depends on the wp-trac-client plugin.
-    if(function_exists('wptc_create_ticket')) {
-    
-        // ticket attributes.
-        $attrs['reporter'] = $reporter;
-        wptc_create_ticket($comment, $gitcommit, $attrs);
+    // using the current logged in user as the author.
+    $current_user = wp_get_current_user();
+    // reformat the comments.
+    $comment_content = <<<EOT
+{$comment}
+
+{{{
+{$commit_result}
+}}}
+EOT;
+
+    // we are using the functions from wp-trac-client plugin
+    //  - wptc_create_ticket
+    //  - wptc_update_ticket
+    // developer could use function_exists to make sure those
+    // 2 functions are available!
+    switch($commit_action) {
+
+        case "create_ticket":
+            // ticket attributes.
+            $attrs = array();
+            // current logged in user as the reporter
+            $attrs['reporter'] = $current_user->user_login;
+            $attrs['cc'] = $current_user->user_email;
+            // default projects.
+            $attrs['project'] = 'Default Project';
+            // default priority.
+            $attrs['priority'] = 'major';
+            $attrs['owner'] = $current_user->user_login;
+            // TODO: you could add your own default value here.
+            // using the first line of comment as the summary
+            $lines = explode("\n", $comment);
+            wptc_create_ticket($lines[0], $comment_content, $attrs);
+            break;
+        case "update_ticket":
+            // update ticket function will use current user
+            // as the author.
+            wptc_update_ticket(intval($ticket_id),
+                               $comment_content, null);
+            break;
+        default:
+            // do nothing.
+            break;
     }
 }
-
-/**
- * update ticket after commit.
- */
-function wpg_update_ticket_after_commit($author, $ticket_id,
-    $comment, $gitcommit) {
-
-    if(function_exists('wptc_update_ticket')) {
-
-        // 
-        wptc_update_ticket($ticket_id, 
-                           $comment . "\n\n" . $gitcommit,
-                           null);
-    }
-}
-
-
