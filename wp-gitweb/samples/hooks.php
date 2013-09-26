@@ -58,3 +58,24 @@ EOT;
             break;
     }
 }
+
+/**
+ * the sample hook to update the existing ticket after merge finish.
+ */
+add_action('wpg_after_perform_merge', 'update_after_merge', 10, 3);
+function update_after_merge($to_branch, $merge_msg, $ticket_id) {
+
+    $comment = <<<EOT
+Merged to branch '''{$to_branch}''', Please test.
+
+Details Merge Message:
+
+{{{
+{$merge_msg}
+}}}
+EOT;
+
+    if(function_exists('wptc_update_ticket')) {
+        wptc_update_ticket($ticket_id, $comment, null);
+    } 
+}
