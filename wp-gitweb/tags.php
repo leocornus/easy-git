@@ -34,13 +34,19 @@ function wpg_get_ticket_base_url() {
 
 /**
  * return true if the given user is one of the code reviewers.
+ * if $user_login not provided we will try to get the current user.
+ * 
  */
 function wpg_is_code_reviewer($user_login = null) {
 
     if($user_login === null) {
-        // get current user.
-        global $current_user;
-        $user_login = $current_user->user_login;
+        if(is_user_logged_in()) {
+            // get current user.
+            $current_user = wp_get_current_user();
+            $user_login = $current_user->user_login;
+        } else {
+            return False;
+        }
     }
     $reviewers = wpg_get_option_as_array('wpg_code_reviewers');
 
@@ -606,4 +612,26 @@ function wpg_git_log_grep($repo_path, $branch, $term) {
     // the default PREG_PATTERN_ORDER will return all full pattern
     // match as matches[0]
     return $matches[1];
+}
+
+/**
+ * perform merge by using cherry-pick.
+ */
+function wpg_perform_merge($repo_path, $from_branch, $to_branch, 
+                           $commit_id, $ticket_id=null) {
+
+    chdir($repo_path);
+    shell_exec('git checkout ' . $from_branch . '; git pull');
+    shell_exec('git checkout ' . $to_branch . '; git pull');
+
+    // perform merge by using cherry-pick
+    $cherry_pick = shell_exec('git cherry-pick -x ' . $commit_id);
+    shell_exec('git push');
+
+    if(has_action('wpg_after_perform_merge')) {
+        do_action('wpg_after_perform_merge', 
+                  $cherry_pick, $ticket_id); 
+    }
+
+    return $cherry_pick;
 }
