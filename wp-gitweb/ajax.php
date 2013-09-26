@@ -39,3 +39,31 @@ function wpg_toggle_repo_opts_cb() {
     echo json_encode($opts);
     exit;
 }
+
+/**
+ * WordPress AJAX callback for git merge.
+ *
+ * only logged in user can perform git merge. 
+ */
+//add_action('wp_ajax_nopriv_wpg_git_perform_merge',
+//           'wpg_git_perform_merge_cb');
+add_action('wp_ajax_wpg_git_perform_merge',
+           'wpg_git_perform_merge_cb');
+function wpg_git_perform_merge_cb() {
+
+    $repo_path = wpg_get_request_param('repo_path');
+    $from_branch = wpg_get_request_param('from_branch');
+    $to_branch = wpg_get_request_param('to_branch');
+    $commit_id = wpg_get_request_param('commit_id');
+    $ticket_id = intval(wpg_get_request_param('ticket_id'));
+
+
+    // perfrom git merge,
+    // parse the new commit id;
+    $new_id = "abcdef1";
+    $ret = "Merged to <b>" . $to_branch . "</b> at " . 
+           "commit <b>" . $new_id . "</b>";
+
+    echo json_encode($ret);
+    exit;
+}
