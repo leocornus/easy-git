@@ -14,8 +14,8 @@ if (isset($_POST['wpg_merge_settings_form_submit']) &&
                        stripslashes($_POST['wpg_merge_dev_branch']));
     update_site_option('wpg_merge_uat_branch', 
                        stripslashes($_POST['wpg_merge_uat_branch']));
-    //update_site_option('wpg_merge_prod_branch', 
-    //                   stripslashes($_POST['wpg_merge_prod_branch']));
+    update_site_option('wpg_merge_prod_branch', 
+                       stripslashes($_POST['wpg_merge_prod_branch']));
     // show the message.
     echo '<div class="updated"><p><strong>Settings Updated</strong></p></div>';
 }
@@ -48,6 +48,13 @@ if (isset($_POST['wpg_merge_settings_form_submit']) &&
         <td>
           <input name="wpg_merge_uat_branch" size="18"
             value="<?php echo get_site_option('wpg_merge_uat_branch')?>">
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">Production Branch Name: </th>
+        <td>
+          <input name="wpg_merge_prod_branch" size="18"
+            value="<?php echo get_site_option('wpg_merge_prod_branch')?>">
         </td>
       </tr>
       <tr>
