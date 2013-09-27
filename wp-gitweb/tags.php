@@ -586,14 +586,20 @@ function wpg_git_log_grep($repo_path, $branch, $term) {
  * perform merge by using cherry-pick.
  */
 function wpg_perform_merge($repo_path, $from_branch, $to_branch, 
-                           $commit_id, $ticket_id=null) {
+                           $commit_id, $ticket_id=null, 
+                           $recording=True) {
 
     chdir($repo_path);
     shell_exec('git checkout ' . $from_branch . '; git pull');
     shell_exec('git checkout ' . $to_branch . '; git pull');
 
     // perform merge by using cherry-pick
-    $cherry_pick = shell_exec('git cherry-pick -x ' . $commit_id);
+    $cmd = 'git cherry-pick ';
+    if($recording) {
+        // recording the commit from source branch.
+        $cmd = $cmd . "-x ";
+    }
+    $cherry_pick = shell_exec($cmd . $commit_id);
     shell_exec('git push');
 
     if(has_action('wpg_after_perform_merge')) {
