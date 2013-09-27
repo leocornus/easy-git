@@ -64,8 +64,7 @@ function wpg_git_perform_merge_cb() {
     // parse the new commit id;
     $count = preg_match('/^\[' . $to_branch . ' ([0-9a-fA-F]{7})\]/', 
                         $cherry_pick, $matches);
-    $ret = "Merged to <b>" . $to_branch . "</b> at " . 
-           "commit <b>" . $matches[1]. "</b>";
+    $ret = wpg_merged_msg($to_branch, $matches[1]);
 
     echo json_encode($ret);
     exit;

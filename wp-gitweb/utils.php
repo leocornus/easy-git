@@ -35,3 +35,17 @@ function wpg_extract_ticket_id($subject) {
 
     return $id;
 }
+
+/**
+ * form the merged message for the given values.
+ */
+function wpg_merged_msg($branch, $new_commit) {
+
+    $msg = <<<EOT
+Merged to <b>{$branch}</b> at commit <b>{$new_commit}</b>
+EOT;
+
+    // TODO: add filter to allow developer to tweak the format.
+
+    return $msg;
+}
