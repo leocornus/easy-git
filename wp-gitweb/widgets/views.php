@@ -725,14 +725,14 @@ jQuery("input#merge_{$to_branch}").click(function() {
             "ticket_id"   : ticketId
         };
         // set the mouse cursor to progress...
-        jQuery("body").css("cursor", "progress");
+        jQuery("*").css("cursor", "progress");
         jQuery.post("{$ajax_url}",
             data,
             function(response) {
                 res = JSON.parse(response);
                 jQuery("div#merge_msg").html(res);
                 // set the mouse cursor back to default...
-                jQuery("body").css("cursor", "default");
+                jQuery("*").css("cursor", "default");
             });
     }
 });
