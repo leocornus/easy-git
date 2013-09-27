@@ -691,7 +691,8 @@ function wpg_widget_merge_form_html($repo_path, $from_branch,
     // return message No Merge Available!
     if(!wpg_is_code_reviewer()) {
         // not a code reviewer!
-        return "<b>No Merge Performed!</b>";
+        return "No Merge Performed on <b>" . 
+               $to_branch . "</b> Branch!";
     }
 
     $ajax_url = admin_url("admin-ajax.php");
@@ -744,6 +745,48 @@ EOT;
 }
 
 /**
+ * generate the merge history html for the given from and to branches.
+ * if the commit exists in to_branch:
+ *   return the merge message.
+ * if NOT:
+ *   return the merge form.
+ */
+function wpg_widget_merge_history_html($commit_comment, 
+                                       $org_commit_id, $merge_path,
+                                       $from_branch, $from_commit_id,
+                                       $to_branch) {
+
+    // check the commit is merged or not, 2 steps to make sure.
+    // 1. grep the the full orginal commit id from the git log
+    // 2. grep the first line of commit comment from the git log
+    $matches = wpg_git_log_grep($merge_path, $to_branch, 
+                                $org_commit_id);
+    if($matches === False) {
+        // find the fist line of comments.
+        $comment_lines = explode("\n", trim($commit_comment));
+        $matches = wpg_git_log_grep($merge_path, $to_branch,
+                                    $comment_lines[0]);
+    }
+
+    // if it is merged, get the commit id 
+    // if not, 
+    // 1. extract the ticket id from commit comment
+    // 2. show the merge form with ticket id.
+    // 3. present JavaScript, the merge button.
+    if($matches === False) {
+        // find the ticket id
+        $ticket_id = wpg_extract_ticket_id($commit_comment);
+        // merge the commit id in from branch.
+        $merge_html = wpg_widget_merge_form_html($merge_path,
+            $from_branch, $to_branch, $from_commit_id, $ticket_id);
+    } else {
+        $merge_html = wpg_merged_msg($to_branch, $matches[0]);
+    }
+
+    return $merge_html;
+}
+
+/**
  * get ready the merge role for the changeset html.
  * we need the ticket id if we could figure out it from git comments.
  */
@@ -755,34 +798,33 @@ function wpg_widget_merge_html($commit_log) {
         // return empty view.
         return "";
     }
-    $uat_branch = get_site_option('wpg_merge_uat_branch');
     $dev_branch = get_site_option('wpg_merge_dev_branch');
-    // check the commit is merged or not, 2 steps to make sure.
-    // 1. grep the the full commit id from the git log
-    // 2. grep the first line of commit comment from the git log
-    $matches = wpg_git_log_grep($merge_path, $uat_branch,
-                                $commit_log['commit_id']);
-    if($matches === False) {
-        // find the fist line of comments.
-        $comment_lines = explode("\n", trim($commit_log['comment']));
-        $matches = wpg_git_log_grep($merge_path, $uat_branch,
-                                    $comment_lines[0]);
-    }
+    $uat_branch = get_site_option('wpg_merge_uat_branch');
+    $prod_branch = get_site_option('wpg_merge_prod_branch');
 
-    // if it is merged, get the commit id 
-    // if not, 
-    // 1. extract the ticket id from commit comment
-    // 2. show the merge form with ticket id.
-    // 3. present JavaScript, the merge button.
-    if($matches === False) {
-        // find the ticket id
-        $ticket_id = wpg_extract_ticket_id($commit_log['comment']);
-        $merge_html = wpg_widget_merge_form_html($merge_path,
-            $dev_branch, $uat_branch, $commit_log['commit_id'],
-            $ticket_id);
-    } else {
-        $merge_html = "Merged to <b>" . $uat_branch . "</b> at " . 
-                      "commit <b>" . $matches[0] . "</b>";
+    // check the uat merge (first level merge).
+    $merge_html = 
+        wpg_widget_merge_history_html($commit_log['comment'], 
+                                      $commit_log['commit_id'],
+                                      $merge_path,
+                                      $dev_branch, 
+                                      $commit_log['commit_id'],
+                                      $uat_branch);
+    // now let's check if UAT merge is done?
+    // we will based on the commit id exist on the message or not.
+    $pattern = wpg_merged_msg($uat_branch, '([0-9a-fA-F]{7})');
+    $pattern = str_replace("/", "\/", $pattern);
+    if(preg_match('/' . $pattern . '/', $merge_html, $matches)) {
+        // this tells UAT merge is finished.
+        $uat_commit_id = $matches[1];
+        $prod_merge_html = 
+            wpg_widget_merge_history_html($commit_log['comment'],
+                                          $commit_log['commit_id'],
+                                          $merge_path,
+                                          $uat_branch, 
+                                          $uat_commit_id,
+                                          $prod_branch);
+        $merge_html = $merge_html . "<br/>" . $prod_merge_html;
     }
  
     $view = <<<EOT
