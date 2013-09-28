@@ -53,14 +53,18 @@ function wpg_git_perform_merge_cb() {
 
     $repo_path = wpg_get_request_param('repo_path');
     $from_branch = wpg_get_request_param('from_branch');
+    $from_commit_id = wpg_get_request_param('from_commit_id');
     $to_branch = wpg_get_request_param('to_branch');
-    $commit_id = wpg_get_request_param('commit_id');
+    $org_commit_id = wpg_get_request_param('org_commit_id');
     $ticket_id = intval(wpg_get_request_param('ticket_id'));
 
+    // if we are merge the original commit, turn on
+    // the cherry-pick recording commit option.
+    $recording = ($from_commit_id === $org_commit_id);
     // perfrom git merge,
     $cherry_pick = 
-        wpg_perform_merge($repo_path, $from_branch, 
-                          $to_branch, $commit_id, $ticket_id);
+        wpg_perform_merge($repo_path, $from_branch, $to_branch, 
+                          $from_commit_id, $ticket_id, $recording);
     // parse the new commit id;
     $count = preg_match('/^\[' . $to_branch . ' ([0-9a-fA-F]{7})\]/', 
                         $cherry_pick, $matches);

@@ -685,7 +685,7 @@ EOT;
  * ajax based merge form.
  */
 function wpg_widget_merge_form_html($repo_path, $from_branch,
-    $to_branch, $commit_id, $ticket_id) {
+    $from_commit_id, $to_branch, $org_commit_id, $ticket_id) {
 
     // TODO: if user not loged in or user is not code reviewer, skip!
     // return message No Merge Available!
@@ -718,12 +718,13 @@ jQuery("input#merge_{$to_branch}").click(function() {
     } else {
         // preparing the ajax request data
         var data ={
-            "action" : "wpg_git_perform_merge",
-            "repo_path"   : "{$repo_path}",
-            "from_branch" : "{$from_branch}",
-            "to_branch"   : "{$to_branch}",
-            "commit_id"   : "{$commit_id}",
-            "ticket_id"   : ticketId
+            "action"         : "wpg_git_perform_merge",
+            "repo_path"      : "{$repo_path}",
+            "from_branch"    : "{$from_branch}",
+            "from_commit_id" : "{$from_commit_id}",
+            "to_branch"      : "{$to_branch}",
+            "org_commit_id"  : "{$org_commit_id}",
+            "ticket_id"      : ticketId
         };
         // set the mouse cursor to progress...
         jQuery("*").css("cursor", "progress");
@@ -778,7 +779,8 @@ function wpg_widget_merge_history_html($commit_comment,
         $ticket_id = wpg_extract_ticket_id($commit_comment);
         // merge the commit id in from branch.
         $merge_html = wpg_widget_merge_form_html($merge_path,
-            $from_branch, $to_branch, $from_commit_id, $ticket_id);
+            $from_branch, $from_commit_id, $to_branch, 
+            $org_commit_id, $ticket_id);
     } else {
         $merge_html = wpg_merged_msg($to_branch, $matches[0]);
     }
