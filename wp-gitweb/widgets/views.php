@@ -687,7 +687,6 @@ EOT;
 function wpg_widget_merge_form_html($repo_path, $from_branch,
     $from_commit_id, $to_branch, $org_commit_id, $ticket_id) {
 
-    // TODO: if user not loged in or user is not code reviewer, skip!
     // return message No Merge Available!
     if(!wpg_is_code_reviewer()) {
         // not a code reviewer!
@@ -793,6 +792,12 @@ function wpg_widget_merge_history_html($commit_comment,
  * we need the ticket id if we could figure out it from git comments.
  */
 function wpg_widget_merge_html($commit_log) {
+
+    // skip the whole merge section if it is not a code reviewer.
+    if(!wpg_is_code_reviewer()) {
+        // not a code reviewer!
+        return "";
+    }
 
     // if no merge folder set up, skip it.
     $merge_path = get_site_option('wpg_merge_folder');
