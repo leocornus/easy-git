@@ -600,6 +600,11 @@ function wpg_perform_merge($repo_path, $from_branch, $to_branch,
         $cmd = $cmd . "-x ";
     }
     $cherry_pick = shell_exec($cmd . $commit_id);
+    // check if the merge success?
+    if(empty($cherry_pick)) {
+        // merge failed! return with error message!
+        return "Merge Failed! Please fix on command line!";
+    }
     shell_exec('git push');
 
     if(has_action('wpg_after_perform_merge')) {
