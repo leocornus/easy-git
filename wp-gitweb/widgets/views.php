@@ -793,19 +793,14 @@ function wpg_widget_merge_history_html($commit_comment,
  */
 function wpg_widget_merge_html($commit_log) {
 
-    // skip the whole merge section if current user 
-    // is not a code reviewer.
-    if(!wpg_is_code_reviewer()) {
-        // not a code reviewer!
-        return "";
-    }
-
     // if no merge folder set up, skip it.
-    $merge_path = get_site_option('wpg_merge_folder');
-    if($merge_path === False || $merge_path === "") {
+    $merge_folder= get_site_option('wpg_merge_folder');
+    $merge_path = wpg_get_user_merge_path($merge_folder);
+    if(empty($merge_path)) {
         // return empty view.
         return "";
     }
+
     $dev_branch = get_site_option('wpg_merge_dev_branch');
     $uat_branch = get_site_option('wpg_merge_uat_branch');
     $prod_branch = get_site_option('wpg_merge_prod_branch');

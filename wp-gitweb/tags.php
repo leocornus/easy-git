@@ -70,7 +70,7 @@ function wpg_is_code_reviewer($user_login = null) {
  *
  * we should ONLY check current user.
  */
-function wpg_get_user_merge_setting($user_login = null) {
+function wpg_get_user_merge_path($merge_folder, $user_login = null) {
 
     if(!is_user_logged_in()) {
         // user not logged in!
@@ -79,7 +79,39 @@ function wpg_get_user_merge_setting($user_login = null) {
     $current_user = wp_get_current_user();
     $user_login = $current_user->user_login;
     // has to me code reviewer first.
-    if(!wpg_is_code_reviewer($user_login) {
+    if(!wpg_is_code_reviewer($user_login)) {
+        // not a code reviewer!
+        return null;
+    }
+
+    if($merge_folder === False || $merge_folder === "") {
+        // no merge folder set up, skip merge.
+        return null;
+    }
+
+    // we should have everything ready if reach this point.
+    $merge_path = $merge_folder . DIRECTORY_SEPARATOR . $user_login;
+    if(!file_exists($merge_path)) {
+        // merge folder is not set! skip merge.
+        return null;
+    }
+
+    return $merge_path;
+}
+
+ /**
+  * TODO: this is a back up for the old design based on databse.
+  */
+function wpg_get_user_merge_setting_db($user_login = null) {
+
+    if(!is_user_logged_in()) {
+        // user not logged in!
+        return null;
+    }
+    $current_user = wp_get_current_user();
+    $user_login = $current_user->user_login;
+    // has to me code reviewer first.
+    if(!wpg_is_code_reviewer($user_login)) {
         // not a code reviewer!
         return null;
     }
