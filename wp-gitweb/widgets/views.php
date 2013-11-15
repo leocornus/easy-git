@@ -761,12 +761,13 @@ function wpg_widget_merge_history_html($commit_comment,
     // 2. grep the first line of commit comment from the git log
     $matches = wpg_git_log_grep($merge_path, $to_branch, 
                                 $org_commit_id);
-    if($matches === False) {
-        // find the fist line of comments.
-        $comment_lines = explode("\n", trim($commit_comment));
-        $matches = wpg_git_log_grep($merge_path, $to_branch,
-                                    $comment_lines[0]);
-    }
+    // we don't match by the first line of comment.
+    //if($matches === False) {
+    //    // find the fist line of comments.
+    //    $comment_lines = explode("\n", trim($commit_comment));
+    //    $matches = wpg_git_log_grep($merge_path, $to_branch,
+    //                                $comment_lines[0]);
+    //}
 
     // if it is merged, get the commit id 
     // if not, 
