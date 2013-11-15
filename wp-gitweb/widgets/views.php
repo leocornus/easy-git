@@ -793,7 +793,8 @@ function wpg_widget_merge_history_html($commit_comment,
  */
 function wpg_widget_merge_html($commit_log) {
 
-    // skip the whole merge section if it is not a code reviewer.
+    // skip the whole merge section if current user 
+    // is not a code reviewer.
     if(!wpg_is_code_reviewer()) {
         // not a code reviewer!
         return "";

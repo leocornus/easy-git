@@ -36,6 +36,8 @@ function wpg_get_ticket_base_url() {
  * return true if the given user is one of the code reviewers.
  * if $user_login not provided we will try to get the current user.
  * 
+ * code reviewer is a rolw, which is set in the general settings
+ * page.
  */
 function wpg_is_code_reviewer($user_login = null) {
 
@@ -51,6 +53,39 @@ function wpg_is_code_reviewer($user_login = null) {
     $reviewers = wpg_get_option_as_array('wpg_code_reviewers');
 
     return in_array($user_login, $reviewers);
+}
+
+/**
+ * return the details merge settings in array
+ * if the given user is allowed to do the code merge.
+ * if $user_login is not provided, we will try to get the current
+ * logged in user. If no user logged in, it will return null.
+ *
+ * there is not role called "code merger".
+ * There are certain things to allow a user to merge code:
+ *
+ * 1. must be a logged in user.
+ * 2. must be a code reviewer, this a role
+ * 3. must have merge settings record.
+ *
+ * we should ONLY check current user.
+ */
+function wpg_get_user_merge_setting($user_login = null) {
+
+    if(!is_user_logged_in()) {
+        // user not logged in!
+        return null;
+    }
+    $current_user = wp_get_current_user();
+    $user_login = $current_user->user_login;
+    // has to me code reviewer first.
+    if(!wpg_is_code_reviewer($user_login) {
+        // not a code reviewer!
+        return null;
+    }
+
+    // now check the merge settings.
+    return wpg_get_merge_setting($user_login);
 }
 
 /**
