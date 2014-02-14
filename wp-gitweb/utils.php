@@ -24,7 +24,7 @@ function wpg_auto_link_ticket_id($subject) {
  *
  * as added in the commit form.
  */
-function wpg_extract_ticket_id($subject) {
+function wpg_extract_ticket_id($commit_id, $subject) {
 
     $pattern = '/Re: #([0-9]+)/';
     // set the default id to -1 if there is not such pattern exist.
@@ -32,6 +32,10 @@ function wpg_extract_ticket_id($subject) {
     if(preg_match($pattern, $subject, $matches) === 1) {
         $id = (int)$matches[1];
     }
+
+    // we will pass 3 params in total to the filter.
+    $id = apply_filters('wpg_extract_ticket_id', 
+                        $id, $commit_id, $subject);
 
     return $id;
 }

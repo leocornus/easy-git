@@ -776,7 +776,8 @@ function wpg_widget_merge_history_html($commit_comment,
     // 3. present JavaScript, the merge button.
     if($matches === False) {
         // find the ticket id
-        $ticket_id = wpg_extract_ticket_id($commit_comment);
+        $ticket_id = wpg_extract_ticket_id($org_commit_id, 
+                                           $commit_comment);
         // merge the commit id in from branch.
         $merge_html = wpg_widget_merge_form_html($merge_path,
             $from_branch, $from_commit_id, $to_branch, 
