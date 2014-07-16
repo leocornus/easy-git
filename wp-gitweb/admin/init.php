@@ -2,27 +2,12 @@
 
 // need the WordPress database object.
 global $wpdb;
-global $wpg_db_version;
-// we will need this when we upgrade...
-$wpg_db_version = "0.3";
 
 // Here are the tables name:
 // the merge settings table.
 define('WPG_DB_MERGE', 'wpg_merge');
 
 // initialize functions for admin...
-
-/**
- * installation function
- */
-function wpg_install() {
-
-    global $wpg_db_version;
-    wpg_create_tables();
-    add_site_option("wpg_db_version", $wpg_db_version);
-}
-// hook to the activation action.
-register_activation_hook(__FILE__, 'wpg_install');
 
 /**
  * create database tables for the wp_gitweb plugin.
@@ -45,4 +30,24 @@ function wpg_create_tables($force=false) {
     //    UNIQUE KEY user_login (user_login)
     //);";
     //dbDelta($sql);
+
+    // table to save the active repositories.
+    $sql = "CREATE TABLE wpg_active_git_repos (
+          repo_id mediumint(9) NOT NULL AUTO_INCREMENT,
+          repo_label varchar(128) NOT NULL DEFAULT '',
+          repo_path varchar(255) NOT NULL DEFAULT '',
+          PRIMARY KEY (repo_id),
+          UNIQUE KEY repo_label (repo_label)
+        );";
+    dbDelta($sql);
+
+    // table to associate a user and a Git repo.
+    $sql = "CREATE TABLE wpg_user_repo_associate (
+          ID mediumint(9) NOT NULL AUTO_INCREMENT,
+          user_login varchar(64) NOT NULL DEFAULT '',
+          repo_id mediumint(9) NOT NULL DEFAULT 0,
+          PRIMARY KEY (ID),
+          UNIQUE KEY ID (ID)
+        );";
+    dbDelta($sql);
 }

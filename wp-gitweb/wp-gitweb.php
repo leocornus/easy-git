@@ -9,6 +9,10 @@ Author URI: http://www.leocorn.com
 License: GPLv2
 */
 
+global $wpg_db_version;
+// we will need this when we upgrade...
+$wpg_db_version = "0.3";
+
 // we will usng WPG or wpg as the prefix for this plugin.
 
 // the symlink safe way for plugin path.
@@ -24,7 +28,19 @@ require_once(WPG_PLUGIN_PATH . '/widgets/navs.php');
 require_once(WPG_PLUGIN_PATH . '/widgets/views.php');
 require_once(WPG_PLUGIN_PATH . '/admin/init.php');
 
-// TODO: network activation hook.
+// network activation hook.
+/**
+ * installation function
+ */
+function wpg_install() {
+
+    global $wpg_db_version;
+    wpg_create_tables();
+    add_site_option("wpg_db_version", $wpg_db_version);
+}
+// hook to the activation action.
+register_activation_hook(WPG_PLUGIN_PATH . '/' . basename(__FILE__),
+                         'wpg_install');
 
 /**
  * register the dataTables JavaScript lib.
