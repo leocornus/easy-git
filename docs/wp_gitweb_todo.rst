@@ -35,6 +35,12 @@ wpg_ticket_base_url
 Testing
 -------
 
-Testing reference a commit: b910538b60f986f6b850247dca272d8c18259f42
+Testing reference a commit SHA: b910538b60f986f6b850247dca272d8c18259f42
+Here is the format::
+
+  SHA: [FULL COMMIT SHA ID]
+
+More detail check the `reference a GitHub commit`_.
 
 .. _WordPress: http://www.wordpress.org
+.. _reference a GitHub commit: https://help.github.com/articles/writing-on-github#references
