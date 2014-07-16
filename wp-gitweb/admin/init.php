@@ -33,15 +33,16 @@ function wpg_create_tables($force=false) {
     require_once(ABSPATH . "wp-admin/includes/upgrade.php");
 
     // thw wpg_merge table.
-    $sql = "CREATE TABLE " . WPG_DB_MERGE . " (
-        id mediumint(9) NOT NULL AUTO_INCREMENT,
-        user_login varchar(60) NOT NULL DEFAULT '',
-        merge_folder varchar(255) NOT NULL DEFAULT '',
-        dev_branch varchar(64) NOT NULL DEFAULT '',
-        uat_branch varchar(64) NOT NULL DEFAULT '',
-        prod_branch varchar(64) NOT NULL DEFAULT '',
-        PRIMARY KEY (id),
-        UNIQUE KEY user_login (user_login)
-    );";
-    dbDelta($sql);
+    // we are using site options for this settings now.
+    //$sql = "CREATE TABLE " . WPG_DB_MERGE . " (
+    //    id mediumint(9) NOT NULL AUTO_INCREMENT,
+    //    user_login varchar(60) NOT NULL DEFAULT '',
+    //    merge_folder varchar(255) NOT NULL DEFAULT '',
+    //    dev_branch varchar(64) NOT NULL DEFAULT '',
+    //    uat_branch varchar(64) NOT NULL DEFAULT '',
+    //    prod_branch varchar(64) NOT NULL DEFAULT '',
+    //    PRIMARY KEY (id),
+    //    UNIQUE KEY user_login (user_login)
+    //);";
+    //dbDelta($sql);
 }

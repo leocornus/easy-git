@@ -22,6 +22,7 @@ require_once(WPG_PLUGIN_PATH . '/utils.php');
 require_once(WPG_PLUGIN_PATH . '/ajax.php');
 require_once(WPG_PLUGIN_PATH . '/widgets/navs.php');
 require_once(WPG_PLUGIN_PATH . '/widgets/views.php');
+require_once(WPG_PLUGIN_PATH . '/admin/init.php');
 
 // TODO: network activation hook.
 
