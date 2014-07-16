@@ -31,5 +31,10 @@ wpg_ticket_base_url
   The base URL to ticket system. This will be used for generate 
   the herf link to a ticket id, which will be mentioned in 
   commit comments for commit notes.
+  
+Testing
+-------
+
+Testing reference a commit: b910538b60f986f6b850247dca272d8c18259f42
 
 .. _WordPress: http://www.wordpress.org
