@@ -70,10 +70,16 @@ function wpg_admin_init() {
                      'General Settings',
                      'manage_options',
                      'wp-gitweb/admin/settings.php');
+    // the active Git repos management page.
+    add_submenu_page('wp-gitweb/admin/settings.php',
+                     'WP GitWeb Active Git Repositories Mangement',
+                     'Repos Mangement',
+                     'manage_options',
+                     'wp-gitweb/admin/repos.php');
     // the merge management page.
     add_submenu_page('wp-gitweb/admin/settings.php',
                      'WP GitWeb Merge Mangement',
                      'Merge Mangement',
-                     'manage_optionss',
+                     'manage_options',
                      'wp-gitweb/admin/merge.php');
 }
