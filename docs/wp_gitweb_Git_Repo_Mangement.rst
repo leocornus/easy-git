@@ -40,13 +40,18 @@ Here are the 4 columns:
 :Label: the repository label
 :Path: Full absolute path to the repository.
 :Contributors: a list of user who have access to this repository.
+:Tool: the column to hold convenient ''edit'' and ''delete'' links.
 
 Both **Label** and **Path** columns are sortable.
 
-There will 2 forms for:
+There will be only one form for:
 
 - add Git repository
-- edit a Git reposityr, including add user to a Git repository
+- edit a Git reposityr, 
+  including add user to a Git repository
+
+The `jQuery UI Autocomplete Multiple Values`_ will be use
+to add congributors to a Git repository.
 
 PHP Functions
 -------------
@@ -61,3 +66,4 @@ We also need create the following new functions:
 -  
 
 .. _DataTables: https://github.com/DataTables/DataTablesSrc
+.. _jQuery UI Autocomplete Multiple Values: http://jqueryui.com/autocomplete/#multiple
