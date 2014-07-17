@@ -3,8 +3,6 @@
  * Active Git Repositories Management Page.
  */
 
-// enqueue the jQuery DataTables lib
-// enqueue the jQuery ui theme for the DataTables.
 
 if(isset($_POST['wpg_active_git_repo_form_submit']) &&
    $_POST['wpg_active_git_repo_form_submit'] === 'Y') {
@@ -26,11 +24,11 @@ if(isset($_POST['wpg_active_git_repo_form_submit']) &&
 
   <p>Active Git Repositories Management Page</p>
 
-  <?php echo wpg_widget_repos_admin_form(); ?>
-
-  <?php
-  // show all active git repos in jQuery DataTables.
-  // 
+  <?php 
+    echo wpg_widget_repos_admin_form(); 
+    echo '<h3>List Active Git Repositories</h3>';
+    // show all active git repos in jQuery DataTables.
+    echo wpg_widget_repos_list_dt();
   ?>
 
   <?php
@@ -157,4 +155,119 @@ function wpg_create_repo($repo_label, $repo_path) {
     } else {
         return -1;
     }
+}
+
+/**
+ * get all active repos in a array with the following format:
+ *
+ * repo = array(
+ */
+function wpg_get_all_repos() {
+
+    global $wpdb;
+    $repos = $wpdb->get_results(
+        "SELECT * FROM wpg_active_git_repos",
+        ARRAY_A
+    );
+    return $repos;
+}
+
+/**
+ * all repos in the datatable list.
+ */
+function wpg_widget_repos_list_dt() {
+
+    // get all active repositories.
+    $repos = wpg_get_all_repos();
+
+    // one repo for each row:
+    $rows = array();
+    // foreach
+    foreach($repos as $repo) {
+
+        // one tr for each row.
+        $tr = <<<EOT
+<tr>
+  <td>{$repo['repo_id']}</td>
+  <td>{$repo['repo_label']}</td>
+  <td>{$repo['repo_path']}</td>
+  <td>{$repo['repo_contributors']}</td>
+  <td>[tools comming]</td>
+</tr>
+EOT;
+        $rows[] = $tr;
+    }
+
+    $trs = implode("\n", $rows);
+    $table_id = "repos";
+    // prepare the datatable javascript code.
+    $dt_js = wpg_view_datatable_js($table_id, 25); 
+    // jQuery UI Autocomplete 
+    $autocomplet_js = "";
+
+    // here is the datatable.
+    $dt = <<<EOT
+<table cellpadding="0" cellspacing="0" border="0" id="{$table_id}">
+<thead>
+  <th width="18px">ID</th>
+  <th>Repository Label</th>
+  <th>Repository Path</th>
+  <th>Contributors</th>
+  <th>Tools</th>
+</thead>
+<tbody>
+  {$trs}
+</tbody>
+<tfoot>
+  <th>ID</th>
+  <th>Repository Label</th>
+  <th>Repository Path</th>
+  <th>Contributors</th>
+  <th>Tools</th>
+</tfoot>
+</table>
+{$dt_js}
+EOT;
+
+    return $dt;
+}
+
+/**
+ * a re-usable function to generate JavaScript code to configurate
+ * and load jQuery DataTable for the given table id.
+ */
+function wpg_view_datatable_js($table_id, $per_page=25) {
+
+    $js = <<<EOT
+<script type="text/javascript" charset="utf-8">
+<!--
+jQuery(document).ready(function() {
+    jQuery('#{$table_id}').dataTable( {
+        "bProcessing": true,
+        "bServerSide": false,
+        // trun off the length change drop down.
+        "bLengthChange" : true,
+        // define the length memn option
+        "aLengthMenu" : [[15, 25, 50, -1], [15, 25, 50, "All"]],
+        // turn off filter.
+        "bFilter" : true,
+        // turn off sorting.
+        "bSort" : true,
+        // items per page.
+        "iDisplayLength" : {$per_page},
+        "sPaginationType": "full_numbers",
+        "aoColumns" : [
+            {"bSortable":false},
+            {"bSortable":true},
+            {"bSortable":true},
+            {"bSortable":true},
+            {"bSortable":false},
+        ]
+    } );
+} );
+-->
+</script>
+EOT;
+
+    return $js;
 }
