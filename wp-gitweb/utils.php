@@ -53,3 +53,22 @@ EOT;
 
     return $msg;
 }
+
+/**
+ * utility function to echo the notification message.
+ */
+function wpg_notification_msg($msg, $type="updated", $echo=true) {
+
+    $message = <<<EOT
+<div class="{$type}"><p>
+{$msg}
+</p></div>
+EOT;
+
+    if($echo) {
+        echo $message;
+        return;
+    } else {
+        return $message;
+    }
+}

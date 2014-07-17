@@ -40,7 +40,7 @@ Here are the 4 columns:
 :Label: the repository label
 :Path: Full absolute path to the repository.
 :Contributors: a list of user who have access to this repository.
-:Tool: the column to hold convenient ''edit'' and ''delete'' links.
+:Tools: the column to hold convenient ''edit'' and ''delete'' links.
 
 Both **Label** and **Path** columns are sortable.
 
@@ -48,10 +48,10 @@ There will be only one form for:
 
 - add Git repository
 - edit a Git reposityr, 
-  including add user to a Git repository
+  including add contributor to a Git repository.
 
 The `jQuery UI Autocomplete Multiple Values`_ will be use
-to add congributors to a Git repository.
+to add contributors to a Git repository.
 
 PHP Functions
 -------------
@@ -63,7 +63,9 @@ The following functions need update to get value from database.
 
 We also need create the following new functions:
 
--  
+wpg_get_active_repo($repo_id)
+  return all details for the given repository, including 
+  label, path, and contirbutors.
 
 .. _DataTables: https://github.com/DataTables/DataTablesSrc
 .. _jQuery UI Autocomplete Multiple Values: http://jqueryui.com/autocomplete/#multiple
