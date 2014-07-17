@@ -54,7 +54,27 @@ function wpg_register_resources() {
     // jquery ui dialog style seens not automatically loaded.
     wp_register_style('jquery-ui',
                       'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css');
+
+    // plugins_url will check this is a ssl request or not.
+    wp_register_script('jquery.dataTables',
+              plugins_url('wp-gitweb/js/jquery.dataTables.js'));
+    //          array('jquery'), '1.9.1');
+    // using wp_enqueue_script to load this js lib where you need.
+    wp_register_style('jquery.dataTables',
+              plugins_url('wp-gitweb/css/jquery.dataTables.css'));
 }
+
+/**
+ * enqeue the jquery-ui-dialog lib
+ */
+function load_datatables() {
+
+    // enqueue the jQuery DataTables lib
+    wp_enqueue_script('jquery.dataTables');
+    // enqueue the jQuery ui theme for the DataTables.
+    wp_enqueue_style('jquery.dataTables');
+}
+add_action( 'admin_enqueue_scripts', 'load_datatables' );
 
 // adding the network admin menu.
 add_action('network_admin_menu', 'wpg_admin_init');
