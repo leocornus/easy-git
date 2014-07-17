@@ -169,7 +169,20 @@ function wpg_get_all_repos() {
         "SELECT * FROM wpg_active_git_repos",
         ARRAY_A
     );
-    return $repos;
+
+    // get all contributors for each repo.
+    $ret = array();
+    foreach($repos as $repo) {
+        $contributors = $wpdb->get_col(
+            "SELECT user_login FROM wpg_user_repo_associate WHERE
+             repo_id = " . $repo['repo_id'] 
+        );
+        if($contributors)
+            $repo['repo_contributors'] = implode(', ', $contributors);
+        $ret[] = $repo;
+    }
+
+    return $ret;
 }
 
 /**
