@@ -166,7 +166,7 @@ function wpg_associate_users_to_repo($users, $repo_id) {
     global $wpdb;
 
     // get all contributors for a git repository
-    $existing = wpg_get_all_contributors($repo_id);
+    $existing = wpg_get_repo_contributors($repo_id);
     // only add those new users.
     foreach($users as $user) {
         if(!in_array($user, $existing)) {
@@ -185,7 +185,12 @@ function wpg_associate_users_to_repo($users, $repo_id) {
 /**
  * get all active repos in a array with the following format:
  *
- * repo = array(
+ * $repo = array(
+ *     'repo_id' => 1,
+ *     'repo_label' => 'label for the repo',
+ *     'repo_path' => 'full path to the repo',
+ *     'repo_contributors' => '',
+ * );
  */
 function wpg_get_all_repos() {
 
@@ -198,9 +203,13 @@ function wpg_get_all_repos() {
     // get all contributors for each repo.
     $ret = array();
     foreach($repos as $repo) {
-        $contributors = wpg_get_all_contributors($repo['repo_id']);
-        if($contributors)
+        $contributors = wpg_get_repo_contributors($repo['repo_id']);
+        if($contributors) {
+            // the contributor will implode with ', ' to
+            // get ready for the jQuery Autocomplete multiple value
+            // input field.
             $repo['repo_contributors'] = implode(', ', $contributors);
+        }
         $ret[] = $repo;
     }
 
@@ -210,7 +219,7 @@ function wpg_get_all_repos() {
 /**
  * get all contributors for a repo.
  */
-function wpg_get_all_contributors($repo_id) {
+function wpg_get_repo_contributors($repo_id) {
 
     global $wpdb;
 
