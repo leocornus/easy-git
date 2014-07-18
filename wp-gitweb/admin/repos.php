@@ -124,7 +124,8 @@ function wpg_handle_repos_admin_form_create() {
     $repo_id = wpg_create_repo($repo_label, $repo_path);
     // associate the user to new repo.
     if(!empty($repo_contributors)) {
-        //wpg_associate_users_to_repo($list_of_users, $repo_id);
+        $users = explode(', ', $repo_contributors);
+        wpg_associate_users_to_repo($users, $repo_id);
     }
     // preparing the message.
     $msg = 'Created new Repository: <b>' . $repo_id . 
@@ -158,6 +159,30 @@ function wpg_create_repo($repo_label, $repo_path) {
 }
 
 /**
+ * associate a list users to a repository.
+ */
+function wpg_associate_users_to_repo($users, $repo_id) {
+
+    global $wpdb;
+
+    // get all contributors for a git repository
+    $existing = wpg_get_all_contributors($repo_id);
+    // only add those new users.
+    foreach($users as $user) {
+        if(!in_array($user, $existing)) {
+            $success = $wpdb->insert(
+                'wpg_user_repo_associate',
+                array(
+                    'user_login' => $user,
+                    'repo_id' => $repo_id
+                ),
+                array('%s', '%d')
+            );
+        }
+    }
+}
+
+/**
  * get all active repos in a array with the following format:
  *
  * repo = array(
@@ -173,16 +198,28 @@ function wpg_get_all_repos() {
     // get all contributors for each repo.
     $ret = array();
     foreach($repos as $repo) {
-        $contributors = $wpdb->get_col(
-            "SELECT user_login FROM wpg_user_repo_associate WHERE
-             repo_id = " . $repo['repo_id'] 
-        );
+        $contributors = wpg_get_all_contributors($repo['repo_id']);
         if($contributors)
             $repo['repo_contributors'] = implode(', ', $contributors);
         $ret[] = $repo;
     }
 
     return $ret;
+}
+
+/**
+ * get all contributors for a repo.
+ */
+function wpg_get_all_contributors($repo_id) {
+
+    global $wpdb;
+
+    $contributors = $wpdb->get_col(
+        "SELECT user_login FROM wpg_user_repo_associate WHERE
+         repo_id = " . $repo_id 
+    );
+
+    return $contributors;
 }
 
 /**
