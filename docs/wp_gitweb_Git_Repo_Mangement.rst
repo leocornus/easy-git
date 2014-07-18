@@ -1,13 +1,22 @@
 Git Rrepositories Management Design 
 
-Create Table for Active Repositories List
+There should be a dedicated admin dashboard page to manage all
+active Git repositories and their contributors.
+Any activated wordpress user could be a contributor to any
+active Git repository.
 
-Stories
--------
+Use Cases
+---------
 
-- `Data Structure Story`_
+We will have the following roles for a tipical use case:
 
-.. _Data Structure Story: wp-gitweb-story-data-structure.rst
+- superadmin
+- contributor
+- non-congributor
+
+Superadmin should be able to do the following 
+
+- create active Git repository
 
 Git Repositories Admin Page
 ---------------------------
@@ -40,6 +49,18 @@ There will be only one form for:
 
 The `jQuery UI Autocomplete Multiple Values`_ will be use
 to add contributors to a Git repository.
+
+Stories
+-------
+
+- `Data Structure Story`_
+- `Form to create/update New Repo <wp-gitweb-story-repo-form.rst>`_
+- `List Table Story`_
+- `Actions and Glues`_
+- `General Error Handling`_
+- `AJAX actions`_
+
+.. _Data Structure Story: wp-gitweb-story-data-structure.rst
 
 PHP Functions
 -------------

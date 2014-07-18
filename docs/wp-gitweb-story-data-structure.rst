@@ -1,11 +1,14 @@
+< `Active Git Repository Management Design Story 
+<wp_gitweb_Git_Repo_Management.rst>`_
+
 This story is all about data structure designed for wp-gitweb plugin,
 which including:
 
 - database schema
 - main data structure
 
-Database Schema for Active Git Repository Management Page
----------------------------------------------------------
+Database Schema
+---------------
 
 Create table or tables to manage the active respsitories list.
 2 tables might be better choice:
@@ -34,7 +37,9 @@ Here is an example::
     'repo_id' => 1,
     'repo_lable' => 'the repo name',
     'repo_path' => 'full absolute path',
-    'repo_conbtributors' => 'sean, tom, jone'
+    'repo_conbtributors' => 'sean, jerry, jonh'
   );
 
-label, 
+The **repository** object will be used in many PHP functions.
+
+
