@@ -7,7 +7,7 @@ Stories
 
 - `Data Structure Story`_
 
-.. _Data Structure Story: wp-gitweb-story-datastructure.rst
+.. _Data Structure Story: wp-gitweb-story-data-structure.rst
 
 Git Repositories Admin Page
 ---------------------------
