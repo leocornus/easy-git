@@ -3,17 +3,29 @@
  * Active Git Repositories Management Page.
  */
 
-
 if(isset($_POST['wpg_active_git_repo_form_submit']) &&
    $_POST['wpg_active_git_repo_form_submit'] === 'Y') {
 
-    $repo_id = (int) $_POST['repo_id'];
-    if($repo_id > 0) {
-        // update a existing repo.
-        //wpg_handle_repos_admin_form_update();
+    // handle form submit!
+    wpg_handle_repos_admin_form_submit();
+} else {
+    // normal page load, 
+    // need parse the HTTP Request...
+    $repo_label = wpg_get_request_param('repo');
+    // the repository object.
+    $repo = array();
+    if($repo_label === "") {
+        // no repository selected, skip...
     } else {
-        // create a new repo.
-        wpg_handle_repos_admin_form_create();
+        // a repo is selected, what's the action?
+        $action = wpg_get_request_param('action');
+        switch($action) {
+            case "edit":
+                // edit a repository.
+                $repo = wpg_get_repo($repo_label);
+                //var_dump($repo);
+                break;
+        }
     }
 }
 
@@ -25,8 +37,8 @@ if(isset($_POST['wpg_active_git_repo_form_submit']) &&
   <p>Active Git Repositories Management Page</p>
 
   <?php 
-    echo wpg_widget_repos_admin_form(); 
-    echo '<h3>List Active Git Repositories</h3>';
+    echo wpg_widget_repos_admin_form($repo); 
+    echo '<h3>Active Git Repositories</h3>';
     // show all active git repos in jQuery DataTables.
     echo wpg_widget_repos_list_dt();
   ?>
@@ -44,20 +56,21 @@ if(isset($_POST['wpg_active_git_repo_form_submit']) &&
 /**
  * render the form for creating and editing repos.
  */
-function wpg_widget_repos_admin_form($repo_id=0) {
+function wpg_widget_repos_admin_form($repo) {
 
-    if($repo_id > 1) {
+    if(!empty($repo)) {
         // trying to edit a existing repo.
         $submit_label = "Update Repository";
         // load the details about the repository.
         //$repo = wpg_get_active_repo($repo_id);
-        //$repo_label_value = $repo['label'];
-        //$repo_path_value = $repo['path'];
-        //$repo_contributors_value = 
-        //    implode(', ', $repo['contributors']);
+        $repo_id = $repo['repo_id'];
+        $repo_label_value = $repo['repo_label'];
+        $repo_path_value = $repo['repo_path'];
+        $repo_contributors_value = $repo['repo_contributors'];
     } else {
         // trying to create a new repo.
         $submit_label = "Create Repository";
+        $repo_id = 0;
     }
 
     $form = <<<EOT
@@ -104,8 +117,9 @@ EOT;
 /**
  * handle the request to create a new repository.
  */
-function wpg_handle_repos_admin_form_create() {
+function wpg_handle_repos_admin_form_submit() {
 
+    $repo_id = (int) $_POST['repo_id'];
     // analytics the REQUEST/POST.
     // once the form is submitted, the input fields will be set.
     $repo_label = $_POST['repo_label'];
@@ -120,16 +134,23 @@ function wpg_handle_repos_admin_form_create() {
         return false;
     }
 
-    // create new active repo
-    $repo_id = wpg_create_repo($repo_label, $repo_path);
+    if ($repo_id > 0) {
+        wpg_replace_repo($repo_label, $repo_path, $repo_id);
+        // preparing the message for update.
+        $msg = 'Updated Repository: <b>' . $repo_id . 
+               '</b> - <b>' . $repo_label . '</b>.';
+    } else {
+        // create new active repo
+        $repo_id = wpg_replace_repo($repo_label, $repo_path);
+        // preparing the message for creation.
+        $msg = 'Created new Repository: <b>' . $repo_id . 
+               '</b> - <b>' . $repo_label . '</b>.';
+    }
     // associate the user to new repo.
     if(!empty($repo_contributors)) {
         $users = explode(', ', $repo_contributors);
         wpg_associate_users_to_repo($users, $repo_id);
     }
-    // preparing the message.
-    $msg = 'Created new Repository: <b>' . $repo_id . 
-           '</b> - <b>' . $repo_label . '</b>.';
     // default type is updated.
     wpg_notification_msg($msg);
 }
@@ -137,17 +158,18 @@ function wpg_handle_repos_admin_form_create() {
 /**
  * create a new repo based on repo label and path.
  */
-function wpg_create_repo($repo_label, $repo_path) {
+function wpg_replace_repo($repo_label, $repo_path, $repo_id=0) {
 
     global $wpdb;
 
-    $success = $wpdb->insert(
+    $success = $wpdb->replace(
         'wpg_active_git_repos',
         array(
+            'repo_id' => $repo_id,
             'repo_label' => $repo_label,
             'repo_path' => $repo_path
         ),
-        array('%s', '%s')
+        array('%d', '%s', '%s')
     );
 
     // The auto_increment id could be accessed through insert_id.
@@ -159,9 +181,34 @@ function wpg_create_repo($repo_label, $repo_path) {
 }
 
 /**
+ * get repository from a given repo label.
+ * the rpository label should be unique
+ */
+function wpg_get_repo($repo_label, $include_contributors=true) {
+
+    global $wpdb;
+
+    $repo = $wpdb->get_row(
+        "SELECT * FROM wpg_active_git_repos WHERE repo_label = '" . 
+        $repo_label . "'",
+        ARRAY_A
+    );
+
+    if ($include_contributors and $repo) {
+        // attach the contributors list.
+        $contributors = wpg_get_repo_contributors($repo['repo_id']);
+        if($contributors) {
+            $repo['repo_contributors'] = implode(', ', $contributors);
+        }
+    }
+
+    return $repo;
+}
+
+/**
  * associate a list users to a repository.
  */
-function wpg_associate_users_to_repo($users, $repo_id) {
+function wpg_associate_users_to_repo($users, $repo_id, $replace=true) {
 
     global $wpdb;
 
@@ -177,6 +224,21 @@ function wpg_associate_users_to_repo($users, $repo_id) {
                     'repo_id' => $repo_id
                 ),
                 array('%s', '%d')
+            );
+        }
+    }
+    if($replace) {
+        // remove all existing congributors 
+        // which is not in the new user list.
+        $remove = array_diff($existing, $users);
+        foreach($remove as $user) {
+            $wpdb->delete(
+                'wpg_user_repo_associate',
+                array(
+                    'repo_id' => $repo_id,
+                    'user_login' => $user
+                ),
+                array('%d', '%s')
             );
         }
     }
@@ -223,6 +285,8 @@ function wpg_get_repo_contributors($repo_id) {
 
     global $wpdb;
 
+    // get_col will return a one dimensional array,
+    // an empty array will be returned if now result found
     $contributors = $wpdb->get_col(
         "SELECT user_login FROM wpg_user_repo_associate WHERE
          repo_id = " . $repo_id 
@@ -244,11 +308,18 @@ function wpg_widget_repos_list_dt() {
     // foreach
     foreach($repos as $repo) {
 
+        // preparing the href link for edit.
+        $label = <<<EOT
+<a href="?page={$_REQUEST['page']}&repo={$repo['repo_label']}&action=edit">
+{$repo['repo_label']}
+</a>
+EOT;
+
         // one tr for each row.
         $tr = <<<EOT
 <tr>
   <td>{$repo['repo_id']}</td>
-  <td>{$repo['repo_label']}</td>
+  <td>{$label}</td>
   <td>{$repo['repo_path']}</td>
   <td>{$repo['repo_contributors']}</td>
   <td>[tools comming]</td>
