@@ -56,14 +56,14 @@ wpg_get_all_contributors()
 wpg_get_repo_contributors($repo_id)
   get all contributors associated to the given repository in an array format.
 
-wpg_create_repo($repo_label, $repo_path)
-  create a new repository
+wpg_replace_repo($repo_label, $repo_path, $repo_id=0)
+  create a new repository if the repo_id is 0. Otherwise, replace the existing one.
 
-wpg_associate_users_to_repo($users, $repo_id)
+wpg_associate_users_to_repo($users, $repo_id, $replace=true)
   associate a list of users to the given repository
 
-wpg_get_repo($repo_id)
-  return all info for the given repository id, in the repository object format.
+wpg_get_repo($repo_label)
+  return all info for the given repository label, in the repository object format.
 
 wpg_get_contributor_repos($user_login)
   return all repositories associated to a contributor
