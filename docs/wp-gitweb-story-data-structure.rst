@@ -42,4 +42,28 @@ Here is an example::
 
 The **repository** object will be used in many PHP functions.
 
+PHP Functions
+-------------
 
+We will have the following PHP functions to manipulate Git repos and contributors.
+
+wpg_get_all_repos()
+  return all active Git repository as a array including contributors.
+
+wpg_get_all_contributors()
+  return all contributors for all active Git repository, an one dimensional array.
+
+wpg_get_repo_contributors($repo_id)
+  get all contributors associated to the given repository in an array format.
+
+wpg_create_repo($repo_label, $repo_path)
+  create a new repository
+
+wpg_associate_users_to_repo($users, $repo_id)
+  associate a list of users to the given repository
+
+wpg_get_repo($repo_id)
+  return all info for the given repository id, in the repository object format.
+
+wpg_get_contributor_repos($user_login)
+  return all repositories associated to a contributor
