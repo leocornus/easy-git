@@ -21,6 +21,7 @@ define('WPG_PLUGIN_FILE', $plugin_file);
 define('WPG_PLUGIN_PATH', WP_PLUGIN_DIR . '/' . basename(dirname($plugin_file)));
 
 // load php file for this plugin.
+require_once(WPG_PLUGIN_PATH . '/db.php');
 require_once(WPG_PLUGIN_PATH . '/tags.php');
 require_once(WPG_PLUGIN_PATH . '/utils.php');
 require_once(WPG_PLUGIN_PATH . '/ajax.php');
