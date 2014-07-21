@@ -62,10 +62,16 @@ function wpg_get_all_repos() {
 
 /**
  * get all contributors for all active Git repositories.
+ * TODO: should we exclude ALL_USER from here?
  */
 function wpg_get_all_contributors() {
 
-    
+   global $wpdb;
+   $contributors = $wpdb->get_col(
+       "SELECT DISTINCT(user_login) FROM wpg_user_repo_associate"
+   );
+
+   return $contributors;
 }
 
 /**
@@ -90,7 +96,14 @@ function wpg_get_repo_contributors($repo_id) {
  */
 function wpg_get_contributor_repos($user_login) {
 
-    $repos = array();
+    global $wpdb;
+    $repos = $wpdb->get_col(
+        "SELECT r.repo_label FROM " .
+        "wpg_user_repo_associate as a, " .
+        "wpg_active_git_repos as r WHERE " .
+        "a.user_login = '" . $user_login . "' and " .
+        "a.repo_id = r.repo_id"
+    );
 
     return $repos;
 }
