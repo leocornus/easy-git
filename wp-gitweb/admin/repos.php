@@ -95,7 +95,7 @@ function wpg_widget_repos_admin_form($repo) {
         </td>
       </tr>
       <tr>
-        <th scope="row">Contributors: </th>
+        <th scope="row">Repository Contributors: </th>
         <td>
           <input name="repo_contributors" size="80"
             value="{$repo_contributors_value}">
@@ -310,10 +310,27 @@ function wpg_widget_repos_list_dt() {
 
         // preparing the href link for edit.
         $label = <<<EOT
+{$repo['repo_label']}<br/>
 <a href="?page={$_REQUEST['page']}&repo={$repo['repo_label']}&action=edit">
-{$repo['repo_label']}
-</a>
+Edit</a> | 
+<a href="?page={$_REQUEST['page']}&repo={$repo['repo_label']}&action=delete">
+Delete</a> 
 EOT;
+
+        // preparing the contributors list, using user's display name.
+        $contributors = explode(', ', $repo['repo_contributors']);
+        $contributor_names = array();
+        foreach($contributors as $user_login) {
+            $user = get_user_by('login', $user_login);
+            if($user === false) {
+                $contributor_names[] = $user_login;
+            } else {
+                $contributor_names[] = $user->first_name . " " . 
+                                       $user->last_name . " - " .
+                                       $user->user_email;
+            }
+        }
+        $contributor_td = implode("<br/>", $contributor_names);
 
         // one tr for each row.
         $tr = <<<EOT
@@ -321,8 +338,7 @@ EOT;
   <td>{$repo['repo_id']}</td>
   <td>{$label}</td>
   <td>{$repo['repo_path']}</td>
-  <td>{$repo['repo_contributors']}</td>
-  <td>[tools comming]</td>
+  <td>{$contributor_td}</td>
 </tr>
 EOT;
         $rows[] = $tr;
@@ -343,7 +359,6 @@ EOT;
   <th>Repository Label</th>
   <th>Repository Path</th>
   <th>Contributors</th>
-  <th>Tools</th>
 </thead>
 <tbody>
   {$trs}
@@ -353,7 +368,6 @@ EOT;
   <th>Repository Label</th>
   <th>Repository Path</th>
   <th>Contributors</th>
-  <th>Tools</th>
 </tfoot>
 </table>
 {$dt_js}
@@ -391,7 +405,6 @@ jQuery(document).ready(function() {
             {"bSortable":true},
             {"bSortable":true},
             {"bSortable":true},
-            {"bSortable":false},
         ]
     } );
 } );
