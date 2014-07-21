@@ -53,6 +53,7 @@ Stories
 -------
 
 - `Data Structure Story`_
+- `Request Context Story <wp-gitweb-story-request-context.rst>`_
 - `Form to create/update New Repo <wp-gitweb-story-repo-form.rst>`_
 - `List Table Story`_
 - `Actions and Glues`_

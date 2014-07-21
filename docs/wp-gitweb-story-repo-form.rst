@@ -12,7 +12,10 @@ The repository contributor field will use jQuery UI Autocomplete input
 field with multiple values support.
 We will have the following component for this feature:
 
-- load the jquery ui js libs using admin enqueue
+- load the jquery ui js libs using **admin_enqueue_scripts** action.
 - AJAX request PHP callback function
-- PHP function to attach autocomplete action to the contributor input field.
-
+- PHP function to generate JavaScript client. 
+  The js client will attach jQuery autocomplete action to 
+  the contributor input field.
+- the js client will prepare the multiple value support for the 
+  jQuery UI autocomplete input field.
