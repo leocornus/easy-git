@@ -34,10 +34,9 @@ We will use DataTables_ to show the list of active repositories.
 Here are the 4 columns:
 
 :ID: the repositories id.
-:Label: the repository label
+:Label: the repository label, with Edit and Delete action links
 :Path: Full absolute path to the repository.
 :Contributors: a list of user who have access to this repository.
-:Tools: the column to hold convenient ''edit'' and ''delete'' links.
 
 Both **Label** and **Path** columns are sortable.
 
