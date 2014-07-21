@@ -62,7 +62,13 @@ function wpg_widget_autocomplete_js($input_id) {
     // WordPress administration screens, 
     // adding more administration-side Ajax functionality to your plugin 
     // is fairly straightforward, and this section describes how to do it.
+    $anim_image = plugins_url('wp-gitweb/images/ui-anim_basic_16x16.gif');
     $js = <<<EOT
+<style>
+  .ui-autocomplete-loading {
+    background: white url("{$anim_image}") right center no-repeat;
+  }
+</style>
 <script type="text/javascript" charset="utf-8">
 <!--
 jQuery(document).ready(function($) {
