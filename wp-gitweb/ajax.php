@@ -81,3 +81,46 @@ function wpg_git_perform_merge_cb() {
     echo json_encode($ret);
     exit;
 }
+
+/**
+ * wordpress AJAX callback for user anme suggestions.
+ */
+add_action('wp_ajax_nopriv_wpg_username_autocomplete', 'wpg_username_suggestion_cb');
+add_action('wp_ajax_wpg_username_autocomplete', 'wpg_username_suggestion_cb');
+function wpg_username_suggestion_cb() {
+
+    $searchTerm = $_REQUEST['term'];
+    // query wp_users table for the given term.
+    global $wpdb;
+    $likeTerm = '%' . $searchTerm . '%';
+    $query = $wpdb->prepare("
+        SELECT user_login, user_email, display_name
+        FROM wp_users
+        WHERE user_login like %s
+        OR display_name like %s
+    ",
+    $likeTerm, $likeTerm
+    );
+
+    // using the default OBJECT as the output format.
+    $users = $wpdb->get_results($query);
+
+    $suggestions = array();
+    foreach($users as $user) {
+        $suggestion = array();
+        // preparing label and value for each user.
+        // TODO: should we add the avatar too?
+        // label: Display Name - Email
+        // value: user_login
+        $suggestion['label'] = $user->display_name . ' - ' .
+            $user->user_email . " - " . $user->user_login;
+        $suggestion['value'] = $user->user_login;
+        $suggestions[] = $suggestion;
+    }
+
+    // we are using jQuery.getJSON to trigger AJAX request,
+    // it is different from direct AJAX call.
+    $response = $_GET["callback"] . "(" . json_encode($suggestions) . ")";
+    echo $response;
+    exit;
+}
