@@ -101,7 +101,8 @@ function wpg_get_contributor_repos($user_login) {
         "SELECT r.repo_label FROM " .
         "wpg_user_repo_associate as a, " .
         "wpg_active_git_repos as r WHERE " .
-        "a.user_login = '" . $user_login . "' and " .
+        "(a.user_login = 'ALL-USER' OR " . 
+        "a.user_login = '" . $user_login . "') and " .
         "a.repo_id = r.repo_id"
     );
 
