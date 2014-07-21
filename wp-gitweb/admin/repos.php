@@ -84,7 +84,8 @@ jQuery(document).ready(function($) {
   var wpg_username_ac = "wpg_username_autocomplete"
   var username_ac_data = {
       source: function(request, response) {
-          $.getJSON(ajaxurl + "?callback=?&action="  + wpg_username_ac, 
+          $.getJSON(ajaxurl + "?callback=?&action="  + 
+                    wpg_username_ac, 
                     { term: extractLast(request.term) }, response);
       },
       select: function(event, ui) {
@@ -381,7 +382,7 @@ function wpg_widget_repos_list_dt() {
 
         // preparing the href link for edit.
         $label = <<<EOT
-{$repo['repo_label']}<br/>
+<strong>{$repo['repo_label']}</strong><br/>
 <a href="?page={$_REQUEST['page']}&repo={$repo['repo_label']}&action=edit">
 Edit</a> | 
 <a href="?page={$_REQUEST['page']}&repo={$repo['repo_label']}&action=delete">
@@ -396,8 +397,7 @@ EOT;
             if($user === false) {
                 $contributor_names[] = $user_login;
             } else {
-                $contributor_names[] = $user->first_name . " " . 
-                                       $user->last_name . " - " .
+                $contributor_names[] = $user->display_name . " - " .
                                        $user->user_email;
             }
         }
