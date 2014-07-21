@@ -9,7 +9,7 @@ function wpg_widget_repos_nav($user) {
     $repos = wpg_get_active_repos($user);
     //$gitweb_url = wpg_get_gitweb_url();
     $lis = "";
-    foreach($repos as $label => $path) {
+    foreach($repos as $label) {
 
         $ali = <<<EOT
  <li>

@@ -34,7 +34,7 @@ function wpg_toggle_repo_opts_cb() {
 
     $user_login = wpg_get_request_param('user');
     $repos = wpg_get_active_repos($user_login);
-    $opts = wpg_widget_options_html(array_keys($repos));
+    $opts = wpg_widget_options_html($repos);
 
     echo json_encode($opts);
     exit;

@@ -147,43 +147,16 @@ function wpg_get_repos_root_path() {
  *     REPO_LABEL => REPO_PATH
  * }
  */
-//function wpg_get_active_repos($user_name=null) {
-//
-//    if($user_name === null) {
-//        // find the current login user.
-//        global $current_user;
-//        $user_name = $current_user->user_login;
-//        // TODO: what id current user is not loged in?
-//    }
-//    $repos = wpg_get_contributor_repos($user_name);
-//}
 function wpg_get_active_repos($user_name=null) {
 
     if($user_name === null) {
         // find the current login user.
         global $current_user;
         $user_name = $current_user->user_login;
-        // TODO: what id current user is not loged in?
     }
+    $repos = wpg_get_contributor_repos($user_name);
 
-    $all = wpg_get_option_as_array('wpg_active_repos');
-    $myRepos = array();
-    foreach($all as $repo) {
-        // check repos for all user first.
-        $pos = strpos($repo, 'ALL-USER');
-        if($pos === False){
-            // user name is the beginning.
-            // check the user name.
-            $pos = strpos($repo, $user_name);
-        }
-        if($pos === 0) {
-            // on the one starts with user name.
-            $theOne = array_slice(explode(";", $repo), 1);
-            $myRepos[$theOne[0]] = $theOne[1];
-        }
-    }
-
-    return $myRepos;
+    return $repos;
 }
 
 /**
@@ -191,19 +164,7 @@ function wpg_get_active_repos($user_name=null) {
  */
 function wpg_get_contributors() {
 
-    $all = wpg_get_option_as_array('wpg_active_repos');
-    $users = array();
-    foreach($all as $repo) {
-        $pos = strpos($repo, ";");
-        if($pos !== false) {
-            // found
-            // the first one is user_login.
-            $user_login = substr($repo, 0, $pos);
-            if(!in_array($user_login, $users)) {
-                $users[] = $user_login;
-            }
-        }
-    }
+    $users = wpg_get_all_contributors();
 
     return $users;
 }
@@ -277,8 +238,8 @@ function wpg_request_context() {
  */
 function wpg_get_base_path($user, $repo) {
 
-    $repos = wpg_get_active_repos($user);
-    $base_path = $repos[$repo];
+    $repository = wpg_get_repo($repo, false);
+    $base_path = $repository['repo_path'];
 
     return $base_path;
 }

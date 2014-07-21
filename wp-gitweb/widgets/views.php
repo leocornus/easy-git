@@ -14,7 +14,7 @@ function wpg_widget_repo_form($context) {
     // active repositories for this user.
     $repos = wpg_get_active_repos($gituser);
     $repo_opts = 
-        wpg_widget_options_html(array_keys($repos), $repo);
+        wpg_widget_options_html($repos, $repo);
     // preparin the user dropdown based on current user's role.
     $user_select_html = "";
     if(wpg_is_code_reviewer()) {
