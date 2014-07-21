@@ -18,6 +18,11 @@ wp-gitweb
 
 .. _PHP: http://www.php.net
 
+Change Logs
+-----------
+
+- `wp-gitweb Release 0.3.0 <docs/wp-gitweb-release-0.3.0.rst>`_
+
 LICENSE
 =======
 
