@@ -14,3 +14,15 @@ A context will have the following fields
 :base_path: the base path for the selected repository.
 :branch: the Git branch for the selected repository.
 :action: the submit action.
+
+The are 2 roles we need handle in the request context:
+
+- regular developer
+- code reviewer
+
+Use Cases for Regular Developer
+-------------------------------
+
+Regular developers could review the Git repositories
+which is assigned to them and the rpos assigned to **ALL_USER**.
+
