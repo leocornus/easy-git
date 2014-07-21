@@ -220,7 +220,11 @@ function wpg_handle_repos_admin_form_submit() {
     }
     // associate the user to new repo.
     if(!empty($repo_contributors)) {
-        $users = explode(', ', $repo_contributors);
+        // strip extra space and , fro mthe end of the contributors.
+        // jQuery UI autocomplete add the ', ' at the end
+        // of the contributors.
+        $trimmed = rtrim($repo_contributors, " ,");
+        $users = explode(', ', $trimmed);
         wpg_associate_users_to_repo($users, $repo_id);
     }
     // default type is updated.
