@@ -54,6 +54,67 @@ if(isset($_POST['wpg_active_git_repo_form_submit']) &&
 // function to show all git repos in a DataTables.
 
 /**
+ * generate the auto complete js script for contributor field.
+ */
+function wpg_widget_autocomplete_js($input_id) {
+
+    // Since Ajax is already built into the core 
+    // WordPress administration screens, 
+    // adding more administration-side Ajax functionality to your plugin 
+    // is fairly straightforward, and this section describes how to do it.
+    $js = <<<EOT
+<script type="text/javascript" charset="utf-8">
+<!--
+jQuery(document).ready(function($) {
+  function split(val) {
+    return val.split(/,\s*/);
+  }
+
+  function extractLast( term ) {
+    return split(term).pop();
+  }
+
+  // username auto complete for contributors.
+  var wpg_username_ac = "wpg_username_autocomplete"
+  var username_ac_data = {
+      source: function(request, response) {
+          $.getJSON(ajaxurl + "?callback=?&action="  + wpg_username_ac, 
+                    { term: extractLast(request.term) }, response);
+      },
+      select: function(event, ui) {
+          // do nothing for now.
+          // selected value could get from ui param.
+          // ui.item.id, ui.item.value.
+          // testing...
+          //alert (ui.item.value);
+          var terms = split(this.value);
+          terms.pop();
+          terms.push(ui.item.value);
+          terms.push("");
+          this.value = terms.join(", ");
+          return false;
+      },
+      search: function() {
+          var term = extractLast(this.value);
+          if(term.length < 2) {
+            return false;
+          }
+      },
+      focus: function() {
+          return false;
+      }
+  };
+
+  jQuery("#{$input_id}").autocomplete(username_ac_data);
+});
+-->
+</script>
+EOT;
+
+    return $js;
+}
+
+/**
  * render the form for creating and editing repos.
  */
 function wpg_widget_repos_admin_form($repo) {
@@ -72,6 +133,8 @@ function wpg_widget_repos_admin_form($repo) {
         $submit_label = "Create Repository";
         $repo_id = 0;
     }
+    // jQuery UI Autocomplete for contributor field.
+    $autocomplete_js = wpg_widget_autocomplete_js('repo_contributors');
 
     $form = <<<EOT
   <form name="wpg_active_git_repo_form" method="post">
@@ -98,6 +161,7 @@ function wpg_widget_repos_admin_form($repo) {
         <th scope="row">Repository Contributors: </th>
         <td>
           <input name="repo_contributors" size="80"
+                 id="repo_contributors"
             value="{$repo_contributors_value}">
         </td>
       </tr>
@@ -109,6 +173,7 @@ function wpg_widget_repos_admin_form($repo) {
       </tr>
     </tbody></table>
   </form>
+  {$autocomplete_js}
 EOT;
 
   return $form;
@@ -348,8 +413,6 @@ EOT;
     $table_id = "repos";
     // prepare the datatable javascript code.
     $dt_js = wpg_view_datatable_js($table_id, 25); 
-    // jQuery UI Autocomplete 
-    $autocomplet_js = "";
 
     // here is the datatable.
     $dt = <<<EOT

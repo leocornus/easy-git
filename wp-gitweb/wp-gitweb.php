@@ -73,6 +73,8 @@ function load_datatables() {
     wp_enqueue_script('jquery.dataTables');
     // enqueue the jQuery ui theme for the DataTables.
     wp_enqueue_style('jquery.dataTables');
+    wp_enqueue_script('jquery-ui-autocomplete');
+    wp_enqueue_script('jquery-ui');
 }
 add_action( 'admin_enqueue_scripts', 'load_datatables' );
 
