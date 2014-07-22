@@ -15,8 +15,6 @@ if (isset($_POST['wpg_settings_form_submit']) &&
                        stripslashes($_POST['wpg_ignore_patterns']));
     update_site_option('wpg_code_reviewers', 
                        stripslashes($_POST['wpg_code_reviewers']));
-    update_site_option('wpg_active_repos', 
-                       stripslashes($_POST['wpg_active_repos']));
     update_site_option('wpg_repo_roots',
                        stripslashes($_POST['wpg_repo_roots']));
     update_site_option('wpg_ticket_base_url',
@@ -81,17 +79,6 @@ if (isset($_POST['wpg_settings_form_submit']) &&
         <td>
           <input name="wpg_ticket_base_url" size="80"
             value="<?php echo get_site_option('wpg_ticket_base_url')?>">
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">Active Git Repositories: <br/>
-        (One Repo Each Line, with following format:<br/>
-         USER_NAME;REPO_LABEL;REPO_PATH)
-        </th>
-        <td>
-          <textarea name="wpg_active_repos" 
-                    rows="16" cols="98"
-          ><?php echo get_site_option('wpg_active_repos')?></textarea>
         </td>
       </tr>
       <tr>
