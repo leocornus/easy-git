@@ -25,6 +25,10 @@ if(isset($_POST['wpg_active_git_repo_form_submit']) &&
                 $repo = wpg_get_repo($repo_label);
                 //var_dump($repo);
                 break;
+            case "delete":
+                // delete a repository.
+                wpg_handle_repos_admin_delete($repo_label);
+                break;
         }
     }
 }
@@ -232,6 +236,25 @@ function wpg_handle_repos_admin_form_submit() {
 }
 
 /**
+ * handle the request to delete a repoistory.
+ */
+function wpg_handle_repos_admin_delete($repo_label) {
+
+    $counts = wpg_remove_repo($repo_label);
+
+    if ($counts) {
+        $msg = "Successfully Removed Repository: <b>" .
+               $repo_label . 
+               "</b> and its contributor associations!";
+    } else {
+        $msg = "Failed to Remove Repository: <b>" . 
+               $repo_label . "</b>!";
+    }
+
+    wpg_notification_msg($msg);
+}
+
+/**
  * create a new repo based on repo label and path.
  */
 function wpg_replace_repo($repo_label, $repo_path, $repo_id=0) {
@@ -254,6 +277,27 @@ function wpg_replace_repo($repo_label, $repo_path, $repo_id=0) {
     } else {
         return -1;
     }
+}
+
+/**
+ * delete a repository and all its contributor associations.
+ */
+function wpg_remove_repo($repo_label) {
+
+    global $wpdb;
+    // reomve repository record and all associated records in 
+    // user repo associate table.
+    $repo = wpg_get_repo($repo_label);
+    // delete contributor associations 
+    $count = $wpdb->delete('wpg_user_repo_associate', 
+                           array('repo_id' => $repo['repo_id']),
+                           array('%d'));
+
+    $rows = $wpdb->delete('wpg_active_git_repos',
+                          array('repo_id' => $repo['repo_id']),
+                          array('%d'));
+
+    return $rows;
 }
 
 /**
