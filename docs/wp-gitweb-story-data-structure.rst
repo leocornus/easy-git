@@ -59,6 +59,9 @@ wpg_get_repo_contributors($repo_id)
 wpg_replace_repo($repo_label, $repo_path, $repo_id=0)
   create a new repository if the repo_id is 0. Otherwise, replace the existing one.
 
+wpg_remove_repo($repo_label)
+  remove the given repository and all its contributor associations.
+
 wpg_associate_users_to_repo($users, $repo_id, $replace=true)
   associate a list of users to the given repository
 
