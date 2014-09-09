@@ -21,6 +21,7 @@ wp-gitweb
 Change Logs
 -----------
 
+- `wp-gitweb Release 0.4.0 <docs/wp-gitweb/wp-gitweb-release-0.4.0.rst>`_ [Under Development]
 - `wp-gitweb Release 0.3.0 <docs/wp-gitweb-release-0.3.0.rst>`_
 
 LICENSE
