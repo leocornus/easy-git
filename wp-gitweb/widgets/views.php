@@ -46,6 +46,16 @@ EOT;
                 break;
             case "Commit":
                 $the_view = wpg_widget_commit_view($context);
+                session_start();
+                // set the action to check logs
+                $context['action'] = "Check Logs";
+                // save the commit result on context.
+                $context['commit_message'] = $the_view;
+                // save the context on session.
+                $_SESSION['commit_context'] = $context;
+                session_write_close();
+                // redirect
+                header('Location: ' . $_SERVER['REQUEST_URI']);
                 break;
             default:
                 // using check status view.
@@ -118,6 +128,8 @@ function wpg_widget_log_view($context) {
     $repo = $context['repo'];
     $branch = $context['branch'];
     $base_path = $context['base_path'];
+    // get commit message if it is exist.
+    $commit_message = $context['commit_message'];
     $logs = wpg_get_log_list($base_path);
 
     $log_rows = array();
@@ -136,6 +148,7 @@ EOT;
     $alt_color_js = wpg_widget_tr_alternate_js("tr[id='log']",
           array("even" => "#FCFCEF"));
 $the_view = <<<EOT
+{$commit_message}
 <p>Commit Logs for Git Repository:<br />
 <b>{$repo}</b> <br />
 -- at Branch: <b>{$branch}</b></p>
