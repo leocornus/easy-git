@@ -34,6 +34,11 @@ The context will be update with action **Check Logs**.
 Then the page will be redirect to gitweb check logs page.
 The commit result will be show on the beginning of logs.
 
+TODO:
+
+Should we redirect to the details changeset view for the new
+commit? We should have the commit id.
+
 PHP Session
 -----------
 
