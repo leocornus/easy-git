@@ -605,15 +605,13 @@ EOT;
  */
 function wpg_widget_changeset_html($commit_log) {
 
-    $working_folder = $commit_log['working_folder'];
     // add 1 to skip the last slash '/'
     $pos = strlen($working_folder) + 1;
     $commit_id = $commit_log['commit_id'];
-    $base_path = $commit_log['repo_path'] . "/" . $working_folder;
+    $base_path = $commit_log['repo_path'];
 
     $file_trs = array();
-    foreach($commit_log['changeset'] as $file => $status) {
-        $filename = substr($file, $pos);
+    foreach($commit_log['changeset'] as $filename => $status) {
         $diff_url = $status;
         if($status === 'modified') {
             $diff_url = <<<EOT
@@ -667,11 +665,6 @@ EOT;
   </td>
 </tr>
 {$merge_view}
-<tr>
-  <td colspan="2">
-  <b>{$commit_log['working_folder']}</b>
-  </td>
-</tr>
 <tr>
   <td colspan="2">
   ---- <b>{$commit_log['change_stat']}</b>
