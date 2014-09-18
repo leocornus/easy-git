@@ -19,6 +19,16 @@ Whow only the body for a commit::
 
   $ git log --patch -1 --pretty=format:%b [COMMIT_ID]
 
+Workflow Thinking
+-----------------
+
+The easy way to implement this is changing the jQuery_ dialog
+to show the details change under the summary area.
+In case of big changeset, we will initialy show the first 5 files.
+More thang 5 files changes will be considered as **big changeset**.
+User can still review the details change for any file in this case
+by clicking the status link for the file.
+
 Syntax Highlight Solutions
 --------------------------
 
@@ -32,6 +42,20 @@ There will be different solutions for different tools.
 - command line process on server side and show the html
 - Pure JavaScript solution, highlight on Web page.
 - PHP parse the diff patch format and provide proper styles.
+
+Code Samples
+------------
+
+The following code shows how to use jQuery to get all changed files.
+Assume each file has a td with id '''filename'''::
+
+  <script type="text/javascript">
+  jQuery(document).ready(function($) {
+      $("td[id='filename']").each(function(index) {
+          console.log($(this).html());
+      });
+  });
+  </script>
 
 .. _Pygments: http://pygments.org/
 .. _highlight.js: https://highlightjs.org/
