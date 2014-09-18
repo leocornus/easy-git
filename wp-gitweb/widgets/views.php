@@ -620,10 +620,11 @@ function wpg_widget_changeset_html($commit_log) {
 >{$status}</a>
 EOT;
         }
+        // one tr for each file
         $file_trs[] = <<<EOT
 <tr id="log">
   <td align="center">{$diff_url}</td>
-  <td>{$filename}</td>
+  <td id="filename">{$filename}</td>
 </tr>
 EOT;
     }
@@ -639,7 +640,7 @@ EOT;
     $merge_view = wpg_widget_merge_html($commit_log);
 
     $changeset = <<<EOT
-<table><tbody>
+<table id="changeset"><tbody>
 <tr>
   <th>Full ID:</th>
   <td>{$commit_log['commit_id']}</td>
@@ -678,6 +679,34 @@ EOT;
 <tr>
   <th align="center">Status</th>
   <th>File Name</th>
+</tr>
+<tr>
+  <td colspan="2">
+    <b>Change is Details</b>
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        $("td[id='filename']").each(function(index) {
+            console.log($(this).html());
+            // send ajax request.
+            var data = {
+                "action" : "wpg_get_git_diff",
+                "base_path" : "{$base_path}",
+                "filename" : $(this).html(),
+                "commit_id" : "{$commit_id}"
+            };
+            $.post("wp-admin/admin-ajax.php", data, 
+                   function(response) {
+                var last = $("table[id='changeset'] > tbody:last");
+                last.append('<tr><td colspan="2">' + 
+                            response.replace('max-height:398px', '').
+                              replace('overflow: auto;', '').
+                              replace('\\n\\t', '</td></tr><tr><td colspan="2">') +
+                            '</td></tr>');
+            });
+        });
+    });
+    </script>
+  </td>
 </tr>
 </tbody></table>
 {$alt_tr_js}
