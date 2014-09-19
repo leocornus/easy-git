@@ -375,9 +375,9 @@ function changeDiff({$signature}) {
     jQuery.post("{$ajax_url}", data, function(response) {
 
         var patch = '<pre style="font-size: 2em; ' +
-                   'white-space: pre-wrap; ' + 
-                   'text-align: left; overflow: auto; ' + 
-                   'max-height:398px">' + response + '</pre>';
+                    'white-space: pre-wrap; ' + 
+                    'text-align: left; overflow: auto; ' + 
+                    'max-height:398px">' + response + '</pre>';
         jQuery("#gitDiff").html(patch);
     });
 }
@@ -692,6 +692,7 @@ EOT;
     <script type="text/javascript">
     jQuery(document).ready(function($) {
         $("td[id='filename']").each(function(index) {
+
             console.log($(this).html());
             // send ajax request.
             var data = {
@@ -704,9 +705,10 @@ EOT;
                    function(response) {
                 var last = $("table[id='changeset'] > tbody:last");
                 last.append('<tr><td colspan="2">' + 
-                            response.replace('max-height:398px', '').
-                              replace('overflow: auto;', '').
-                              replace('\\n\\t', '</td></tr><tr><td colspan="2">') +
+                            '<pre style="font-size: 2em; ' +
+                            'white-space: pre-wrap; ' + 
+                            'text-align: left;' + 
+                            '">' + response + '</pre>' +
                             '</td></tr>');
             });
         });
