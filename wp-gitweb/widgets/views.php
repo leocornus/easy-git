@@ -688,13 +688,19 @@ EOT;
 </tr>
 <tr>
   <td colspan="2">
-    <b>Change is Details</b>
+    <b>Change in Details</b>
     <script type="text/javascript">
     jQuery(document).ready(function($) {
         $("td[id='filename']").each(function(index) {
 
-            console.log($(this).html());
-            // send ajax request.
+            if(index > 9) {
+                // we only show up to 10 files a one time.
+                // TODO: do nothing for now.
+                return;
+            }
+
+            // console.log($(this).html());
+            // send ajax request to get patch for each file.
             var data = {
                 "action" : "wpg_get_git_diff",
                 "base_path" : "{$base_path}",
@@ -704,12 +710,20 @@ EOT;
             $.post("wp-admin/admin-ajax.php", data, 
                    function(response) {
                 var last = $("table[id='changeset'] > tbody:last");
+                var codeId = 'file' + index;
                 last.append('<tr><td colspan="2">' + 
-                            '<pre style="font-size: 2em; ' +
+                            '<pre style="font-size: 1.5em; ' +
                             'white-space: pre-wrap; ' + 
                             'text-align: left;' + 
-                            '">' + response + '</pre>' +
+                            '"><code class="diff"' +
+                            'id="' + codeId + 
+                            '">' + response + '</code></pre>' +
                             '</td></tr>');
+                $('pre code').each(
+                    function(i, block) {
+                        hljs.highlightBlock(block);
+                    }
+                );
             });
         });
     });

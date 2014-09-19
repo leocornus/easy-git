@@ -63,6 +63,14 @@ function wpg_register_resources() {
     // using wp_enqueue_script to load this js lib where you need.
     wp_register_style('jquery.dataTables',
               plugins_url('wp-gitweb/css/jquery.dataTables.css'));
+
+    // register highlight.js lib and styles.
+    wp_register_script('highlight-js',
+              plugins_url('wp-gitweb/js/highlight.min.js'), 
+              null, '8.2');
+    wp_register_style('highlight-js-default',
+              plugins_url('wp-gitweb/css/highlight.default.min.css'),
+              null, '8.2');
 }
 
 /**
