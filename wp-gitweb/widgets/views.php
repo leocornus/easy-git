@@ -328,6 +328,8 @@ EOT;
  */
 function wpg_widget_diff_dialog_js($has_commit_id=false) {
 
+    $ajax_url = admin_url("admin-ajax.php");
+
     $signature = "basePath, fileName";
     $data = <<<EOT
         "base_path" : basePath,
@@ -370,7 +372,7 @@ function changeDiff({$signature}) {
 {$data}
     };
 
-    jQuery.post("wp-admin/admin-ajax.php", data, function(response) {
+    jQuery.post("{$ajax_url}", data, function(response) {
 
         jQuery("#gitDiff").html(response);
     });
