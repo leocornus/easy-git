@@ -374,7 +374,11 @@ function changeDiff({$signature}) {
 
     jQuery.post("{$ajax_url}", data, function(response) {
 
-        jQuery("#gitDiff").html(response);
+        var patch = '<pre style="font-size: 2em; ' +
+                   'white-space: pre-wrap; ' + 
+                   'text-align: left; overflow: auto; ' + 
+                   'max-height:398px">' + response + '</pre>';
+        jQuery("#gitDiff").html(patch);
     });
 }
 </script>

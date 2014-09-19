@@ -484,13 +484,8 @@ function wpg_get_git_diff($base_path, $filename,
 
     // TODO: NOT suppose format the difference here.
     // should just return the difference line by line as an array
-    $pre = <<<EOT
-<pre style="font-size: 2em; white-space: pre-wrap; 
-  text-align: left; overflow: auto; max-height:398px"
->{$diff}</pre>
-EOT;
 
-    return $pre;
+    return $diff;
 }
 
 /**
@@ -503,14 +498,7 @@ function wpg_get_git_log_diff($base_path, $filename, $commit_id,
     $git_cmd = "git log -1 -w -p " . $commit_id . " " . $filename;
     $diff = htmlentities(shell_exec($git_cmd));
 
-    // TODO: 
-    $pre = <<<EOT
-<pre style="font-size: 2em; white-space: pre-wrap; 
-  text-align: left; overflow: auto; max-height:398px"
->{$diff}</pre>
-EOT;
-
-    return $pre;
+    return $diff;
 }
 
 /**
