@@ -46,11 +46,11 @@ EOT;
                 break;
             case "Commit":
                 $the_view = wpg_widget_commit_view($context);
-                session_start();
                 // set the action to check logs
                 $context['action'] = "Check Logs";
                 // save the commit result on context.
                 $context['commit_message'] = $the_view;
+                session_start();
                 // save the context on session.
                 $_SESSION['commit_context'] = $context;
                 session_write_close();
@@ -393,6 +393,68 @@ EOT;
 }
 
 /**
+ *
+ */
+function wpg_widget_files_patch_js($base_path, 
+                                   $commit_id=null,
+                                   $max_files=10,
+                                   $filecontainer_id='filename',
+                                   $table_id='changeset',
+                                   $td_colspan=2) {
+
+    $ajax_url = admin_url('admin-ajax.php');
+
+    $commit_id_data = "";
+    if($commit_id) {
+        $commit_id_data = '"commit_id" : "' . $commit_id . '",';
+    }
+
+    $js = <<<EOT
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+    $("td[id='{$filecontainer_id}']").each(function(index) {
+
+        if(index >= {$max_files}) {
+            // we only show up to 10 files a one time.
+            // TODO: do nothing for now.
+            return;
+        }
+
+        // console.log($(this).html());
+        // send ajax request to get patch for each file.
+        var data = {
+            "action" : "wpg_get_git_diff",
+            {$commit_id_data}
+            "base_path" : "{$base_path}",
+            "filename" : $(this).html()
+        };
+        $.post("{$ajax_url}", data, 
+               function(response) {
+            var last = $("table[id='{$table_id}'] > tbody:last");
+            var codeId = 'file' + index;
+            last.append('<tr><td colspan="{$td_colspan}">' + 
+                        '<pre style="font-size: 1.5em; ' +
+                        'white-space: pre-wrap; ' + 
+                        'text-align: left;' + 
+                        '"><code class="diff"' +
+                        'id="' + codeId + 
+                        '">' + response + '</code></pre>' +
+                        '</td></tr>');
+            $('pre code').each(
+                function(i, block) {
+                    hljs.highlightBlock(block);
+                }
+            );
+        });
+    });
+});
+</script>
+EOT;
+
+    return $js;
+}
+
+/**
  * preparing the commit form fieldset in tr format.
  */
 function wpg_widget_commit_fieldset($context) {
@@ -640,6 +702,8 @@ EOT;
         array("even" => "#FCFCEF"));
     // we will pass commit id here.
     $diff_dialog_js = wpg_widget_diff_dialog_js(true);
+    // the java script to show the patch view...
+    $patch_js = wpg_widget_files_patch_js($base_path, $commit_id);
     // generate html safe comment.
     $comment = htmlspecialchars($commit_log['comment']);
     $comment = wpg_auto_link_ticket_id($comment);
@@ -687,50 +751,12 @@ EOT;
   <th>File Name</th>
 </tr>
 <tr>
-  <td colspan="2">
+  <th colspan="2">
     <b>Change in Details</b>
-    <script type="text/javascript">
-    jQuery(document).ready(function($) {
-        $("td[id='filename']").each(function(index) {
-
-            if(index > 9) {
-                // we only show up to 10 files a one time.
-                // TODO: do nothing for now.
-                return;
-            }
-
-            // console.log($(this).html());
-            // send ajax request to get patch for each file.
-            var data = {
-                "action" : "wpg_get_git_diff",
-                "base_path" : "{$base_path}",
-                "filename" : $(this).html(),
-                "commit_id" : "{$commit_id}"
-            };
-            $.post("wp-admin/admin-ajax.php", data, 
-                   function(response) {
-                var last = $("table[id='changeset'] > tbody:last");
-                var codeId = 'file' + index;
-                last.append('<tr><td colspan="2">' + 
-                            '<pre style="font-size: 1.5em; ' +
-                            'white-space: pre-wrap; ' + 
-                            'text-align: left;' + 
-                            '"><code class="diff"' +
-                            'id="' + codeId + 
-                            '">' + response + '</code></pre>' +
-                            '</td></tr>');
-                $('pre code').each(
-                    function(i, block) {
-                        hljs.highlightBlock(block);
-                    }
-                );
-            });
-        });
-    });
-    </script>
-  </td>
+  </th>
 </tr>
 </tbody></table>
+{$patch_js}
 {$alt_tr_js}
 {$diff_dialog_js}
 EOT;
