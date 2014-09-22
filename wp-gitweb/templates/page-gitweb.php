@@ -8,7 +8,9 @@
 <?php
 get_header();
 wp_enqueue_script('jquery-ui-dialog');
+wp_enqueue_script('highlight-js');
 wp_enqueue_style('jquery-ui');
+wp_enqueue_style('highlight-js-default');
 
 $context = wpg_request_context();
 // we will using the left nav and content layout.

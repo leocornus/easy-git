@@ -221,6 +221,9 @@ function wpg_widget_status_view($context) {
     $branch = $context['branch'];
     $base_path = $context['base_path'];
     $changes = wpg_get_change_list($base_path);
+    // preparing the patch view js.
+    $patch_js = wpg_widget_files_patch_js($base_path, null,
+        10, 'filename', 'status', 3);
 
     $status_view = "nothing to commit (working directory is clean)";
     if (is_array($changes) && count($changes) > 0) {
@@ -248,7 +251,7 @@ EOT;
            id="commits" 
            value="{$filename}"/>
   </td>
-  <td>{$filename}</td>
+  <td id="filename">{$filename}</td>
   <td align="center">{$diff_url}</td>
 </tr>
 
@@ -288,7 +291,11 @@ EOT;
     {$commit_trs}
     </tbody></table>
   </td></tr>
+  <tr><th colspan="3">
+    <b>Change in Details</b>
+  </th></tr>
 </tbody></table>
+{$patch_js}
 {$alt_color_js}
 {$diff_dialog_js}
 
