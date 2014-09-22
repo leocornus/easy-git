@@ -7,4 +7,6 @@ Change Logs
   <Double_POST_Problem_Solution.rst>`_
 - `Load details patch in the changeset view 
   <Details-Patch-on-Changeset-View-Design-Story.rst>`_
+- `Show merge status for all commits
+  <wp-gitweb-Merge-Status-Design-Story.rst>`_
 - `FTP Management Story <wp-gitweb-FTP-Management-Story.rst>`_

@@ -24,10 +24,13 @@ Workflow Thinking
 
 The easy way to implement this is changing the jQuery_ dialog
 to show the details change under the summary area.
-In case of big changeset, we will initialy show the first 5 files.
-More thang 5 files changes will be considered as **big changeset**.
+In case of big changeset, we will initialy show the first 10 files.
+More thang 10 files changes will be considered as **big changeset**.
 User can still review the details change for any file in this case
 by clicking the status link for the file.
+
+The patch view will appear for both check status view and
+commit view.
 
 Syntax Highlight Solutions
 --------------------------
