@@ -51,6 +51,10 @@ register_activation_hook(WPG_PLUGIN_PATH . '/' . basename(__FILE__),
 add_action('init', 'wpg_register_resources');
 function wpg_register_resources() {
 
+    // register the default wpg styles.
+    wp_register_style('wpg-styles',
+              plugins_url('wp-gitweb/css/wpg.css'));
+
     // using wp_enqueue_style to load this css.
     // jquery ui dialog style seens not automatically loaded.
     wp_register_style('jquery-ui',

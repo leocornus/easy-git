@@ -1,0 +1,19 @@
+/**
+ * default styles for wp-gitweb plugin.
+ */
+
+/**
+ * styles for notification message.
+ */
+div.updated {
+  background-color: #ffffe0;
+  border-color: #e6db55;
+  border-width: 1px;
+  border-style: solid;
+  line-height: 2em;
+  font-size: 1.5em;
+}
+
+div.updated p {
+  margin: 0.5em 0 0.5em;
+}
