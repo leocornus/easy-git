@@ -198,15 +198,15 @@ function wpg_get_request_param($param) {
 function wpg_request_context() {
 
     // check if this is redirect from commit success!
-    session_start();
-    if(isset($_SESSION['commit_context'])) {
-        $context = $_SESSION['commit_context'];
-        unset($_SESSION['commit_context']);
-        session_write_close();
-        return $context;
-    }
-    // close session anyway!
-    session_write_close();
+    //session_start();
+    //if(isset($_SESSION['commit_context'])) {
+    //    $context = $_SESSION['commit_context'];
+    //    unset($_SESSION['commit_context']);
+    //    //session_write_close();
+    //    return $context;
+    //}
+    //// close session anyway!
+    //session_write_close();
 
     $context = array();
 

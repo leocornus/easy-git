@@ -47,15 +47,18 @@ EOT;
             case "Commit":
                 $the_view = wpg_widget_commit_view($context);
                 // set the action to check logs
-                $context['action'] = "Check Logs";
-                // save the commit result on context.
-                $context['commit_message'] = $the_view;
-                session_start();
-                // save the context on session.
-                $_SESSION['commit_context'] = $context;
-                session_write_close();
+                //$context['action'] = "Check Logs";
+                //// save the commit result on context.
+                //$context['commit_message'] = $the_view;
+                //session_start();
+                //// save the context on session.
+                //$_SESSION['commit_context'] = $context;
+                ////session_write_close();
                 // redirect
-                header('Location: ' . $_SERVER['REQUEST_URI']);
+                $commit_id = wpg_extract_commit_id($the_view);
+                header('Location: ' . 
+                       $_SERVER['REQUEST_URI'] . '/commit/?id=' .
+                       $commit_id);
                 break;
             default:
                 // using check status view.
