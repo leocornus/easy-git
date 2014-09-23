@@ -179,6 +179,10 @@ function wpg_get_request_param($param) {
         $value = $_POST[$param];
     } elseif (array_key_exists($param, $_GET)) {
         $value = $_GET[$param];
+    } elseif (array_key_exists($param, $_COOKIE)) {
+        // cookie is one of the request in PHP.
+        // check manuel $_REQUEST for details.
+        $value = $_COOKIE[$param];
     } else {
         $value = '';
     }
@@ -239,6 +243,9 @@ function wpg_request_context() {
 
     // the submit action.
     $context['action'] = wpg_get_request_param('submit');
+    // the state message, mainly from cookie.
+    $context['state_message'] = 
+        wpg_get_request_param('state_message');
 
     return $context;
 }

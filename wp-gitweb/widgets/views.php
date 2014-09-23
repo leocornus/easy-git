@@ -46,19 +46,19 @@ EOT;
                 break;
             case "Commit":
                 $the_view = wpg_widget_commit_view($context);
-                // set the action to check logs
-                //$context['action'] = "Check Logs";
-                //// save the commit result on context.
-                //$context['commit_message'] = $the_view;
-                //session_start();
-                //// save the context on session.
-                //$_SESSION['commit_context'] = $context;
-                ////session_write_close();
-                // redirect
+                // redirect to status view with current repo
+                // and current user.
                 $commit_id = wpg_extract_commit_id($the_view);
-                header('Location: ' . 
-                       $_SERVER['REQUEST_URI'] . '/commit/?id=' .
-                       $commit_id);
+                $message = 'Changes are successfully commit at ' .
+                    '<strong>' . $commit_id . '</strong> ' . 
+                    'Check Logs for more details.';
+                $states = array(
+                    'state_message' => $message,
+                    'repo' => $context['repo'],
+                    'submit' => 'Check Status',
+                    'gituser' => $context['gituser']);
+                wpg_set_cookie_state($states, 600);
+                header('Location: ' . $_SERVER['REQUEST_URI']);
                 break;
             default:
                 // using check status view.
@@ -228,6 +228,20 @@ function wpg_widget_status_view($context) {
     $patch_js = wpg_widget_files_patch_js($base_path, null,
         10, 'filename', 'status', 3);
 
+    // check if there is notification message.
+    $notice = "";
+    if($context['state_message'] !== '') {
+        $notice = wpg_notification_msg($context['state_message'],
+                                       'updated', false);
+        // clean state!
+        $states = array(
+            'state_message' => '',
+            'repo' => '',
+            'submit' => '',
+            'gituser' => '');
+        wpg_set_cookie_state($states, 3600, true);
+    }
+
     $status_view = "nothing to commit (working directory is clean)";
     if (is_array($changes) && count($changes) > 0) {
 
@@ -321,6 +335,7 @@ EOT;
     }
 
     $the_view = <<<EOT
+{$notice}
 <p>Change status for Git Repository: <br />
 <b>{$repo}</b> <br />
 -- at Branch: <b>{$branch}</b></p>

@@ -11,6 +11,7 @@ wp_enqueue_script('jquery-ui-dialog');
 wp_enqueue_script('highlight-js');
 wp_enqueue_style('jquery-ui');
 wp_enqueue_style('highlight-js-default');
+wp_enqueue_style('wpg-styles');
 
 $context = wpg_request_context();
 // we will using the left nav and content layout.
