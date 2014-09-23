@@ -17,6 +17,21 @@ function wpg_auto_link_ticket_id($subject) {
 }
 
 /**
+ * extract the commit id from the given message.
+ */
+function wpg_extract_commit_id($message) {
+
+    // the pattern for the commit id.
+    $pattern = '/( ){1}([0-9a-fA-F]{7})(\]| |\)){1}/';
+    $commit_id = null;
+    if(preg_match($pattern, $message, $matches) === 1) {
+        $commit_id = $matches[2];
+    }
+
+    return $commit_id;
+}
+
+/**
  * extract the ticket id from the commit comment.
  * assume the ticket it is reference in the following format.
  * 
