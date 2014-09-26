@@ -139,10 +139,12 @@ function wpg_widget_log_view($context) {
     foreach($logs as $log) {
         $log_rows[] = <<<EOT
 <tr id="log">
-  <td><a href='{$log["url"]}'>{$log["id"]}</a></td>
+  <td><a id='commit-id' href='{$log["url"]}'>{$log["id"]}</a></td>
   <td>{$log["email"]}</td>
   <td>{$log["date"]}</td>
   <td>{$log["comment"]}</td>
+  <td id='uat-{$log["id"]}'></td>
+  <td id='prod-{$log["id"]}'></td>
 </tr>
 EOT;
     }
@@ -150,7 +152,11 @@ EOT;
     $log_trs = implode("\n", $log_rows);
     $alt_color_js = wpg_widget_tr_alternate_js("tr[id='log']",
           array("even" => "#FCFCEF"));
-$the_view = <<<EOT
+
+    // Java Script to check merge status.
+    $merge_status_js = wpg_widget_merge_status_js("a[id='commit-id']");
+
+    $the_view = <<<EOT
 {$commit_message}
 <p>Commit Logs for Git Repository:<br />
 <b>{$repo}</b> <br />
@@ -163,6 +169,8 @@ $the_view = <<<EOT
     <th width="100">Author</th>
     <th width="80">Date</th>
     <th>Comment</th>
+    <th>UAT</th>
+    <th>Production</th>
   </tr>
   </thead>
   <tfoot>
@@ -171,12 +179,15 @@ $the_view = <<<EOT
     <th width="100">Author</th>
     <th width="80">Date</th>
     <th>Comment</th>
+    <th>UAT</th>
+    <th>Production</th>
   </tr>
   </tfoot>
   <tbody>
   {$log_trs}
 </tbody></table>
 {$alt_color_js}
+{$merge_status_js}
 EOT;
 
     return $the_view;
@@ -214,6 +225,39 @@ EOT;
     return $js;
 }
 
+/**
+ * js client to query merge status for all commits.
+ */
+function wpg_widget_merge_status_js($selector) {
+
+    $ajax_url = admin_url('admin-ajax.php');
+
+    $js = <<<EOT
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+    $("{$selector}").each(function(index) {
+        var commitId = $(this).html();
+        //$("td[id='uat-" + commitId + "']").html('uat' + commitId);
+        //console.log(commitId);
+        // query merge status.
+        var data = {
+            "action" : "wpg_get_merge_status",
+            "commit_id" : commitId
+        };
+        $.post("{$ajax_url}", data, function(response) {
+
+            var status = JSON.parse(response);
+            //console.log(status);
+            $("td[id='uat-" + commitId + "']").html(status['uat']);
+            $("td[id='prod-" + commitId + "']").html(status['prod']);
+        });
+    });
+});
+</script>
+EOT;
+
+    return $js;
+}
 
 /**
  * view for git status review
