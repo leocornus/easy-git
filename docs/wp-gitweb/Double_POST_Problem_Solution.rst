@@ -37,7 +37,35 @@ The commit result will be show on the beginning of logs.
 TODO:
 
 Should we redirect to the details changeset view for the new
-commit? We should have the commit id.
+commit? We should have the commit id by query the git commit message.
+Here is a sample pattern::
+
+  $pattern = '/( ){1}([0-9a-fA-F]{7,40})(\]| |\)){1}/';
+
+The `Cookie Solution`_ solution is the winner.
+
+Cookie Solution
+---------------
+
+Cookie might be simple and easy solution.
+WordPress heavely depends cookie `WordPress Cookies`_.
+As long as we stay on WordPress context, 
+it should be save to use cookie.
+
+To handle cookie we will introduce the new function named
+'''wpg_set_cookie_state'''.
+For this double post submit issue, we will have the following
+states stored in cookie::
+
+  $states = array(
+      'state_message' => $message,
+      'repo' => $context['repo'],
+      'submit' => 'Check Status',
+      'gituser' => $context['gituser']);
+
+The function '''wpg_get_request_param''' will be updated to
+get param from cookie too.
+As the PHP `HTTP Request variables`_ includes the contents of cookie.
 
 PHP Session
 -----------
@@ -52,3 +80,5 @@ Here are the important PHP functions we are using::
   session_write_close();
 
 .. _PRG Pattern: http://en.wikipedia.org/wiki/Post/Redirect/Get
+.. _WordPress Cookies: http://codex.wordpress.org/WordPress_Cookies
+.. _HTTP Request variables: http://php.net/manual/en/reserved.variables.request.php
