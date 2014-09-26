@@ -124,3 +124,40 @@ function wpg_username_suggestion_cb() {
     echo $response;
     exit;
 }
+
+/**
+ * WordPress AJAX callback for check merge status.
+ */
+add_action('wp_ajax_nopriv_wpg_get_merge_status', 'wpg_get_merge_status');
+add_action('wp_ajax_wpg_get_merge_status', 'wpg_get_merge_status');
+function wpg_get_merge_status() {
+
+    $commit_id = wpg_get_request_param('commit_id');
+    $merge_folder = get_site_option('wpg_merge_folder');
+    $status = array();
+
+    // check merge status on UAT...
+    $uat_branch = get_site_option('wpg_merge_uat_branch');
+    $uat_path = $merge_folder . DIRECTORY_SEPARATOR . $uat_branch;
+    $uat_id = wpg_git_log_grep($uat_path, $uat_branch, $commit_id);
+    if($uat_id === False) {
+        // not find in uat.
+        $status['uat'] = 'Pending';
+        $status['prod'] = 'Pending';
+    } else {
+        $status['uat'] = $uat_id[0];
+        $prod_branch = get_site_option('wpg_merge_prod_branch');
+        $prod_path = $merge_folder . DIRECTORY_SEPARATOR . 
+                     $prod_branch;
+        $prod_id = 
+            wpg_git_log_grep($prod_path, $prod_branch, $commit_id);
+        if($prod_id === False) {
+            $status['prod'] = 'Pending';
+        } else {
+            $status['prod'] = $prod_id[0];
+        }
+    }
+
+    echo json_encode($status);
+    exit;
+}

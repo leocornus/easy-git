@@ -93,7 +93,7 @@ EOT;
  * it is specificely for form submint redirect.
  *
  * $states provide a array with cookie names and values.
- * $expire tell how log those state will alive, in seconds.
+ * $expire tell how long those state will alive, in seconds.
  * $clean indicates clean the cookie states or not, default is false
  */
 function wpg_set_cookie_state($states, $expire=60, $clean=false) {
