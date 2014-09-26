@@ -134,6 +134,7 @@ function wpg_widget_log_view($context) {
     // get commit message if it is exist.
     $commit_message = $context['commit_message'];
     $logs = wpg_get_log_list($base_path);
+    $wait_image =  plugins_url('wp-gitweb/images/wait.gif');
 
     $log_rows = array();
     foreach($logs as $log) {
@@ -143,8 +144,10 @@ function wpg_widget_log_view($context) {
   <td>{$log["email"]}</td>
   <td>{$log["date"]}</td>
   <td>{$log["comment"]}</td>
-  <td id='uat-{$log["id"]}'></td>
-  <td id='prod-{$log["id"]}'></td>
+  <td id='uat-{$log["id"]}'><img src='{$wait_image}' height="12"/>
+  </td>
+  <td id='prod-{$log["id"]}'><img src='{$wait_image}' height="12"/>
+  </td>
 </tr>
 EOT;
     }
