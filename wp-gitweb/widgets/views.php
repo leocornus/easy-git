@@ -251,8 +251,20 @@ jQuery(document).ready(function($) {
 
             var status = JSON.parse(response);
             //console.log(status);
-            $("td[id='uat-" + commitId + "']").html(status['uat']);
-            $("td[id='prod-" + commitId + "']").html(status['prod']);
+            var uat_td = $("td[id='uat-" + commitId + "']")
+            uat_td.html(status['uat']);
+            if(status['uat'] == 'Pending') {
+                uat_td.css('background-color', 'red');
+            } else {
+                uat_td.css('background-color', 'green');
+            }
+            var prod_td = $("td[id='prod-" + commitId + "']")
+            prod_td.html(status['prod']);
+            if(status['prod'] == 'Pending') {
+                prod_td.css('background-color', 'red');
+            } else {
+                prod_td.css('background-color', 'green');
+            }
         });
     });
 });
