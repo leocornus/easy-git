@@ -7,8 +7,63 @@ Actions
 - create a separate folder for checking merge status.
 - this folder will be read only for all regular users and 
   anonymous users.
-- jQuery client to query each commit and display the result.
+- jQuery client to query the merge status for each commit and 
+  display the result.
 - call back PHP fucntions to execute git query and reply the 
   result to jQuery client.
 
+API Data Structure
+------------------
 
+As we will use wp-ajax action to query the merge status for 
+each commit.
+
+Here is the data structure for query::
+
+  var data = {
+    "action" : "wpg_get_merge_status",
+    "commit_id" : commitId
+  }
+
+The response data structure will be like the following::
+
+  var status = JSON.parse(response);
+  console.log('UAT Merge Status: " + status['uat']);
+  console.log('Prod Merge Status: " + status['prod']);
+
+New Options
+-----------
+
+Need introduce new options to save the location of 
+staging branch and production branch.
+
+If we use branch name as the folder name and 
+reuse the merge folder as the base folder for staging 
+and production branch's location, we don't need new options.
+
+Here is the code sample to get those pathes::
+
+  $merge_folder = get_site_option('wpg_merge_folder');
+  $uat_branch = get_site_option('wpg_merge_uat_branch');
+  $prod_branch = get_site_option('wpg_merge_prod_branch');
+
+  $uat_path = $merge_folder . DIRECTORY_SEPARATOR . $uat_branch;
+  $prod_path = $merge_folder . DIRECTORY_SEPARATOR . $prod_branch;
+
+UI Design
+---------
+
+Just need add two columns for log view commits list table to 
+display the merge status, one for UAT branch and one for Production branch.
+Column header will call '''UAT''' and '''Production'''.
+Both columns will have initial value '''loading image''' 
+for each commit.
+
+Sorting the jQuery Selector Result
+----------------------------------
+
+here are code samples::
+
+  jQuery("td[id='commit-id']").sort(function(a, b) {
+    return a - b;
+  }).each(...);
