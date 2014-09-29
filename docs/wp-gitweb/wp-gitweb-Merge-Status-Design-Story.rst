@@ -1,4 +1,4 @@
-`wp-gitweb RElease 0.4.0 <wp-gitweb-release-0.4.0.rst>`_ > 
+`wp-gitweb Release 0.4.0 <wp-gitweb-release-0.4.0.rst>`_ > 
 Design Story for displaying the merge status for each commit.
 
 Actions
@@ -53,11 +53,20 @@ Here is the code sample to get those pathes::
 UI Design
 ---------
 
+'''New columns for log view'''
+
 Just need add two columns for log view commits list table to 
 display the merge status, one for UAT branch and one for Production branch.
 Column header will call '''UAT''' and '''Production'''.
 Both columns will have initial value '''loading image''' 
 for each commit.
+
+'''Merge Status for Anonymous User'''
+
+Update the details changeset view to show merge status for 
+anonymous users (none code reviewer).
+Bascially, update the function '''wpg_widget_merge_html''' to handle
+users who don't have '''code_reviewer''' role, or anonymous users.
 
 Sorting the jQuery Selector Result
 ----------------------------------
