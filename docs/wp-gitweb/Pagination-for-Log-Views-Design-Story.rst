@@ -1,4 +1,4 @@
-`wp-gitweb RElease 0.4.0 <wp-gitweb-release-0.4.0.rst>`_ > 
+`wp-gitweb Release 0.4.0 <wp-gitweb-release-0.4.0.rst>`_ > 
 Design Story for adding pagination for git logs view.
 
 As the change logs are more than 50, it will be very hard to 
@@ -16,11 +16,19 @@ There 2 solutions we are considering now:
 - cookie solution
 - AJAX solution
 
+New Site Option
+---------------
+
+Need introduce new site option for user to set the maxium commits
+for each page.
+The new option will have name **wpg_max_commits_per_page**.
+It could be set in the page **Dashboard** -> **General Settings**.
+
 Pagination Support from Git
 ---------------------------
 
 The Git log commmand has very good support for Pagination_.
-We can use either '''since until''' or '''commit limiting''' to
+We can use either **since until** or **commit limiting** to
 do Pagination_.
 
 Sample for commit limiting::
