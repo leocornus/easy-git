@@ -275,6 +275,41 @@ EOT;
 }
 
 /**
+ * js client to query merge status for a single commit.
+ */
+function wpg_widget_single_merge_status_js($commit_id, $selector) {
+
+    $ajax_url = admin_url('admin-ajax.php');
+
+    $js = <<<EOT
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+    // query merge status for the given commit.
+    var data = {
+        "action" : "wpg_get_merge_status",
+        "commit_id" : "{$commit_id}"
+    };
+    $.post("{$ajax_url}", data, function(response) {
+
+        var status = JSON.parse(response);
+        //$.each(status, function() {
+        //    $.each(this, function(name, value) {
+        //        console.log(name + '=' + value);
+        //    });
+        //});
+
+        var mergeMsg = "UAT " + status['uat'] + "<br/>" + 
+                       "Prod " + status['prod'];
+        $("{$selector}").html(mergeMsg);
+    });
+});
+</script>
+EOT;
+
+    return $js;
+}
+
+/**
  * view for git status review
  */
 function wpg_widget_status_view($context) {
@@ -962,13 +997,19 @@ function wpg_widget_merge_history_html($commit_comment,
  */
 function wpg_widget_merge_html($commit_log) {
 
+    $wait_image =  plugins_url('wp-gitweb/images/wait.gif');
+
     // if no merge folder set up, skip it.
     $merge_folder= get_site_option('wpg_merge_folder');
     $merge_path = wpg_get_user_merge_path($merge_folder);
     if(empty($merge_path)) {
-        // return empty view.
-        return "";
-    }
+        // none code reviewer, show the anonymous view.
+        // load the initial waiting image and 
+        $merge_html = "<img src='{$wait_image}'/>";
+        // get ready the js client to query merge status.
+        $status_js = wpg_widget_single_merge_status_js(
+            $commit_log['commit_id'], "td[id='merge-status']");
+    } else {
 
     $dev_branch = get_site_option('wpg_merge_dev_branch');
     $uat_branch = get_site_option('wpg_merge_uat_branch');
@@ -998,13 +1039,15 @@ function wpg_widget_merge_html($commit_log) {
                                           $prod_branch);
         $merge_html = $merge_html . "<br/>" . $prod_merge_html;
     }
+    }
  
     $view = <<<EOT
 <tr>
-  <th>Merge:</th>
-  <td style="background-color: rgb(252, 252, 239);">
+  <th>Merge Status:</th>
+  <td id="merge-status" style="background-color: rgb(252, 252, 239);">
     {$merge_html}
   </td>
+  {$status_js}
 </tr>
 EOT;
 
