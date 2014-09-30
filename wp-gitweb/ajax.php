@@ -138,23 +138,23 @@ function wpg_get_merge_status() {
 
     // check merge status on UAT...
     $uat_branch = get_site_option('wpg_merge_uat_branch');
+    $prod_branch = get_site_option('wpg_merge_prod_branch');
     $uat_path = $merge_folder . DIRECTORY_SEPARATOR . $uat_branch;
     $uat_id = wpg_git_log_grep($uat_path, $uat_branch, $commit_id);
     if($uat_id === False) {
         // not find in uat.
-        $status['uat'] = 'Pending';
-        $status['prod'] = 'Pending';
+        $status[$uat_branch] = 'Pending';
+        $status[$prod_branch] = 'Pending';
     } else {
-        $status['uat'] = $uat_id[0];
-        $prod_branch = get_site_option('wpg_merge_prod_branch');
+        $status[$uat_branch] = $uat_id[0];
         $prod_path = $merge_folder . DIRECTORY_SEPARATOR . 
                      $prod_branch;
         $prod_id = 
             wpg_git_log_grep($prod_path, $prod_branch, $commit_id);
         if($prod_id === False) {
-            $status['prod'] = 'Pending';
+            $status[$prod_branch] = 'Pending';
         } else {
-            $status['prod'] = $prod_id[0];
+            $status[$prod_branch] = $prod_id[0];
         }
     }
 
