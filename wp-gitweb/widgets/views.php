@@ -303,13 +303,31 @@ jQuery(document).ready(function($) {
         //        console.log(name + '=' + value);
         //    });
         //});
-
-        var mergeMsg = "{$uat_branch} " + status['{$uat_branch}'] + 
-                       "<br/>" + 
-                       "{$prod_branch} " + status['{$prod_branch}'];
+        mergeMsg = mergeMessage('{$uat_branch}', 
+                                status['{$uat_branch}']) +
+                   "<br/>" +
+                   mergeMessage('{$prod_branch}', 
+                                status['{$prod_branch}']);
         $("{$selector}").html(mergeMsg);
     });
 });
+
+function mergeMessage(branch, status) {
+
+    // the background color
+    var color = "green";
+    if(status == 'Pending') {
+        color = "red";
+    }
+
+    // a little style to line up.
+    var msg = "<span style='display: inline-block; width: 128px;" + 
+              "'><b>" + branch + "</b> branch: </span>" + 
+              "<span style='background-color: " + color +
+              "'>" + status + "</span>";
+
+    return msg;
+}
 </script>
 EOT;
 
