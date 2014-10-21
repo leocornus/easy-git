@@ -12,3 +12,11 @@ Change Logs
 - `Pagination for Log Views
   <Pagination-for-Log-Views-Design-Story.rst>`_
 - `FTP Management Story <wp-gitweb-FTP-Management-Story.rst>`_
+
+**TODO Ideas**
+
+- AJAX Driving **Load More** button for Check Logs view
+- Auto Complete for developers user name list.
+- Allow anonymous user to view all change logs
+- Allow anonymous user to download snapshots
+- 
