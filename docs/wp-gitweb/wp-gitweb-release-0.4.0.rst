@@ -15,8 +15,10 @@ Change Logs
 
 **TODO Ideas**
 
-- AJAX Driving **Load More** button for Check Logs view
+- AJAX Driving **Load More** button for Check Logs view.
+  Introduce new option to set the maxium commits to load at one
+  time
 - Auto Complete for developers user name list.
 - Allow anonymous user to view all change logs
 - Allow anonymous user to download snapshots
-- 
+- Allow users to browse all files for a repository. 
