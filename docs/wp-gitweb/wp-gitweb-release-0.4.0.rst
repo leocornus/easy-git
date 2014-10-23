@@ -19,6 +19,8 @@ Change Logs
   Introduce new option to set the maxium commits to load at one
   time
 - Auto Complete for developers user name list.
+- Ability to download repository snapshot from commit logs view,
+  for any commit.
 - Allow anonymous user to view all change logs
 - Allow anonymous user to download snapshots
 - Allow users to browse all files for a repository. 
