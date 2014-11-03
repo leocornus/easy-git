@@ -11,6 +11,7 @@ Change Logs
   <wp-gitweb-Merge-Status-Design-Story.rst>`_
 - `Pagination for Log Views
   <Pagination-for-Log-Views-Design-Story.rst>`_
+- `Change Logs View Redesign <Change-Logs-Redesign.rst>`_
 - `FTP Management Story <wp-gitweb-FTP-Management-Story.rst>`_
 
 **TODO Ideas**
