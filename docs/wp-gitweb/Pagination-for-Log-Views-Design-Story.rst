@@ -16,6 +16,12 @@ There 2 solutions we are considering now:
 - cookie solution
 - AJAX solution
 
+No need to do pagination, just load batch change logs at a time.
+We will offfer **Load More ...** link at the end of the page.
+Once user click it, we will load another set of batch change logs.
+A none display div on page will be used to track the page number.
+
+
 New Site Option
 ---------------
 
