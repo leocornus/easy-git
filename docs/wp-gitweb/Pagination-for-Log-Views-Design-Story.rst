@@ -30,6 +30,27 @@ for each page.
 The new option will have name **wpg_max_commits_per_page**.
 It could be set in the page **Dashboard** -> **General Settings**.
 
+AJAX Actions
+------------
+
+We will create WordPress AJAX actions to return the logs.
+
+**wpg_get_log_list**
+
+The function need update to handle pagination.
+
+jQuery Frontend
+---------------
+
+We will introduce a new file **gitweb.js** for JavaScript code.
+
+Actions:
+
+- load logs page by page
+- triger merge status JavaScript after load each page. 
+
+Need update merge status logic!
+
 Pagination Support from Git
 ---------------------------
 
@@ -45,5 +66,7 @@ Sample for commit limiting::
   $ git log --skip=20 -20 --oneline
   ; 4th page.
   $ git log --skip=60 -20 --oneline
+  ; Here is the pattern. PAGE_NUMBER starts from 0
+  $ git log --skip=PAGE_NUMBER * PER_PAGE -PER_PAGE --oneline
 
 .. _Pagination: http://en.wikipedia.org/wiki/Pagination
