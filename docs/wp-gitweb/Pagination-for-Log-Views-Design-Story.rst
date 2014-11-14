@@ -35,6 +35,8 @@ AJAX Actions
 
 We will create WordPress AJAX actions to return the logs.
 
+
+
 **wpg_get_log_list**
 
 The function need update to handle pagination.
@@ -49,7 +51,27 @@ Actions:
 - load logs page by page
 - triger merge status JavaScript after load each page. 
 
-Need update merge status logic!
+**Page Loading Workflow**
+
+- Initially the page just load necessary JavaScript with no logs.
+- **load more** will show progressing icon.
+- Once the page DOM is ready, JavaScript start to execute.
+- JavaScript to read the page number, starts from 0
+- AJAX call to load one page of logs.
+- JavaScript to append the logs to **tbody:last**.
+- hide the progressing icon when logs are all loaded.
+- update the page number hidden field.
+- AJAX call to load merge status for all commis in one page.
+
+Change Logs View Update
+-----------------------
+
+The change log list table will have a status **tfoot** row.
+It will have the hidden field to track the page number and
+**load more** link to load next page.
+It will also show progressing while it is loading logs.
+The **load more** link will change according to pagination situation:
+more pages, last page, ...
 
 Pagination Support from Git
 ---------------------------
