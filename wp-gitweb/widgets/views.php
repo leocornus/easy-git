@@ -129,31 +129,15 @@ EOT;
 function wpg_widget_log_view($context) {
 
     $ajax_url = admin_url('admin-ajax.php');
+    $uat_branch = get_site_option('wpg_merge_uat_branch');
+    $prod_branch = get_site_option('wpg_merge_prod_branch');
 
     $repo = $context['repo'];
     $branch = $context['branch'];
     $base_path = $context['base_path'];
     // get commit message if it is exist.
     $commit_message = $context['commit_message'];
-    $logs = wpg_get_log_list($base_path);
     $wait_image =  plugins_url('wp-gitweb/images/wait.gif');
-
-    $log_rows = array();
-    foreach($logs as $log) {
-        $log_rows[] = <<<EOT
-<tr id="log">
-  <td><a id='commit-id' href='{$log["url"]}'>{$log["id"]}</a></td>
-  <td>{$log["email"]}</td>
-  <td>{$log["date"]}</td>
-  <td>{$log["comment"]}</td>
-  <td id='uat-{$log["id"]}'><img src='{$wait_image}' height="12"/>
-  </td>
-  <td id='prod-{$log["id"]}'><img src='{$wait_image}' height="12"/>
-  </td>
-</tr>
-EOT;
-    }
-    $log_trs = implode("\n", $log_rows);
 
     $log_js = <<<EOT
 <script type="text/javascript">
@@ -165,6 +149,7 @@ jQuery(document).ready(function($) {
   function loadLogs() {
     // get the page number
     var pageNumber = parseInt($("input[id='pageNumber']").val());
+    var statusSelector = 'commit-id-' + pageNumber;
 
     // get ready the AJAX call data.
     var data = {
@@ -183,7 +168,7 @@ jQuery(document).ready(function($) {
         // append to table id = changeLogs
         var last = $("table[id='changeLogs'] > tbody:last");
         last.append('<tr id="log">' +
-          '<td><a id="commit-id-' + pageNumber + '" href="' + 
+          '<td><a id="' + statusSelector + '" href="' + 
             log['url'] + '">' + log['id'] + "</a></td>" +
           '<td>' + log['email'] + '</td>' +
           '<td>' + log['date'] + '</td>' +
@@ -198,6 +183,43 @@ jQuery(document).ready(function($) {
       $('input[id="pageNumber"]').val(pageNumber + 1);
       // toggle the progress icon.
       // triger the merge status checking process.
+      var selector = 'a[id="' + statusSelector + '"]';
+      $(selector).each(function(index) {
+         var commitId = $(this).html();
+         mergeStatus(commitId, '{$uat_branch}', '{$prod_branch}');
+      });
+    });
+  }
+
+  /**
+   * check the merge status for a given commit.
+   */
+  function mergeStatus(commitId, uatBranch, prodBranch) {
+
+    // query merge status.
+    var data = {
+        "action" : "wpg_get_merge_status",
+        "commit_id" : commitId
+    };
+    // ajax_url will be set up by wp_localize_script
+    $.post('{$ajax_url}', data, function(response) {
+
+        var status = JSON.parse(response);
+        //console.log(status);
+        var uat_td = $("td[id='uat-" + commitId + "']")
+        uat_td.html(status[uatBranch]);
+        if(status[uatBranch] == 'Pending') {
+            uat_td.css('background-color', 'red');
+        } else {
+            uat_td.css('background-color', 'green');
+        }
+        var prod_td = $("td[id='prod-" + commitId + "']")
+        prod_td.html(status[prodBranch]);
+        if(status[prodBranch] == 'Pending') {
+            prod_td.css('background-color', 'red');
+        } else {
+            prod_td.css('background-color', 'green');
+        }
     });
   }
 
@@ -249,7 +271,6 @@ EOT;
 </tbody></table>
 {$log_js}
 {$alt_color_js}
-{$merge_status_js}
 EOT;
 
     return $the_view;
@@ -301,37 +322,6 @@ function wpg_widget_merge_status_js($selector) {
 <script type="text/javascript">
 jQuery(document).ready(function($) {
 
-  /**
-   * check the merge status for a given commit.
-   */
-  function mergeStatus(commitId, uatBranch, prodBranch) {
-
-    // query merge status.
-    var data = {
-        "action" : "wpg_get_merge_status",
-        "commit_id" : commitId
-    };
-    // ajax_url will be set up by wp_localize_script
-    $.post('{$ajax_url}', data, function(response) {
-
-        var status = JSON.parse(response);
-        //console.log(status);
-        var uat_td = $("td[id='uat-" + commitId + "']")
-        uat_td.html(status[uatBranch]);
-        if(status[uatBranch] == 'Pending') {
-            uat_td.css('background-color', 'red');
-        } else {
-            uat_td.css('background-color', 'green');
-        }
-        var prod_td = $("td[id='prod-" + commitId + "']")
-        prod_td.html(status[prodBranch]);
-        if(status[prodBranch] == 'Pending') {
-            prod_td.css('background-color', 'red');
-        } else {
-            prod_td.css('background-color', 'green');
-        }
-    });
-  }
 
     $("{$selector}").each(function(index) {
         var commitId = $(this).html();
