@@ -359,14 +359,18 @@ function wpg_get_diff_url($base_path, $filename, $status) {
 /**
  * return the commit log as array list
  */
-function wpg_get_log_list($base_path) {
+function wpg_get_log_list($base_path, $page_number=0, $per_page=10) {
 
     chdir($base_path);
     // check details by using the following command:
     // git help log
     // %ae for author email
     // %an for author name
-    $gitlog = shell_exec('git log --pretty=format:"%h|%an|%ae|%ad|%s" --date=short .');
+    $format = '--pretty=format:"%h|%an|%ae|%ad|%s" --date=short ';
+    $skip = $page_number * $per_page;
+    $paging = '--skip=' . $skip . ' -' . $per_page;
+    $cmd = 'git log ' . $format . $paging . ' .'; 
+    $gitlog = shell_exec($cmd);
     $commits = explode("\n", $gitlog);
     $logs = array();
     foreach ($commits as $commit) {
