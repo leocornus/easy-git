@@ -161,3 +161,20 @@ function wpg_get_merge_status() {
     echo json_encode($status);
     exit;
 }
+
+/**
+ * WordPress AJAX callback for check change logs.
+ */
+add_action('wp_ajax_nopriv_wpg_get_log_list', 'wpg_get_log_list_cb');
+add_action('wp_ajax_wpg_get_log_list', 'wpg_get_log_list_cb');
+function wpg_get_log_list_cb() {
+
+    $repo_path = wpg_get_request_param('repo_path');
+    $page_number = wpg_get_request_param('page_number');
+    $per_page = wpg_get_request_param('per_page');
+
+    $logs = wpg_get_log_list($repo_path, $page_number, $per_page);
+
+    echo json_encode($logs);
+    exit;
+}
