@@ -128,6 +128,8 @@ EOT;
  */
 function wpg_widget_log_view($context) {
 
+    $ajax_url = admin_url('admin-ajax.php');
+
     $repo = $context['repo'];
     $branch = $context['branch'];
     $base_path = $context['base_path'];
@@ -151,11 +153,62 @@ function wpg_widget_log_view($context) {
 </tr>
 EOT;
     }
-
     $log_trs = implode("\n", $log_rows);
+
+    $log_js = <<<EOT
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+
+  /**
+   * load logs 
+   */
+  function loadLogs() {
+    // get the page number
+    var pageNumber = parseInt($("input[id='pageNumber']").val());
+
+    // get ready the AJAX call data.
+    var data = {
+      'action' : 'wpg_get_log_list',
+      'repo_path' : '{$base_path}',
+      'page_number' : pageNumber,
+      'per_page' : '10'
+    };
+
+    $.post('{$ajax_url}', data, function(response) {
+      // parse logs from response.
+      var logs = JSON.parse(response);
+      console.log(logs);
+      for(i = 0; i < logs.length; i++) {
+        var log = logs[i];
+        // append to table id = changeLogs
+        var last = $("table[id='changeLogs'] > tbody:last");
+        last.append('<tr id="log">' +
+          '<td><a id="commit-id-' + pageNumber + '" href="' + 
+            log['url'] + '">' + log['id'] + "</a></td>" +
+          '<td>' + log['email'] + '</td>' +
+          '<td>' + log['date'] + '</td>' +
+          '<td>' + log['comment'] + '</td>' +
+          '<td id="uat-' + log['id'] + 
+            '"><img src="{$wait_image}" height="12"/></td>' +
+          '<td id="prod-' + log['id'] + 
+            '"><img src="{$wait_image}" height="12"/></td>' +
+        '</tr>');
+      }
+      // update pageNumber
+      $('input[id="pageNumber"]').val(pageNumber + 1);
+      // toggle the progress icon.
+      // triger the merge status checking process.
+    });
+  }
+
+  loadLogs();
+});
+</script>
+EOT;
+
+    // alternate color js.
     $alt_color_js = wpg_widget_tr_alternate_js("tr[id='log']",
           array("even" => "#FCFCEF"));
-
     // Java Script to check merge status.
     $merge_status_js = wpg_widget_merge_status_js("a[id='commit-id']");
 
@@ -165,7 +218,7 @@ EOT;
 <b>{$repo}</b> <br />
 -- at Branch: <b>{$branch}</b></p>
 
-<table border = "1" width="90%">
+<table border = "1" width="90%" id="changeLogs">
   <thead>
   <tr>
     <th width="60">Commit</th>
@@ -185,10 +238,16 @@ EOT;
     <th>UAT</th>
     <th>Production</th>
   </tr>
+  <tr>
+    <th colspan="6" align="right" id="loadStatus">
+      <input type="hidden" id="pageNumber" value="0"/>
+      Load More...
+    </th>
+  </tr>
   </tfoot>
   <tbody>
-  {$log_trs}
 </tbody></table>
+{$log_js}
 {$alt_color_js}
 {$merge_status_js}
 EOT;
@@ -241,34 +300,68 @@ function wpg_widget_merge_status_js($selector) {
     $js = <<<EOT
 <script type="text/javascript">
 jQuery(document).ready(function($) {
+
+  /**
+   * check the merge status for a given commit.
+   */
+  function mergeStatus(commitId, uatBranch, prodBranch) {
+
+    // query merge status.
+    var data = {
+        "action" : "wpg_get_merge_status",
+        "commit_id" : commitId
+    };
+    // ajax_url will be set up by wp_localize_script
+    $.post('{$ajax_url}', data, function(response) {
+
+        var status = JSON.parse(response);
+        //console.log(status);
+        var uat_td = $("td[id='uat-" + commitId + "']")
+        uat_td.html(status[uatBranch]);
+        if(status[uatBranch] == 'Pending') {
+            uat_td.css('background-color', 'red');
+        } else {
+            uat_td.css('background-color', 'green');
+        }
+        var prod_td = $("td[id='prod-" + commitId + "']")
+        prod_td.html(status[prodBranch]);
+        if(status[prodBranch] == 'Pending') {
+            prod_td.css('background-color', 'red');
+        } else {
+            prod_td.css('background-color', 'green');
+        }
+    });
+  }
+
     $("{$selector}").each(function(index) {
         var commitId = $(this).html();
         //$("td[id='uat-" + commitId + "']").html('uat' + commitId);
         //console.log(commitId);
+        mergeStatus(commitId, '{$uat_branch}', '{$prod_branch}');
         // query merge status.
-        var data = {
-            "action" : "wpg_get_merge_status",
-            "commit_id" : commitId
-        };
-        $.post("{$ajax_url}", data, function(response) {
+        // --var data = {
+        // --    "action" : "wpg_get_merge_status",
+        // --    "commit_id" : commitId
+        // --};
+        // --$.post("{$ajax_url}", data, function(response) {
 
-            var status = JSON.parse(response);
-            //console.log(status);
-            var uat_td = $("td[id='uat-" + commitId + "']")
-            uat_td.html(status['{$uat_branch}']);
-            if(status['{$uat_branch}'] == 'Pending') {
-                uat_td.css('background-color', 'red');
-            } else {
-                uat_td.css('background-color', 'green');
-            }
-            var prod_td = $("td[id='prod-" + commitId + "']")
-            prod_td.html(status['{$prod_branch}']);
-            if(status['{$prod_branch}'] == 'Pending') {
-                prod_td.css('background-color', 'red');
-            } else {
-                prod_td.css('background-color', 'green');
-            }
-        });
+        // --    var status = JSON.parse(response);
+        // --    //console.log(status);
+        // --    var uat_td = $("td[id='uat-" + commitId + "']")
+        // --    uat_td.html(status['{$uat_branch}']);
+        // --    if(status['{$uat_branch}'] == 'Pending') {
+        // --        uat_td.css('background-color', 'red');
+        // --    } else {
+        // --        uat_td.css('background-color', 'green');
+        // --    }
+        // --    var prod_td = $("td[id='prod-" + commitId + "']")
+        // --    prod_td.html(status['{$prod_branch}']);
+        // --    if(status['{$prod_branch}'] == 'Pending') {
+        // --        prod_td.css('background-color', 'red');
+        // --    } else {
+        // --        prod_td.css('background-color', 'green');
+        // --    }
+        // --});
     });
 });
 </script>
@@ -854,7 +947,15 @@ EOT;
     $merge_view = wpg_widget_merge_html($commit_log);
 
     $changeset = <<<EOT
-<table id="changeset"><tbody>
+<table id="changeset">
+<tfoot>
+  <tr>
+    <th colspan="3">This is tfoot element, it will always after
+    thead and tbody
+    </th>
+  </tr>
+</tfoot>
+<tbody>
 <tr>
   <th>Full ID:</th>
   <td>{$commit_log['commit_id']}</td>
