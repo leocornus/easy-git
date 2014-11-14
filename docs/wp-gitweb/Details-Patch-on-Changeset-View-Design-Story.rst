@@ -60,5 +60,19 @@ Assume each file has a td with id '''filename'''::
   });
   </script>
 
+The following code try to demonstrate how to append rows to 
+an existing table::
+
+  var last = $("table[id='{$table_id}'] > tbody:last");
+  var codeId = 'file' + index;
+  last.append('<tr><td colspan="{$td_colspan}">' + 
+              '<pre style="font-size: 1.5em; ' +
+              'white-space: pre-wrap; ' + 
+              'text-align: left;' + 
+              '"><code class="diff"' +
+              'id="' + codeId + 
+              '">' + response + '</code></pre>' +
+              '</td></tr>');
+
 .. _Pygments: http://pygments.org/
 .. _highlight.js: https://highlightjs.org/
