@@ -35,11 +35,7 @@ AJAX Actions
 
 We will create WordPress AJAX actions to return the logs.
 
-
-
-**wpg_get_log_list**
-
-The function need update to handle pagination.
+The function **wpg_get_log_list** need update to handle pagination.
 
 jQuery Frontend
 ---------------
@@ -54,6 +50,8 @@ Actions:
 **Page Loading Workflow**
 
 - Initially the page just load necessary JavaScript with no logs.
+- The status row in **tfoot** will display a log summary:
+  loaded xxx of total xxx commits.
 - **load more** will show progressing icon.
 - Once the page DOM is ready, JavaScript start to execute.
 - JavaScript to read the page number, starts from 0
@@ -61,6 +59,7 @@ Actions:
 - JavaScript to append the logs to **tbody:last**.
 - hide the progressing icon when logs are all loaded.
 - update the page number hidden field.
+- update the status row
 - AJAX call to load merge status for all commis in one page.
 
 Change Logs View Update
@@ -91,4 +90,20 @@ Sample for commit limiting::
   ; Here is the pattern. PAGE_NUMBER starts from 0
   $ git log --skip=PAGE_NUMBER * PER_PAGE -PER_PAGE --oneline
 
+How to get the commit count from Git::
+
+  $ git rev-list HEAD --count .
+  $ git log --oneline . | wc
+
+Code Memos
+----------
+
+**How to Scroll to Bottom of page**
+
+The jQuery_ funtion **scrollTop** will be used to scroll down to
+the bottom of a page. Here is a one line sample::
+
+  jQuery('html,body').scrollTop(jQuery(windown).height());
+
 .. _Pagination: http://en.wikipedia.org/wiki/Pagination
+.. _jQuery: http://jquery.com
