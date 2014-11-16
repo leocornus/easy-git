@@ -181,6 +181,8 @@ jQuery(document).ready(function($) {
       }
       // update pageNumber
       $('input[id="pageNumber"]').val(pageNumber + 1);
+      // scroll down the bottom.
+      $('html,body').scrollTop($(window).height());
       // toggle the progress icon.
       // triger the merge status checking process.
       var selector = 'a[id="' + statusSelector + '"]';
@@ -224,6 +226,10 @@ jQuery(document).ready(function($) {
   }
 
   loadLogs();
+
+  $("a[id='loadMore']").click(function() {
+    loadLogs();
+  });
 });
 </script>
 EOT;
@@ -262,8 +268,9 @@ EOT;
   </tr>
   <tr>
     <th colspan="6" align="right" id="loadStatus">
+      <a name="loadMore"></a>
       <input type="hidden" id="pageNumber" value="0"/>
-      Load More...
+      <a href="#loadMore" id="loadMore">Load More...</a>
     </th>
   </tr>
   </tfoot>
