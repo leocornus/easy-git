@@ -188,6 +188,13 @@ jQuery(document).ready(function($) {
       var loadedCommits = perPage * pageNumber + logs.length;
       $('span[id="loadedCommits"]').html(loadedCommits);
       // compare with the total commits.
+      var totalCommits = 
+          parseInt($('span[id="totalCommits"]').html());
+      if(loadedCommits == totalCommits) {
+          // disable the load more button.
+          $("input[id='loadMore']").attr('disabled', true);
+      }
+
       // scroll down the bottom.
       $('html,body').scrollTop($(window).height());
       // toggle the progress icon.
