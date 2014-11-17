@@ -27,7 +27,7 @@ New Site Option
 
 Need introduce new site option for user to set the maxium commits
 for each page.
-The new option will have name **wpg_max_commits_per_page**.
+The new option will have name **wpg_commits_per_page**.
 It could be set in the page **Dashboard** -> **General Settings**.
 
 AJAX Actions
@@ -119,6 +119,12 @@ How to get the commit count from Git::
 
   $ git rev-list HEAD --count .
   $ git log --oneline . | wc
+
+How to toggle mouse cursor to wait and default ::
+
+  jQuery('html,body').css('cursor', 'wait');
+  jQuery(':button').css('cursor', 'wait');
+  jQuery('html,body').css('cursor', 'default');
 
 Code Memos
 ----------
