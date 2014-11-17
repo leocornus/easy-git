@@ -399,6 +399,19 @@ function wpg_get_log_list($base_path, $page_number=0, $per_page=10) {
 }
 
 /**
+ * return the total number of commits for the given repo
+ */
+function wpg_get_log_count($base_path) {
+
+    chdir($base_path);
+    // Q: should we pull first?
+    $cmd = 'git rev-list HEAD --count .';
+    $count = shell_exec($cmd);
+
+    return $count;
+}
+
+/**
  * is good file to commit? check if the given file is 
  * one of the ignore 
  * files.

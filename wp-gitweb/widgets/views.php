@@ -135,6 +135,7 @@ function wpg_widget_log_view($context) {
     $repo = $context['repo'];
     $branch = $context['branch'];
     $base_path = $context['base_path'];
+    $total_commits = wpg_get_log_count($repo);
     // get commit message if it is exist.
     $commit_message = $context['commit_message'];
     $wait_image =  plugins_url('wp-gitweb/images/wait.gif');
@@ -186,6 +187,7 @@ jQuery(document).ready(function($) {
       // calculate loaded commits.
       var loadedCommits = perPage * pageNumber + logs.length;
       $('span[id="loadedCommits"]').html(loadedCommits);
+      // compare with the total commits.
       // scroll down the bottom.
       $('html,body').scrollTop($(window).height());
       // toggle the progress icon.
@@ -274,8 +276,8 @@ EOT;
     <th colspan="6" id="loadStatus" align="right">
         <input type="hidden" id="pageNumber" value="0"/>
         <span id="loadSummary">
-          Showing <span id="loadedCommits">12</span> of 
-          Total <span id="totalCommits">123</span> Commits
+          Showing <span id="loadedCommits">0</span> of 
+          Total <span id="totalCommits">{$total_commits}</span> Commits
         </span>
         <input type="button" id="loadMore" value="Load More..."/>
     </th>
