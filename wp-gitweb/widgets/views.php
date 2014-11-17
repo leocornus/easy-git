@@ -227,7 +227,7 @@ jQuery(document).ready(function($) {
 
   loadLogs();
 
-  $("a[id='loadMore']").click(function() {
+  $("input[id='loadMore']").click(function() {
     loadLogs();
   });
 });
@@ -267,10 +267,13 @@ EOT;
     <th>Production</th>
   </tr>
   <tr>
-    <th colspan="6" align="right" id="loadStatus">
-      <a name="loadMore"></a>
-      <input type="hidden" id="pageNumber" value="0"/>
-      <a href="#loadMore" id="loadMore">Load More...</a>
+    <th colspan="6" id="loadStatus" align="right">
+        <input type="hidden" id="pageNumber" value="0"/>
+        <span id="loadSummary">
+          Showing <span id="loadedCommits">12</span> of 
+          Total <span id="totalCommits">123</span> Commits
+        </span>
+        <input type="button" id="loadMore" value="Load More..."/>
     </th>
   </tr>
   </tfoot>
