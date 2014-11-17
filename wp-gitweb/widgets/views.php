@@ -243,8 +243,6 @@ EOT;
     // alternate color js.
     $alt_color_js = wpg_widget_tr_alternate_js("tr[id='log']",
           array("even" => "#FCFCEF"));
-    // Java Script to check merge status.
-    $merge_status_js = wpg_widget_merge_status_js("a[id='commit-id']");
 
     $the_view = <<<EOT
 {$commit_message}
@@ -317,58 +315,6 @@ EOT;
 // using jQuery to alternate table row colors.
 jQuery(document).ready(function($) {
 {$even_odd}
-});
-</script>
-EOT;
-
-    return $js;
-}
-
-/**
- * js client to query merge status for all commits.
- */
-function wpg_widget_merge_status_js($selector) {
-
-    $ajax_url = admin_url('admin-ajax.php');
-    // get the branch names.
-    $uat_branch = get_site_option('wpg_merge_uat_branch');
-    $prod_branch = get_site_option('wpg_merge_prod_branch');
-
-    $js = <<<EOT
-<script type="text/javascript">
-jQuery(document).ready(function($) {
-
-
-    $("{$selector}").each(function(index) {
-        var commitId = $(this).html();
-        //$("td[id='uat-" + commitId + "']").html('uat' + commitId);
-        //console.log(commitId);
-        mergeStatus(commitId, '{$uat_branch}', '{$prod_branch}');
-        // query merge status.
-        // --var data = {
-        // --    "action" : "wpg_get_merge_status",
-        // --    "commit_id" : commitId
-        // --};
-        // --$.post("{$ajax_url}", data, function(response) {
-
-        // --    var status = JSON.parse(response);
-        // --    //console.log(status);
-        // --    var uat_td = $("td[id='uat-" + commitId + "']")
-        // --    uat_td.html(status['{$uat_branch}']);
-        // --    if(status['{$uat_branch}'] == 'Pending') {
-        // --        uat_td.css('background-color', 'red');
-        // --    } else {
-        // --        uat_td.css('background-color', 'green');
-        // --    }
-        // --    var prod_td = $("td[id='prod-" + commitId + "']")
-        // --    prod_td.html(status['{$prod_branch}']);
-        // --    if(status['{$prod_branch}'] == 'Pending') {
-        // --        prod_td.css('background-color', 'red');
-        // --    } else {
-        // --        prod_td.css('background-color', 'green');
-        // --    }
-        // --});
-    });
 });
 </script>
 EOT;
