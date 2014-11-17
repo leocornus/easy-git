@@ -162,6 +162,12 @@ jQuery(document).ready(function($) {
       'per_page' : perPage
     };
 
+    // disable the load more button.
+    $("input[id='loadMore']").attr('disabled', true);
+    // show cursor 
+    $('html,body').css('cursor', 'wait');
+    $(':button').css('cursor', 'wait');
+    // send out AJAX request.
     $.post('{$ajax_url}', data, function(response) {
       // parse logs from response.
       var logs = JSON.parse(response);
@@ -190,7 +196,9 @@ jQuery(document).ready(function($) {
       // compare with the total commits.
       var totalCommits = 
           parseInt($('span[id="totalCommits"]').html());
-      if(loadedCommits == totalCommits) {
+      if(loadedCommits < totalCommits) {
+          $("input[id='loadMore']").attr('disabled', false);
+      } else {
           // disable the load more button.
           $("input[id='loadMore']").attr('disabled', true);
       }
@@ -198,6 +206,8 @@ jQuery(document).ready(function($) {
       // scroll down the bottom.
       $('html,body').scrollTop($(window).height());
       // toggle the progress icon.
+      $('html,body').css('cursor', 'default');
+      $(':button').css('cursor', 'default');
 
       // triger the merge status checking process.
       var selector = 'a[id="' + statusSelector + '"]';
@@ -911,8 +921,7 @@ EOT;
 <table id="changeset">
 <tfoot>
   <tr>
-    <th colspan="3">This is tfoot element, it will always after
-    thead and tbody
+    <th colspan="3">
     </th>
   </tr>
 </tfoot>
