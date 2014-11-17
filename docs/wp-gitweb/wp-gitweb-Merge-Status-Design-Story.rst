@@ -53,7 +53,7 @@ Here is the code sample to get those pathes::
 UI Design
 ---------
 
-'''New columns for log view'''
+**New columns for log view**
 
 Just need add two columns for log view commits list table to 
 display the merge status, one for UAT branch and one for Production branch.
@@ -61,7 +61,7 @@ Column header will call '''UAT''' and '''Production'''.
 Both columns will have initial value '''loading image''' 
 for each commit.
 
-'''Merge Status for Anonymous User'''
+**Merge Status for Anonymous User**
 
 Update the details changeset view to show merge status for 
 anonymous users (none code reviewer).

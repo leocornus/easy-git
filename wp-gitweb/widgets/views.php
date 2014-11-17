@@ -1097,35 +1097,36 @@ function wpg_widget_merge_html($commit_log) {
         $status_js = wpg_widget_single_merge_status_js(
             $commit_log['commit_id'], "td[id='merge-status']");
     } else {
-
-    $dev_branch = get_site_option('wpg_merge_dev_branch');
-    $uat_branch = get_site_option('wpg_merge_uat_branch');
-    $prod_branch = get_site_option('wpg_merge_prod_branch');
-
-    // check the uat merge (first level merge).
-    $merge_html = 
-        wpg_widget_merge_history_html($commit_log['comment'], 
-                                      $commit_log['commit_id'],
-                                      $merge_path,
-                                      $dev_branch, 
-                                      $commit_log['commit_id'],
-                                      $uat_branch);
-    // now let's check if UAT merge is done?
-    // we will based on the commit id exist on the message or not.
-    $pattern = wpg_merged_msg($uat_branch, '([0-9a-fA-F]{7})');
-    $pattern = str_replace("/", "\/", $pattern);
-    if(preg_match('/' . $pattern . '/', $merge_html, $matches)) {
-        // this tells UAT merge is finished.
-        $uat_commit_id = $matches[1];
-        $prod_merge_html = 
-            wpg_widget_merge_history_html($commit_log['comment'],
+        // this is code reviewer with merge folder.
+        $dev_branch = get_site_option('wpg_merge_dev_branch');
+        $uat_branch = get_site_option('wpg_merge_uat_branch');
+        $prod_branch = get_site_option('wpg_merge_prod_branch');
+    
+        // check the uat merge (first level merge).
+        $merge_html = 
+            wpg_widget_merge_history_html($commit_log['comment'], 
                                           $commit_log['commit_id'],
                                           $merge_path,
-                                          $uat_branch, 
-                                          $uat_commit_id,
-                                          $prod_branch);
-        $merge_html = $merge_html . "<br/>" . $prod_merge_html;
-    }
+                                          $dev_branch, 
+                                          $commit_log['commit_id'],
+                                          $uat_branch);
+        // now let's check if UAT merge is done?
+        // we will based on the commit id exist on the message or 
+        // not.
+        $pattern = wpg_merged_msg($uat_branch, '([0-9a-fA-F]{7})');
+        $pattern = str_replace("/", "\/", $pattern);
+        if(preg_match('/' . $pattern . '/', $merge_html, $matches)) {
+            // this tells UAT merge is finished.
+            $uat_commit_id = $matches[1];
+            $prod_merge_html = 
+                wpg_widget_merge_history_html($commit_log['comment'],
+                                              $commit_log['commit_id'],
+                                              $merge_path,
+                                              $uat_branch, 
+                                              $uat_commit_id,
+                                              $prod_branch);
+            $merge_html = $merge_html . "<br/>" . $prod_merge_html;
+        }
     }
  
     $view = <<<EOT
