@@ -72,6 +72,31 @@ It will also show progressing while it is loading logs.
 The **load more** link will change according to pagination situation:
 more pages, last page, ...
 
+**Commits Number Summary**
+
+The message should be something like::
+
+  Show xxx of Total xxx Commits
+
+Q: How to the total number of commits for a repository?
+
+Q: When should we get the total number? first batch of loading or
+every batch of loading?
+
+**Toggle Load More**
+
+We will toggle the Load More link in the following situation:
+
+- When it is loading logs.
+- When it is loading merge status?
+- After load all commits.
+
+The **disabled** attribute for a html button type will be used 
+to disable the Load More button::
+
+  jQuery("#loadMore").attr('disabled', true);
+  jQuery("#loadMore").attr('disabled', false);
+
 Pagination Support from Git
 ---------------------------
 
