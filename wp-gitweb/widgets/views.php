@@ -147,6 +147,8 @@ jQuery(document).ready(function($) {
    * load logs 
    */
   function loadLogs() {
+
+    perPage = 10;
     // get the page number
     var pageNumber = parseInt($("input[id='pageNumber']").val());
     var statusSelector = 'commit-id-' + pageNumber;
@@ -156,7 +158,7 @@ jQuery(document).ready(function($) {
       'action' : 'wpg_get_log_list',
       'repo_path' : '{$base_path}',
       'page_number' : pageNumber,
-      'per_page' : '10'
+      'per_page' : perPage
     };
 
     $.post('{$ajax_url}', data, function(response) {
@@ -181,9 +183,13 @@ jQuery(document).ready(function($) {
       }
       // update pageNumber
       $('input[id="pageNumber"]').val(pageNumber + 1);
+      // calculate loaded commits.
+      var loadedCommits = perPage * pageNumber + logs.length;
+      $('span[id="loadedCommits"]').html(loadedCommits);
       // scroll down the bottom.
       $('html,body').scrollTop($(window).height());
       // toggle the progress icon.
+
       // triger the merge status checking process.
       var selector = 'a[id="' + statusSelector + '"]';
       $(selector).each(function(index) {
