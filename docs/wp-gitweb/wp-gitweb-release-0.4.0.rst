@@ -13,6 +13,8 @@ Change Logs
   <Pagination-for-Log-Views-Design-Story.rst>`_
 - `Change Logs View Redesign <Change-Logs-Redesign.rst>`_
 - `FTP Management Story <wp-gitweb-FTP-Management-Story.rst>`_
+- `Using php-git binding to manipulate Git repo 
+  <Using-PHP-Git-Bindings-to-Manipulate-Git.rst>`_
 
 **TODO Ideas**
 
