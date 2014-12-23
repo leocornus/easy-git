@@ -40,7 +40,9 @@ Ideas
 -----
 
 - integrate the pure-ftpd configuration.
-- 
+- Re-use the table **WPG_USER_REPO_ASSOCIATE** to associate 
+  user and FTP access. the **REPO_LABEL** will be the empty symlink
+  folder in chroot folder.
 
 Planning
 --------

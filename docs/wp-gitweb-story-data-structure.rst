@@ -25,6 +25,14 @@ WPG_USER_REPO_ASSOCIATE
 :USER_LOGIN: user_login from wp_users table
 :REPO_ID: REPO_ID from table WPG_ACTIVE_GIT_REPOS.
 
+WPG_FTP_ACCESS
+
+:SERVICE_ID: auto increase id.
+:USER_LOGIN: wordpress user login from wp_users table.
+:SECRET_KEY: password to access FTP server.
+:FTP_HOME_DIR: the home directory for FTP access.
+:ACTIVATE_TIME: the activation timestamp.
+
 There will be a special user_login for some sandbox repositories.
 For example: ALL-USER
 
