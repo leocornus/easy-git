@@ -36,13 +36,18 @@ For **superadmin**:
 The repo label will be the folder name in **chroot** folder.
 The repo path will be mounted to the **chroot** foler.
 
+Database Schema
+---------------
+
+Moved to `Data Structure Story`_.
+
 Ideas
 -----
 
 - integrate the pure-ftpd configuration.
 - Re-use the table **WPG_USER_REPO_ASSOCIATE** to associate 
   user and FTP access. the **REPO_LABEL** will be the empty symlink
-  folder in chroot folder.
+  folder in **/chroot** folder.
 
 Planning
 --------
@@ -50,16 +55,6 @@ Planning
 - PHASE ONE: create dashboard to manage the ftp access info,
   basically manage the ftp service table.
   Similar with `Git Repo Management Story`_.
-
-Database Schema
----------------
-
-WPG_FTP_ACCESS
-
-:SERVICE_ID: auto increase id.
-:USER_LOGIN: wordpress user login from wp_users table.
-:SECRET_KEY: password to access FTP server.
-:FTP_HOME_DIR: the home directory for FTP access.
 
 How is it working now?
 ----------------------
@@ -75,3 +70,4 @@ Currently it depends on the manual process:
 
 .. _Pure-FTPd: https://github.com/jedisct1/pure-ftpd
 .. _Git Repo Management Story: ../wp_gitweb_Git_Repo_Management.rst
+.. _Data Structure Story: ../wp-gitweb-story-data-structure.rst

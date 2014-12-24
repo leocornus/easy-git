@@ -1,5 +1,5 @@
 **NOTE**
-Abandonded, using `FTP Management Story`_ instead.
+This story is Abandonded, using `FTP Management Story`_ instead.
 
 .. _FTP Management Story: wp-gitweb/wp-gitweb-FTP-Management-Story.rst
 
