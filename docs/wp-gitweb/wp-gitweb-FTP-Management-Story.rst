@@ -29,6 +29,10 @@ For **superadmin**:
 - able to generate random ftp access key for a user.
 - ability to generate and update shell script.
 
+Here is a alternative way to execute sudo commands::
+
+  shell_exec ssh user@localhost 'sudo mkdir -v /chroot/user/repo-label'
+
 **Create and Update FTP access**
 
 **Leverage the WPG_USER_REPO_ASSOCIATE**
@@ -40,6 +44,16 @@ Database Schema
 ---------------
 
 Moved to `Data Structure Story`_.
+
+PHP Functions
+-------------
+
+Before define PHP functions, we need figure out what actions/cases:
+
+- add user: create secret key, make the chroot home dir, 
+- associate user to a repo: make the chroot repo dir, mount the 
+  chroot repo dir to repo path.
+- un-associate user to a repo: unmount, remove the chroot repo dir
 
 Ideas
 -----

@@ -53,19 +53,23 @@ The **repository** object will be used in many PHP functions.
 PHP Functions
 -------------
 
-We will have the following PHP functions to manipulate Git repos and contributors.
+We will have the following PHP functions to manipulate 
+Git repos and contributors.
 
 wpg_get_all_repos()
   return all active Git repository as a array including contributors.
 
 wpg_get_all_contributors()
-  return all contributors for all active Git repository, an one dimensional array.
+  return all contributors for all active Git repository, 
+  an one dimensional array.
 
 wpg_get_repo_contributors($repo_id)
-  get all contributors associated to the given repository in an array format.
+  get all contributors associated to the given repository 
+  in an array format.
 
 wpg_replace_repo($repo_label, $repo_path, $repo_id=0)
-  create a new repository if the repo_id is 0. Otherwise, replace the existing one.
+  create a new repository if the repo_id is 0. Otherwise, 
+  replace the existing one.
 
 wpg_remove_repo($repo_label)
   remove the given repository and all its contributor associations.
@@ -74,7 +78,8 @@ wpg_associate_users_to_repo($users, $repo_id, $replace=true)
   associate a list of users to the given repository
 
 wpg_get_repo($repo_label)
-  return all info for the given repository label, in the repository object format.
+  return all info for the given repository label, 
+  in the repository object format.
 
 wpg_get_contributor_repos($user_login)
   return all repositories associated to a contributor
