@@ -11,19 +11,19 @@ Change Logs
   <wp-gitweb-Merge-Status-Design-Story.rst>`_
 - `Pagination for Log Views
   <Pagination-for-Log-Views-Design-Story.rst>`_
+  AJAX Driving **Load More** button for Check Logs view.
+  Introduce new option to set the maxium commits to load at one
+  time
 - `Change Logs View Redesign <Change-Logs-Redesign.rst>`_
+  - Ability to download repository snapshot from commit logs view,
+    for any commit.
+  - Allow anonymous user to view all change logs
+  - Allow anonymous user to download snapshots
+  - Allow users to browse all files for a repository. 
 - `FTP Management Story <wp-gitweb-FTP-Management-Story.rst>`_
 - `Using php-git binding to manipulate Git repo 
   <Using-PHP-Git-Bindings-to-Manipulate-Git.rst>`_
 
 **TODO Ideas**
 
-- AJAX Driving **Load More** button for Check Logs view.
-  Introduce new option to set the maxium commits to load at one
-  time
 - Auto Complete for developers user name list.
-- Ability to download repository snapshot from commit logs view,
-  for any commit.
-- Allow anonymous user to view all change logs
-- Allow anonymous user to download snapshots
-- Allow users to browse all files for a repository. 
