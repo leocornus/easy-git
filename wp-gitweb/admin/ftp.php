@@ -150,6 +150,10 @@ function wpg_handle_ftp_admin_form_submit() {
         $msg = 'Created new FTP Access: <b>' . $id . 
                '</b> - <b>' . $user_login . '</b>.';
     }
+
+    // mount the ftp folders.
+    //wpg_mount_users_ftp_folder($users, $repo_label, $repo_path);
+
     // default type is updated.
     wpg_notification_msg($msg);
 }
@@ -212,6 +216,10 @@ Edit</a> |
 Delete</a> 
 EOT;
 
+        // get assigned repos.
+        $repos = wpg_get_contributor_repos($ftp['user_login']);
+        $repos_list = implode("<br/>", $repos);
+
         // one tr for each row.
         $tr = <<<EOT
 <tr>
@@ -219,6 +227,7 @@ EOT;
   <td>{$user_name}</td>
   <td>{$ftp['secret_key']}</td>
   <td>{$ftp['ftp_home_dir']}</td>
+  <td>{$repos_list}</td>
 </tr>
 EOT;
         $rows[] = $tr;
@@ -237,6 +246,7 @@ EOT;
   <th>User</th>
   <th>Secret Key</th>
   <th>FTP Home Dir</th>
+  <th>Git Repos</th>
 </thead>
 <tbody>
   {$trs}
@@ -246,6 +256,7 @@ EOT;
   <th>User</th>
   <th>Secret Key</th>
   <th>FTP Home Dir</th>
+  <th>Git Repos</th>
 </tfoot>
 </table>
 {$dt_js}
