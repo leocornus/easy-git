@@ -41,7 +41,7 @@ Function Changes
 
 :wpg_widget_repo_form:
   - take off **auth_redirct**
-  - only show **Check Sttus** from logged in user and user who work
+  - only show **Check Status** from logged in user and user who work
     on that project. or code reviewer.
 
 :wpg_widget_status_view:

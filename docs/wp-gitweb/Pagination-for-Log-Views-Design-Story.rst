@@ -1,6 +1,9 @@
 `wp-gitweb Release 0.4.0 <wp-gitweb-release-0.4.0.rst>`_ > 
 Design Story for adding pagination for git logs view.
 
+.. contents:: Table of Content
+    :depth: 5
+
 As the change logs are more than 50, it will be very hard to 
 browse all change in one page and
 the page loading time will be a lot slower.
