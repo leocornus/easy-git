@@ -92,7 +92,8 @@ function wpg_get_repo_contributors($repo_id) {
 }
 
 /**
- * get all repositories for the given contributor.
+ * get all repositorie's labels for the given contributor.
+ * the function wpg_get_repo will return all detail for a repo.
  */
 function wpg_get_contributor_repos($user_login) {
 

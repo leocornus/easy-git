@@ -144,8 +144,10 @@ function wpg_get_repos_root_path() {
  * structure:
  *
  * array() {
- *     REPO_LABEL => REPO_PATH
+ *     REPO_LABEL
  * }
+ * 
+ * the repos_path could be got by calling function wpg_get_repo.
  */
 function wpg_get_active_repos($user_name=null) {
 
