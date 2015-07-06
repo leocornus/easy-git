@@ -112,3 +112,42 @@ function wpg_set_cookie_state($states, $expire=60, $clean=false) {
 
     return;
 }
+
+/**
+ * a re-usable function to generate JavaScript code to configurate
+ * and load jQuery DataTable for the given table id.
+ */
+function wpg_view_datatable_js($table_id, $per_page=25) {
+
+    $js = <<<EOT
+<script type="text/javascript" charset="utf-8">
+<!--
+jQuery(document).ready(function() {
+    jQuery('#{$table_id}').dataTable( {
+        "bProcessing": true,
+        "bServerSide": false,
+        // trun off the length change drop down.
+        "bLengthChange" : true,
+        // define the length memn option
+        "aLengthMenu" : [[15, 25, 50, -1], [15, 25, 50, "All"]],
+        // turn off filter.
+        "bFilter" : true,
+        // turn off sorting.
+        "bSort" : true,
+        // items per page.
+        "iDisplayLength" : {$per_page},
+        "sPaginationType": "full_numbers",
+        "aoColumns" : [
+            {"bSortable":false},
+            {"bSortable":true},
+            {"bSortable":true},
+            {"bSortable":true},
+        ]
+    } );
+} );
+-->
+</script>
+EOT;
+
+    return $js;
+}
