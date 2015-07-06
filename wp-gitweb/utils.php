@@ -116,6 +116,15 @@ function wpg_set_cookie_state($states, $expire=60, $clean=false) {
 /**
  * a re-usable function to generate JavaScript code to configurate
  * and load jQuery DataTable for the given table id.
+ * "aoColumns" will turn on and off the sort for each column.
+ * default is all columns are sortable. we will use default here.
+ * 
+ *    "aoColumns" : [
+ *        {"bSortable":false},
+ *        {"bSortable":true},
+ *        {"bSortable":true},
+ *        {"bSortable":true},
+ *    ]
  */
 function wpg_view_datatable_js($table_id, $per_page=25) {
 
@@ -136,13 +145,7 @@ jQuery(document).ready(function() {
         "bSort" : true,
         // items per page.
         "iDisplayLength" : {$per_page},
-        "sPaginationType": "full_numbers",
-        "aoColumns" : [
-            {"bSortable":false},
-            {"bSortable":true},
-            {"bSortable":true},
-            {"bSortable":true},
-        ]
+        "sPaginationType": "full_numbers"
     } );
 } );
 -->
