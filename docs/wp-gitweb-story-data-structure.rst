@@ -34,7 +34,23 @@ WPG_FTP_ACCESS
 :ACTIVATE_TIME: the activation timestamp.
 
 There will be a special user_login for some sandbox repositories.
-For example: ALL-USER
+For example: **ALL-USER**.
+
+Some constrains
+~~~~~~~~~~~~~~~
+
+here some scenarios:
+
+- user will gain FTP access by adding a record in table
+  **WPG_FTP_ACCESS**.
+- user will associate with a repository by adding a record in table
+  **WPG_USER_REPO_ASSOCIATE**, (USER_LOGIN, REPO_ID)
+- BY NOW, user can review the change status on GitWeb page, 
+  and can commit changes to the repo.
+- As long as a repo is assigned to a user, 
+  this folder will be created: **FTP_HOME_DIR/REPO_LABEL**.
+  And it will be mount to **REPO_PATH**.
+- BY NOW, user and the ftp access this this repository.
 
 Repository Object in Application
 --------------------------------
