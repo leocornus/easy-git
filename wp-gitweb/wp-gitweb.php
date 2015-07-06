@@ -111,6 +111,12 @@ function wpg_admin_init() {
                      'Repos Mangement',
                      'manage_options',
                      'wp-gitweb/admin/repos.php');
+    // the FTP management page.
+    add_submenu_page('wp-gitweb/admin/settings.php',
+                     'WP GitWeb FTP Mangement',
+                     'FTP Mangement',
+                     'manage_options',
+                     'wp-gitweb/admin/ftp.php');
     // the merge management page.
     add_submenu_page('wp-gitweb/admin/settings.php',
                      'WP GitWeb Merge Mangement',

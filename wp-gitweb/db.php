@@ -146,3 +146,38 @@ function wpg_get_merge_setting($user_login = null) {
 
     return $setting;
 }
+
+/**
+ * get all ftp accesses in a array with the following format:
+ *
+ * $ftp_access = array(
+ *     'id' => 1,
+ *     'user_login' = 'sean',
+ *     'secret_key' = 'ssss',
+ *     'ftp_home_dir' = '/chroot/sean',
+ * );
+ */
+function wpg_get_all_ftp_accesses() {
+
+    global $wpdb;
+
+    $ftps = $wpdb->get_results(
+        "SELECT * FROM wpg_ftp_access",
+        ARRAY_A
+    );
+
+    return $ftps;
+}
+
+/**
+ * return ftp access object for the given user_login.
+ */
+function wpg_get_ftp_access($user_login) {
+
+    global $wpdb;
+    $query = "SELECT * FROM wpg_ftp_access WHERE user_login = %s";
+    $query = $wpdb->prepare($query, $user_login);
+    $ftp = $wpdb->get_row($query, ARRAY_A);
+
+    return $ftp;
+}

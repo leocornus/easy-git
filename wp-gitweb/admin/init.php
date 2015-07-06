@@ -50,4 +50,16 @@ function wpg_create_tables($force=false) {
           UNIQUE KEY ID (ID)
         );";
     dbDelta($sql);
+
+    // table to manage user's FTP access.
+    $sql = "CREATE TABLE wpg_ftp_access (
+          ID mediumint(9) NOT NULL AUTO_INCREMENT,
+          user_login varchar(64) NOT NULL DEFAULT '',
+          secret_key varchar(128) NOT NULL DEFAULT '',
+          ftp_home_dir varchar(64) NOT NULL DEFAULT '',
+          activate_time datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+          PRIMARY KEY (ID),
+          UNIQUE KEY ID (ID)
+        );";
+    dbDelta($sql);
 }
