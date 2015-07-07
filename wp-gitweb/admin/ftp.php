@@ -138,13 +138,14 @@ function wpg_handle_ftp_admin_form_submit() {
     }
 
     if ($id > 0) {
-        //wpg_replace_ftp_access($user_login, $repo_path, $repo_id);
+        wpg_replace_ftp_access($user_login, 
+            $secret_key, $ftp_home_dir, $id);
         // preparing the message for update.
-        //$msg = 'Updated FTP Access: <b>' . $id. 
-        //       '</b> - <b>' . $user_login. '</b>.';
+        $msg = 'Updated FTP Access: <b>' . $id. 
+               '</b> - <b>' . $user_login. '</b>.';
     } else {
         // create new ftp access. 
-        $repo_id = wpg_replace_ftp_access($user_login, 
+        $id = wpg_replace_ftp_access($user_login, 
             $secret_key, $ftp_home_dir);
         // preparing the message for creation.
         $msg = 'Created new FTP Access: <b>' . $id . 
@@ -152,7 +153,7 @@ function wpg_handle_ftp_admin_form_submit() {
     }
 
     // mount the ftp folders.
-    //wpg_mount_users_ftp_folder($users, $repo_label, $repo_path);
+    wpg_mount_user_ftp_folders($user_login, $ftp_home_dir);
 
     // default type is updated.
     wpg_notification_msg($msg);
@@ -165,16 +166,19 @@ function wpg_replace_ftp_access($user_login, $secret_key,
     $ftp_home_dir, $id=0) {
 
     global $wpdb;
+    $data = array(
+        'id' => $id,
+        'user_login' => $user_login,
+        'secret_key' => $secret_key,
+        'ftp_home_dir' => $ftp_home_dir,
+    );
+    if ($id > 0) {
+        // adding the activate time.
+        $data['activate_time'] = 'now()';
+    }
 
     $success = $wpdb->replace(
-        'wpg_ftp_access',
-        array(
-            'id' => $id,
-            'user_login' => $user_login,
-            'secret_key' => $secret_key,
-            'ftp_home_dir' => $ftp_home_dir,
-            'activate_time' => 'now()'
-        ),
+        'wpg_ftp_access', $data,
         array('%d', '%s', '%s', '%s')
     );
 
@@ -183,6 +187,79 @@ function wpg_replace_ftp_access($user_login, $secret_key,
         return $wpdb->insert_id;
     } else {
         return -1;
+    }
+}
+
+/**
+ * mount user's ftp folders.
+ * return summary of the ftp folders.
+ */
+function wpg_mount_user_ftp_folders($user_login, $ftp_home) {
+
+    // get repo_labels
+    // foreach repo:
+    //   get repo object 
+    //   create ftp_folder: ftp_home/repo_label
+    //   mount ftp_folder to repo_path
+    $repo_labels = wpg_get_contributor_repos($user_login);
+    //var_dump($repo_labels);
+    foreach($repo_labels as $repo_label) {
+        $repo = wpg_get_repo($repo_label);
+        $repo_path = $repo['repo_path'];
+        $ftp_folder = "{$ftp_home}/{$repo_label}";
+        if(file_exists($ftp_folder)) {
+            // try to get the source mount path:
+            $source_path = wpg_mount_source($ftp_folder);
+            if($source_path == NULL) {
+                // not mounted at all!
+                // do nothing here.
+            } else if($source_path == $repo_path) {
+                // the ftp folder is already mounted properly.
+                // continue to next one.
+                continue;
+            } else {
+                // umount the current one!
+                wpg_sudo_shell_exec("umount {$ftp_folder}");
+            }
+        } else {
+            // directory is not exist!
+            wpg_sudo_shell_exec("mkdir -pv {$ftp_folder}");
+        }
+        // sudo mount -v --bind repo_path ftp_folder
+        wpg_sudo_shell_exec("mount -v --bind {$repo_path} {$ftp_folder}");
+    }
+}
+
+/**
+ * execute a command as sudo.
+ * this function depends on the settings for current system user,
+ * the user execute php or php-fpm.
+ */
+function wpg_sudo_shell_exec($command) {
+
+    // TODO: the user name should be configurable!
+    //var_dump($command);
+    shell_exec("ssh localhost 'sudo {$command}'");
+}
+
+/**
+ * return the source path id the given path is mounted.
+ */
+function wpg_mount_source($path) {
+
+    // assume the given path is exist, 
+    // it could be simplly check by using the file_exists function.
+    $command =  "mount -l | grep {$path}";
+    $output = shell_exec($command);
+    if($output == NULL) {
+        // output is NULL tells not mounted.
+        return NULL;
+    } else {
+        // analyze the output, try to find the source path.
+        $source = explode("on", $output);
+        // thie first one will be the source path.
+        $source = trim($source[0]);
+        return $source;
     }
 }
 

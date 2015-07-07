@@ -1,6 +1,9 @@
 `wp-gitweb RElease 0.4.0 <wp-gitweb-release-0.4.0.rst>`_ > 
 FTP Management Story
 
+.. contents:: Table of Contents
+    :depth: 5
+
 Overview
 --------
 
@@ -81,6 +84,31 @@ Currently it depends on the manual process:
 #. mount the target folder to the empty foler.
 #. the empty folder name should be the same with repository
    name. 
+
+Code Memo
+---------
+
+**file_exists($path)** to check if the directory exists?
+
+here is the logic to create chroot folder and mount to repo path::
+
+  if ftp_folder is exist
+    execute mount -l | grep ftp_folder
+    if there is output (currently mounted)
+      get the source_path
+      if the source_path != repo_path
+        unmount the current one
+      else (already mounted to the same folder)
+        continue to next one.
+    else (no output, do nothing here.)
+  else (not exist, create new one)
+    sudo mkdir ftp_folder
+  sudo mount -v --bind repo_path ftp_folder
+
+Possible functions:
+
+- wpg_mount_source($path), return $source_path for the given
+  $path.
 
 .. _Pure-FTPd: https://github.com/jedisct1/pure-ftpd
 .. _Git Repo Management Story: ../wp_gitweb_Git_Repo_Management.rst
