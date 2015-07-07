@@ -156,8 +156,10 @@ EOT;
 }
 
 /**
- * mount user's ftp folders.
- * return summary of the ftp folders.
+ * mount a user's all repo pathes to ftp folders.
+ * TODO: return summary of the ftp folders.
+ *
+ * this function is mainly serve FTP management dashboard page.
  */
 function wpg_mount_user_ftp_folders($user_login, $ftp_home) {
 
@@ -171,28 +173,48 @@ function wpg_mount_user_ftp_folders($user_login, $ftp_home) {
     foreach($repo_labels as $repo_label) {
         $repo = wpg_get_repo($repo_label);
         $repo_path = $repo['repo_path'];
-        $ftp_folder = "{$ftp_home}/{$repo_label}";
-        if(file_exists($ftp_folder)) {
-            // try to get the source mount path:
-            $source_path = wpg_mount_source($ftp_folder);
-            if($source_path == NULL) {
-                // not mounted at all!
-                // do nothing here.
-            } else if($source_path == $repo_path) {
-                // the ftp folder is already mounted properly.
-                // continue to next one.
-                continue;
-            } else {
-                // umount the current one!
-                wpg_sudo_shell_exec("umount {$ftp_folder}");
-            }
-        } else {
-            // directory is not exist!
-            wpg_sudo_shell_exec("mkdir -pv {$ftp_folder}");
-        }
-        // sudo mount -v --bind repo_path ftp_folder
-        wpg_sudo_shell_exec("mount -v --bind {$repo_path} {$ftp_folder}");
+        wpg_mount_repo_to_ftp($ftp_home, $repo_label, $repo_path);
     }
+}
+
+/**
+ *
+ */
+function wpg_mount_repo_to_ftp($ftp_home, $repo_label, $repo_path) {
+
+    $ftp_folder = "{$ftp_home}/{$repo_label}";
+    if(file_exists($ftp_folder)) {
+        // try to get the source mount path:
+        $source_path = wpg_mount_source($ftp_folder);
+        if($source_path == NULL) {
+            // not mounted at all!
+            // do nothing here.
+        } else if($source_path == $repo_path) {
+            // the ftp folder is already mounted properly.
+            // no need to do anything here.
+            return;
+        } else {
+            // umount the current one!
+            wpg_sudo_shell_exec("umount {$ftp_folder}");
+        }
+    } else {
+        // directory is not exist!
+        wpg_sudo_shell_exec("mkdir -pv {$ftp_folder}");
+    }
+    // sudo mount -v --bind repo_path ftp_folder
+    $mount_command = "mount -v --bind {$repo_path} {$ftp_folder}";
+    wpg_sudo_shell_exec($mount_command);
+}
+
+/**
+ * mount a repo path to a list of users.
+ * this will mainly serve the Reporsitory management dashboard page.
+ */
+function wpg_mount_users_ftp_folder($users, $repo_label, $repo_path) {
+
+    // foreach user:
+    //   get the ftp_home_dir
+    //   
 }
 
 /**
