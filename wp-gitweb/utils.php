@@ -154,3 +154,76 @@ EOT;
 
     return $js;
 }
+
+/**
+ * mount user's ftp folders.
+ * return summary of the ftp folders.
+ */
+function wpg_mount_user_ftp_folders($user_login, $ftp_home) {
+
+    // get repo_labels
+    // foreach repo:
+    //   get repo object 
+    //   create ftp_folder: ftp_home/repo_label
+    //   mount ftp_folder to repo_path
+    $repo_labels = wpg_get_contributor_repos($user_login);
+    //var_dump($repo_labels);
+    foreach($repo_labels as $repo_label) {
+        $repo = wpg_get_repo($repo_label);
+        $repo_path = $repo['repo_path'];
+        $ftp_folder = "{$ftp_home}/{$repo_label}";
+        if(file_exists($ftp_folder)) {
+            // try to get the source mount path:
+            $source_path = wpg_mount_source($ftp_folder);
+            if($source_path == NULL) {
+                // not mounted at all!
+                // do nothing here.
+            } else if($source_path == $repo_path) {
+                // the ftp folder is already mounted properly.
+                // continue to next one.
+                continue;
+            } else {
+                // umount the current one!
+                wpg_sudo_shell_exec("umount {$ftp_folder}");
+            }
+        } else {
+            // directory is not exist!
+            wpg_sudo_shell_exec("mkdir -pv {$ftp_folder}");
+        }
+        // sudo mount -v --bind repo_path ftp_folder
+        wpg_sudo_shell_exec("mount -v --bind {$repo_path} {$ftp_folder}");
+    }
+}
+
+/**
+ * execute a command as sudo.
+ * this function depends on the settings for current system user,
+ * the user execute php or php-fpm.
+ */
+function wpg_sudo_shell_exec($command) {
+
+    // TODO: the user name should be configurable!
+    //var_dump($command);
+    shell_exec("ssh localhost 'sudo {$command}'");
+}
+
+/**
+ * return the source path id the given path is mounted.
+ */
+function wpg_mount_source($path) {
+
+    // assume the given path is exist, 
+    // it could be simplly check by using the file_exists function.
+    $command =  "mount -l | grep {$path}";
+    $output = shell_exec($command);
+    if($output == NULL) {
+        // output is NULL tells not mounted.
+        return NULL;
+    } else {
+        // analyze the output, try to find the source path.
+        $source = explode("on", $output);
+        // thie first one will be the source path.
+        $source = trim($source[0]);
+        return $source;
+    }
+}

@@ -182,3 +182,34 @@ function wpg_get_ftp_access($user_login) {
 
     return $ftp;
 }
+
+/**
+ * create a new ftp access.
+ */
+function wpg_replace_ftp_access($user_login, $secret_key, 
+    $ftp_home_dir, $id=0) {
+
+    global $wpdb;
+    $data = array(
+        'id' => $id,
+        'user_login' => $user_login,
+        'secret_key' => $secret_key,
+        'ftp_home_dir' => $ftp_home_dir,
+    );
+    if ($id > 0) {
+        // adding the activate time.
+        $data['activate_time'] = 'now()';
+    }
+
+    $success = $wpdb->replace(
+        'wpg_ftp_access', $data,
+        array('%d', '%s', '%s', '%s')
+    );
+
+    // The auto_increment id could be accessed through insert_id.
+    if($success) {
+        return $wpdb->insert_id;
+    } else {
+        return -1;
+    }
+}
