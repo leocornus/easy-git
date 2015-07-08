@@ -36,6 +36,21 @@ we might split **status** view from **logs** view.
 - Any user, including anonymous user, can download snapshot 
   from any repository as a zip file. 
 
+Repository Label autocomplete
+-----------------------------
+
+Repositry lable will autocomplete for both logged in users and
+anonymous users.
+If logged in user check the checkbox **Only show repos I am working on**,
+the search scope will narrow down to the repos for current users.
+
+Design thinking:
+
+- load all repositories labels.
+- if this is a logged in user.
+  load all repositories labels for a logged in user,
+- client side only jQuery autocomplete.
+
 Function Changes
 ----------------
 
@@ -46,5 +61,3 @@ Function Changes
 
 :wpg_widget_status_view:
   - adding **auth_redirect**, so only logged in user can see it.
-
-

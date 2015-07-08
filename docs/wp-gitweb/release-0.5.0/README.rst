@@ -9,6 +9,8 @@ Chage logs
     for any commit.
   - Allow anonymous user to view all change logs
   - Allow anonymous user to download snapshots
+  - auto complete contributor name for code reviewer.
+  - auto complete repository label.
   - Allow users to browse all files for a repository. 
 
 - `FTP Management Tune Up <ftp-management-tune-up.rst>`_ 
@@ -19,6 +21,8 @@ Chage logs
   - ability to random generate secret_key,
   - ability email secret_key to user.
   - hide or encrypt secret key.
+  - ability to handle umount and rm if user is not set as contributor.
+    basically the house-keeping work.
 
 - integration with `leocornus ci`_
 
