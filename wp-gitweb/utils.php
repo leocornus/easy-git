@@ -214,7 +214,16 @@ function wpg_mount_users_ftp_folder($users, $repo_label, $repo_path) {
 
     // foreach user:
     //   get the ftp_home_dir
-    //   
+    //   call function wpg_mount_repo_to_ftp
+    foreach($users as $user_login) {
+        $ftp_access = wpg_get_ftp_access($user_login);
+        if($ftp_access == NULL) {
+            // this user is not set up FTP access, Skip.
+            continue;
+        }
+        wpg_mount_repo_to_ftp($ftp_access['ftp_home_dir'],
+                              $repo_label, $repo_path);
+    }
 }
 
 /**

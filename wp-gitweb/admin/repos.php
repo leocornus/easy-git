@@ -230,6 +230,8 @@ function wpg_handle_repos_admin_form_submit() {
         $trimmed = rtrim($repo_contributors, " ,");
         $users = explode(', ', $trimmed);
         wpg_associate_users_to_repo($users, $repo_id);
+        // mount the repo path to users' ftp folder.
+        wpg_mount_users_ftp_folder($users, $repo_label, $repo_path);
     }
     // default type is updated.
     wpg_notification_msg($msg);
