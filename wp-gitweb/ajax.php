@@ -178,3 +178,23 @@ function wpg_get_log_list_cb() {
     echo json_encode($logs);
     exit;
 }
+
+/**
+ * AJAX call back to mount all repo path to user ftp folder.
+ *
+ * this is only for logged in user.
+ */
+add_action('wp_ajax_wpg_mount_all_users_repo', 
+           'wpg_mount_all_users_repo_cb');
+function wpg_mount_all_users_repo_cb() {
+
+    // make sure this is logged in user and
+    // this is super admin.
+    $ret = array(); 
+    if(is_user_logged_in() && is_super_admin()) {
+        $ret['summary'] = wpg_mount_all_users_repo();
+    }
+
+    echo json_encode($ret);
+    exit;
+}

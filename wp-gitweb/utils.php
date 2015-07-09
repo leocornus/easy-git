@@ -187,10 +187,13 @@ function wpg_mount_all_users_repo() {
     // call wpg_mount_user_ftp_folders.
 
     $ftp_accesses = wpg_get_all_ftp_accesses();
-    foreach($ftp_acceses as $ftp) {
+    $total = count($ftp_accesses);
+    foreach($ftp_accesses as $ftp) {
         wpg_mount_user_ftp_folders($ftp['user_login'], 
                                    $ftp['ftp_home_dir']);
     }
+
+    return "Mounted {$total} users!";
 }
 
 /**

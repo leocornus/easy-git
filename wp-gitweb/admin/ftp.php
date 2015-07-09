@@ -45,7 +45,8 @@ if(isset($_POST['wpg_ftp_admin_form_submit']) &&
 
   <?php 
     echo wpg_widget_ftp_admin_form($ftp_access); 
-    echo '<h3>FTP Access Users List</h3>';
+    $button = wpg_widget_ftp_mount_button();
+    echo "<h3>FTP Access Users List {$button}</h3>";
     // show all active FTP access in jQuery DataTables.
     echo wpg_widget_ftps_list_dt();
   ?>
@@ -53,6 +54,45 @@ if(isset($_POST['wpg_ftp_admin_form_submit']) &&
 </div>
 
 <?php
+
+/**
+ * get ready the mount button.
+ */
+function wpg_widget_ftp_mount_button() {
+
+    $ajax_url = admin_url('admin-ajax.php');
+    $button = <<<EOT
+<button type="button" class="btn btn-primary" id="ftp-mount"
+>Mount Repos</button>
+<script type="text/javascript" charset="utf-8">
+<!--
+jQuery(document).ready(function($) {
+  $("#ftp-mount").click(function($) {
+
+    var data = {
+      'action' : 'wpg_mount_all_users_repo'
+    };
+
+    // get ready the waiting cursor,
+    jQuery('html,body').css('cursor', 'wait');
+    jQuery(':button').css('cursor', 'wait');
+
+    jQuery.post('{$ajax_url}', data, function(response) {
+      var res = JSON.parse(response);
+      alert(res['summary']);
+    });
+
+    // reset the cursor.
+    $('html,body').css('cursor', 'default');
+    $(':button').css('cursor', 'default');
+  });
+});
+-->
+</script>
+EOT;
+
+    return $button;
+}
 
 /**
  * render the form for creating and editing repos.
