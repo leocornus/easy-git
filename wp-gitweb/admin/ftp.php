@@ -181,11 +181,12 @@ function wpg_widget_ftps_list_dt() {
                          $user->user_email;
         }
         // preparing the href link for edit.
+        $base_url = "page={$_REQUEST['page']}&userlogin={$ftp['user_login']}&action";
         $user_name = <<<EOT
 <strong>{$user_name}</strong><br/>
-<a href="?page={$_REQUEST['page']}&userlogin={$ftp['user_login']}&action=edit">
+<a href="?{$base_url}=edit">
 Edit</a> | 
-<a href="?page={$_REQUEST['page']}&userlogin={$ftp['user_login']}&action=delete">
+<a href="?{$base_url}=delete">
 Delete</a> 
 EOT;
 

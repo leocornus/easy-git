@@ -178,7 +178,25 @@ function wpg_mount_user_ftp_folders($user_login, $ftp_home) {
 }
 
 /**
- *
+ * utility function to mount all repo path to user's ftp folder for
+ * all users.
+ */
+function wpg_mount_all_users_repo() {
+
+    // get all users and the ftp home dir
+    // call wpg_mount_user_ftp_folders.
+
+    $ftp_accesses = wpg_get_all_ftp_accesses();
+    foreach($ftp_acceses as $ftp) {
+        wpg_mount_user_ftp_folders($ftp['user_login'], 
+                                   $ftp['ftp_home_dir']);
+    }
+}
+
+/**
+ * mount the given repository's path to ftp folder.
+ * the target ftp folder will have the following convension:
+ *  {$ftp_home}/{$repo_label}
  */
 function wpg_mount_repo_to_ftp($ftp_home, $repo_label, $repo_path) {
 

@@ -1,7 +1,7 @@
 Release 0.5.0
 -------------
 
-Chage logs
+Change logs
 
 - `Change Logs View Redesign <Change-Logs-Redesign.rst>`_
 
