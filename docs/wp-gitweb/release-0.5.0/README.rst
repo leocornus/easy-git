@@ -16,8 +16,10 @@ Change logs
 - `FTP Management Tune Up <ftp-management-tune-up.rst>`_ 
   more utilities for the FTP management page:
 
-  - sync button to sync the mount between repo PATH ane ftp folder.
+  - [DONE] sync button to sync the mount between repo PATH and 
+    ftp folder.
     This is necessary for recorvering from system reboot.
+  - introduce new options: **wpg_chroot_dir**, **wpg_sudo_user**.
   - ability to random generate secret_key,
   - ability email secret_key to user.
   - hide or encrypt secret key.
