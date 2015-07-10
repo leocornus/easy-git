@@ -80,11 +80,10 @@ jQuery(document).ready(function($) {
     jQuery.post('{$ajax_url}', data, function(response) {
       var res = JSON.parse(response);
       alert(res['summary']);
+      // reset the cursor.
+      jQuery('html,body').css('cursor', 'default');
+      jQuery(':button').css('cursor', 'default');
     });
-
-    // reset the cursor.
-    $('html,body').css('cursor', 'default');
-    $(':button').css('cursor', 'default');
   });
 });
 -->
